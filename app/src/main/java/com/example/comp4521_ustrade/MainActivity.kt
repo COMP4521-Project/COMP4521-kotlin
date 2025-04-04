@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.comp4521_ustrade.ui.theme.COMP4521ustradeTheme
+import com.example.comp4521_ustrade.auth.navigation.AuthNavigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +23,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    AuthNavigation(
+                        onAuthSuccess = {
+                            // Navigate to your main app content here
+                            // For now, we'll just show a greeting
+                            Greeting("Authenticated User")
+                        }
+                    )
                 }
             }
         }
