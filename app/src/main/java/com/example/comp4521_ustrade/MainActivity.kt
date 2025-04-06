@@ -24,10 +24,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     AuthNavigation(
-                        onAuthSuccess = {
-                            // Navigate to your main app content here
-                            // For now, we'll just show a greeting
-                            Greeting("Authenticated User")
+                        onAuthSuccess = { 
+                            @Composable { HomeScreen() }
                         }
                     )
                 }
@@ -50,4 +48,9 @@ fun GreetingPreview() {
     COMP4521ustradeTheme {
         Greeting("Android")
     }
+}
+
+@Composable
+fun HomeScreen() {
+    Greeting("Authenticated User")
 }
