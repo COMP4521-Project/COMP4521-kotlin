@@ -12,8 +12,10 @@ import com.example.comp4521_ustrade.auth.AuthViewModel
 import com.example.comp4521_ustrade.auth.screens.LoginScreen
 import com.example.comp4521_ustrade.auth.screens.RegisterScreen
 import com.example.comp4521_ustrade.auth.screens.ForgotPasswordScreen
+import com.example.comp4521_ustrade.auth.screens.LandingScreen
 
 sealed class AuthScreen(val route: String) {
+    object Landing : AuthScreen("landing")
     object Login : AuthScreen("login")
     object Register : AuthScreen("register")
     object ForgotPassword : AuthScreen("forgot_password")
@@ -35,8 +37,19 @@ fun AuthNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = AuthScreen.Login.route
+        startDestination = AuthScreen.Landing.route
     ) {
+        composable(AuthScreen.Landing.route) {
+            LandingScreen(
+                onNavigateToLogin = {
+                    navController.navigate(AuthScreen.Login.route)
+                },
+                onNavigateToRegister = {
+                    navController.navigate(AuthScreen.Register.route)
+                }
+            )
+        }
+        
         composable(AuthScreen.Login.route) {
             LoginScreen(
                 onSignIn = { email, password ->
