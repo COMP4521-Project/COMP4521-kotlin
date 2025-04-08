@@ -130,5 +130,15 @@ fun LoginScreen(
         ) {
             Text("Login", modifier = Modifier.padding(vertical = 8.dp))
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedButton(
+            onClick = onNavigateToRegister,
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Text("Don't have an account? Register")
+        }
     }
 } 
