@@ -53,7 +53,7 @@ fun LoginScreen(
         
         Spacer(modifier = Modifier.height(32.dp))
 
-        Text("E-mail", style = MaterialTheme.typography.bodyMedium)
+        Text("Email", style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(8.dp))
         
         TextField(
