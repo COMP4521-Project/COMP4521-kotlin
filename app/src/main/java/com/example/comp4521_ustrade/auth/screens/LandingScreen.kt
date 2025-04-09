@@ -3,14 +3,19 @@ package com.example.comp4521_ustrade.auth.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.R
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 @Composable
 fun LandingScreen(
@@ -31,7 +36,7 @@ fun LandingScreen(
         // Logo
         Image(
             painter = painterResource(id = R.drawable.icon),
-            contentDescription = "Ustrade Logo",
+            contentDescription = "USTrade Logo",
             modifier = Modifier.size(512.dp)
         )
 
@@ -43,9 +48,13 @@ fun LandingScreen(
             onClick = onNavigateToRegister,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 32.dp)
+                .padding(horizontal = 32.dp),
+            shape = RoundedCornerShape(8.dp)
         ) {
-            Text("Register")
+            Text(
+                text="Register",
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
         }
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -54,9 +63,16 @@ fun LandingScreen(
             onClick = onNavigateToLogin,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 32.dp)
+                .padding(horizontal = 32.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF213F6C)
+            ),
+            shape = RoundedCornerShape(8.dp)
         ) {
-            Text("Login")
+            Text(
+                text="Login",
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
         }
         
         Spacer(modifier = Modifier.height(64.dp))
