@@ -1,9 +1,7 @@
 package com.example.comp4521_ustrade.auth.screens
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,18 +18,24 @@ import androidx.compose.material3.IconButton
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import com.example.comp4521_ustrade.auth.AuthState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     onSignIn: (String, String) -> Unit,
     onNavigateToRegister: () -> Unit,
-    onNavigateToForgotPassword: () -> Unit
+    onNavigateToForgotPassword: () -> Unit,
+    authState: AuthState
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var hasError by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(authState) {
+        hasError = authState is AuthState.Error
+    }
 
     Column(
         modifier = Modifier
@@ -94,17 +98,15 @@ fun LoginScreen(
             },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color.Transparent,
-                focusedIndicatorColor = if (hasError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                unfocusedIndicatorColor = if (hasError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline
             )
         )
 
         if (hasError) {
             Text(
-                text = "Incorrect password. Please check your password.",
+                text = "Invalid email or password",
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(top = 4.dp)
+                modifier = Modifier.padding(start = 8.dp, top = 4.dp)
             )
         }
 
@@ -120,11 +122,10 @@ fun LoginScreen(
         Button(
             onClick = { 
                 onSignIn(email, password)
-                hasError = true // Simulate error state for demo
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF4C8C6F) // Green color from the design
+                containerColor = Color(0xFF213F6C)
             ),
             shape = RoundedCornerShape(8.dp)
         ) {

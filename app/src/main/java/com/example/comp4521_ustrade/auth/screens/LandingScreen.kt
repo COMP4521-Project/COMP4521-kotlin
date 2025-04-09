@@ -3,12 +3,14 @@ package com.example.comp4521_ustrade.auth.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.R
 
@@ -31,7 +33,7 @@ fun LandingScreen(
         // Logo
         Image(
             painter = painterResource(id = R.drawable.icon),
-            contentDescription = "Ustrade Logo",
+            contentDescription = "USTrade Logo",
             modifier = Modifier.size(512.dp)
         )
 
@@ -45,7 +47,8 @@ fun LandingScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp)
         ) {
-            Text("Register")
+            Text(
+                text="Register")
         }
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -56,7 +59,9 @@ fun LandingScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp)
         ) {
-            Text("Login")
+            Text(
+                text="Login"
+            )
         }
         
         Spacer(modifier = Modifier.height(64.dp))
