@@ -1,5 +1,6 @@
 package com.example.comp4521_ustrade.auth.navigation
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,13 +25,14 @@ sealed class AuthScreen(val route: String) {
 @Composable
 fun AuthNavigation(
     navController: NavHostController = rememberNavController(),
-    onAuthSuccess: () -> Unit
+    onAuthSuccess: @Composable () -> Unit
 ) {
     val authViewModel: AuthViewModel = viewModel()
     val user by authViewModel.user.collectAsState()
     
     // Check if user is logged in
     user?.let {
+        Text("Debug: User is logged in")
         onAuthSuccess()
         return
     }

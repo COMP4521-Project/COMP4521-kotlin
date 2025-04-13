@@ -60,8 +60,9 @@ fun ForgotPasswordScreen(
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
             isError = hasError,
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.Transparent,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
                 focusedIndicatorColor = if (hasError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
                 unfocusedIndicatorColor = if (hasError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline
             )
