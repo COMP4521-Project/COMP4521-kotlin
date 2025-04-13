@@ -35,9 +35,6 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePage(modifier: Modifier = Modifier) {
-    Box(modifier = modifier.fillMaxSize().background(Color.Cyan)) {
-        Text("Home Page")
-    }
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -89,6 +86,39 @@ fun HomePage(modifier: Modifier = Modifier) {
                     }
                 }
             }
+            composable(Screens.Download.screen) { Download() }
+            composable(Screens.Profile.screen) {
+                Scaffold (
+                    bottomBar = { USTBottomBar(navigationController) },
+                ){ innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.White)
+                            .padding(innerPadding)
+                    ) {
+                        Profile()
+                    }
+                }
+            }
+            composable(Screens.Notification.screen) { Notification() }
+            composable(Screens.Search.screen) {
+                Scaffold(
+                    topBar = { Search() },
+                    bottomBar = { USTBottomBar(navigationController) },
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.White)
+                            .padding(innerPadding)
+                    ) {
+                        // Add content here if needed
+                    }
+                }
+            }
+            composable(Screens.Favorite.screen) { Favorite() }
+            composable(Screens.ChatRoom.screen) { ChatRoom() }
 
         }
     }
