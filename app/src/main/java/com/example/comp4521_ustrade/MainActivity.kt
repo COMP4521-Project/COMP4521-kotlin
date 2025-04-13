@@ -17,7 +17,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.comp4521_ustrade.ui.theme.COMP4521ustradeTheme
 import com.example.comp4521_ustrade.auth.navigation.AuthNavigation
 import com.example.comp4521_ustrade.app.screens.Home
-import com.example.comp4521_ustrade.auth.screens.TestScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
