@@ -3,6 +3,7 @@ package com.example.comp4521_ustrade
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -16,11 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.comp4521_ustrade.ui.theme.COMP4521ustradeTheme
 import com.example.comp4521_ustrade.auth.navigation.AuthNavigation
-import com.example.comp4521_ustrade.app.screens.Home
+import com.example.comp4521_ustrade.app.screens.HomePage
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
             COMP4521ustradeTheme {
                 // A surface container using the 'background' color from the theme
@@ -31,7 +33,7 @@ class MainActivity : ComponentActivity() {
 
                     AuthNavigation(
                         onAuthSuccess = {
-                            Home()
+                            HomePage()
 
                         }
                     )

@@ -63,8 +63,9 @@ fun LoginScreen(
             placeholder = { Text("Enter your email") },
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.Transparent,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
                 focusedIndicatorColor = MaterialTheme.colorScheme.primary,
                 unfocusedIndicatorColor = MaterialTheme.colorScheme.outline
             )
@@ -96,8 +97,9 @@ fun LoginScreen(
                     )
                 }
             },
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.Transparent,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
             )
         )
 

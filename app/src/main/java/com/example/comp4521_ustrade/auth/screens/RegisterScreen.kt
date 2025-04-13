@@ -83,8 +83,9 @@ fun RegisterScreen(
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
             isError = firstNameError != null,
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.Transparent,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
                 focusedIndicatorColor = MaterialTheme.colorScheme.primary,
                 unfocusedIndicatorColor = MaterialTheme.colorScheme.outline
             )
@@ -116,8 +117,9 @@ fun RegisterScreen(
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
             isError = lastNameError != null,
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.Transparent,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
                 focusedIndicatorColor = MaterialTheme.colorScheme.primary,
                 unfocusedIndicatorColor = MaterialTheme.colorScheme.outline
             )
@@ -148,8 +150,9 @@ fun RegisterScreen(
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
             isError = emailError != null,
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.Transparent,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
                 focusedIndicatorColor = MaterialTheme.colorScheme.primary,
                 unfocusedIndicatorColor = MaterialTheme.colorScheme.outline
             )
@@ -261,8 +264,9 @@ fun RegisterScreen(
                     )
                 }
             },
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.Transparent,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
                 focusedIndicatorColor = if (passwordError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
                 unfocusedIndicatorColor = if (passwordError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline
             )
@@ -294,8 +298,9 @@ fun RegisterScreen(
                     )
                 }
             },
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.Transparent,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
                 focusedIndicatorColor = if (passwordError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
                 unfocusedIndicatorColor = if (passwordError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline
             )
