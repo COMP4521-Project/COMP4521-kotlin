@@ -29,9 +29,13 @@ import com.example.comp4521_ustrade.app.display.DisplayShortCutCards
 import com.example.comp4521_ustrade.app.display.displayProfileCard
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTWhite
+import androidx.navigation.NavController
 
 @Composable
-fun Profile(modifier: Modifier = Modifier) {
+fun Profile(
+    modifier: Modifier = Modifier,
+    navigationController: NavController
+) {
 
     Box(
         modifier = modifier
@@ -55,10 +59,14 @@ fun Profile(modifier: Modifier = Modifier) {
                     )
                 }
                 Row() {
-                    IconButton(onClick = { /* TODO: Action 1 */ }) {
+                    IconButton(
+                        onClick = { 
+                            navigationController.navigate(Screens.Settings.screen)
+                        }
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Icon 1",
+                            contentDescription = "Settings",
                             tint = USTWhite
                         )
                     }

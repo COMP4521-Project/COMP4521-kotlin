@@ -1,10 +1,15 @@
 package com.example.comp4521_ustrade.app.screens
 
+import AboutAppScreen
+import EditPasswordScreen
+import EditProfileScreen
+import NotificationSettingsScreen
+import PreferencesScreen
+import Settings
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,13 +19,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -30,6 +35,8 @@ import com.example.comp4521_ustrade.app.components.Pager
 import com.example.comp4521_ustrade.app.components.USTBottomBar
 import com.example.comp4521_ustrade.app.components.USTTopBar
 import com.example.comp4521_ustrade.app.display.DisplayCourseCards
+import com.example.comp4521_ustrade.auth.AuthViewModel
+import com.example.comp4521_ustrade.auth.screens.LandingScreen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,6 +46,7 @@ fun HomePage(modifier: Modifier = Modifier) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val navigationController = rememberNavController()
+    val authViewModel: AuthViewModel = viewModel()
 
     val onOpenDrawer: () -> Unit = {
         scope.launch {
@@ -88,16 +96,18 @@ fun HomePage(modifier: Modifier = Modifier) {
             }
             composable(Screens.Download.screen) { Download() }
             composable(Screens.Profile.screen) {
-                Scaffold (
+                Scaffold(
                     bottomBar = { USTBottomBar(navigationController) },
-                ){ innerPadding ->
+                ) { innerPadding ->
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(Color.White)
                             .padding(innerPadding)
                     ) {
-                        Profile()
+                        Profile(
+                            navigationController = navigationController
+                        )
                     }
                 }
             }
@@ -119,7 +129,50 @@ fun HomePage(modifier: Modifier = Modifier) {
             }
             composable(Screens.Favorite.screen) { Favorite() }
             composable(Screens.ChatRoom.screen) { ChatRoom() }
+            composable(Screens.Settings.screen) {
+                Settings(
+                    onNavigateBack = { navigationController.navigateUp() },
+                    navigationController = navigationController,
+                    authViewModel = authViewModel
+                )
+            }
+            // Setting page: Profile setting
+            composable(Screens.EditProfile.screen) {
+                EditProfileScreen(
+                    onNavigateBack = { navigationController.navigateUp() }
+                )
+            }
+            composable(Screens.EditPassword.screen) {
+                EditPasswordScreen(
+                    onNavigateBack = { navigationController.navigateUp() }
+                )
+            }
+            composable(Screens.NotificationSettings.screen) {
+                NotificationSettingsScreen(
+                    onNavigateBack = { navigationController.navigateUp() }
+                )
+            }
+            //TODO: Add Resources Setting
 
+            // Setting page: Support & About
+            composable(Screens.Preferences.screen) {
+                PreferencesScreen(
+                    onNavigateBack = { navigationController.navigateUp() }
+                )
+            }
+            composable(Screens.AboutApp.screen) {
+                AboutAppScreen(
+                    onNavigateBack = { navigationController.navigateUp() }
+                )
+            }
+
+            // Auth
+            composable(Screens.Landing.screen) {
+                LandingScreen(
+                    onNavigateToLogin = { navigationController.navigate(Screens.Login.screen) },
+                    onNavigateToRegister = { navigationController.navigate(Screens.Register.screen) }
+                )
+            }
         }
     }
 
