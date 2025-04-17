@@ -19,10 +19,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.comp4521_ustrade.app.models.ShortCutCardItem
+import com.example.comp4521_ustrade.app.screens.Screens
+import com.example.comp4521_ustrade.auth.AuthViewModel
 
 @Composable
-fun ShortCutCard(ShortCutCardItem: ShortCutCardItem, modifier: Modifier = Modifier) {
+fun ShortCutCard(
+    ShortCutCardItem: ShortCutCardItem,
+    navigateController: NavController,
+    authViewModel: AuthViewModel
+) {
     val context = LocalContext.current
 
     Card(
@@ -32,6 +39,17 @@ fun ShortCutCard(ShortCutCardItem: ShortCutCardItem, modifier: Modifier = Modifi
                 "Clicked: ${ShortCutCardItem.title}",
                 Toast.LENGTH_SHORT
             ).show()
+            when (ShortCutCardItem.title) {
+                "AI" -> navigateController.navigate(Screens.AIDetails.screen)
+                "Preference" -> navigateController.navigate(Screens.Preferences.screen)
+                "Logout" -> {
+                    authViewModel.signOut()
+                    navigateController.navigate(Screens.Landing.screen) {
+                        // Clear the back stack so user can't go back after logging out
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            }
         },
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(4.dp),

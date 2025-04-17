@@ -1,6 +1,5 @@
 package com.example.comp4521_ustrade.auth.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -10,10 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.comp4521_ustrade.auth.AuthViewModel
-import com.example.comp4521_ustrade.auth.screens.LoginScreen
-import com.example.comp4521_ustrade.auth.screens.RegisterScreen
 import com.example.comp4521_ustrade.auth.screens.ForgotPasswordScreen
 import com.example.comp4521_ustrade.auth.screens.LandingScreen
+import com.example.comp4521_ustrade.auth.screens.LoginScreen
+import com.example.comp4521_ustrade.auth.screens.RegisterScreen
 
 sealed class AuthScreen(val route: String) {
     object Landing : AuthScreen("landing")
@@ -32,7 +31,7 @@ fun AuthNavigation(
     
     // Check if user is logged in
     user?.let {
-        Text("Debug: User is logged in")
+//        Text("Debug: User is logged in")
         onAuthSuccess()
         return
     }

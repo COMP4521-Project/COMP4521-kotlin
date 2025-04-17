@@ -24,14 +24,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.comp4521_ustrade.app.components.ContributorCard
 import com.example.comp4521_ustrade.app.display.DisplayShortCutCards
 import com.example.comp4521_ustrade.app.display.displayProfileCard
+import com.example.comp4521_ustrade.auth.AuthViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTWhite
 
 @Composable
-fun Profile(modifier: Modifier = Modifier) {
+fun Profile(
+    modifier: Modifier = Modifier,
+    navigationController: NavController,
+    authViewModel: AuthViewModel
+) {
 
     Box(
         modifier = modifier
@@ -55,10 +61,14 @@ fun Profile(modifier: Modifier = Modifier) {
                     )
                 }
                 Row() {
-                    IconButton(onClick = { /* TODO: Action 1 */ }) {
+                    IconButton(
+                        onClick = { 
+                            navigationController.navigate(Screens.Settings.screen)
+                        }
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Icon 1",
+                            contentDescription = "Settings",
                             tint = USTWhite
                         )
                     }
@@ -88,7 +98,7 @@ fun Profile(modifier: Modifier = Modifier) {
                 displayProfileCard()
             }
 
-            DisplayShortCutCards()
+            DisplayShortCutCards(navigateController = navigationController, authViewModel)
 
             Box(
                 modifier = Modifier
