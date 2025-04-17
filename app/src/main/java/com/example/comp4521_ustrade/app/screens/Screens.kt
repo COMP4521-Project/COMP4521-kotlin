@@ -38,4 +38,7 @@ sealed class Screens(val screen: String) {
 
     // Document Details
     object DocumentDetails: Screens("DocumentDetails")
+
+    // Document Upload
+    object DocumentUpload: Screens("DocumentUpload")
 }

@@ -189,6 +189,14 @@ fun HomePage(modifier: Modifier = Modifier) {
                     onNavigateBack = { navigationController.navigateUp() }
                 )
             }
+
+            // Document Upload
+            composable(Screens.DocumentUpload.screen) {
+                DocumentUploadScreen(
+                    onNavigateBack = { navigationController.navigateUp() }
+                )
+            }
+            
         }
     }
 

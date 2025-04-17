@@ -1,9 +1,11 @@
 package com.example.comp4521_ustrade.app.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +22,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTextField(
+    titleFontSize: Int = 16,
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
@@ -32,36 +35,42 @@ fun CustomTextField(
     onClick: (() -> Unit)? = null,
     passwordVisible: Boolean = false
 ) {
-    Text(label, style = MaterialTheme.typography.bodyMedium)
+    Column (
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp, horizontal = 16.dp)
+    ) {
+        Text(label, style = MaterialTheme.typography.bodyMedium)
 
-    Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(2.dp))
 
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier.fillMaxWidth().then(
-            if (onClick != null) {
-                Modifier.clickable(onClick = onClick)
-            } else {
-                Modifier
-            }
-        ),
-        placeholder = placeholder?.let { { Text(it) } },
-        shape = RoundedCornerShape(8.dp),
-        singleLine = singleLine,
-        minLines = minLines,
-        isError = isError,
-        trailingIcon = trailingIcon,
-        visualTransformation = if (passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            focusedIndicatorColor = if (isError) 
-                MaterialTheme.colorScheme.error 
-            else MaterialTheme.colorScheme.primary,
-            unfocusedIndicatorColor = if (isError) 
-                MaterialTheme.colorScheme.error 
-            else MaterialTheme.colorScheme.outline
+        TextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = modifier.fillMaxWidth().then(
+                if (onClick != null) {
+                    Modifier.clickable(onClick = onClick)
+                } else {
+                    Modifier
+                }
+            ),
+            placeholder = placeholder?.let { { Text(it) } },
+            shape = RoundedCornerShape(8.dp),
+            singleLine = singleLine,
+            minLines = minLines,
+            isError = isError,
+            trailingIcon = trailingIcon,
+            visualTransformation = if (passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                focusedIndicatorColor = if (isError)
+                    MaterialTheme.colorScheme.error
+                else MaterialTheme.colorScheme.primary,
+                unfocusedIndicatorColor = if (isError)
+                    MaterialTheme.colorScheme.error
+                else MaterialTheme.colorScheme.outline
+            )
         )
-    )
+    }
 }

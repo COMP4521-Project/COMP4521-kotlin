@@ -1,6 +1,5 @@
 package com.example.comp4521_ustrade.app.components
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -78,7 +77,7 @@ fun USTBottomBar(navigationController: androidx.navigation.NavHostController = r
         ) {
             FloatingActionButton(
                 containerColor = Color.Red,
-                onClick = { Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show() }) {
+                onClick = { navigationController.navigate(Screens.DocumentUpload.screen) }) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = null,
