@@ -15,10 +15,12 @@ import androidx.navigation.NavController
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.ShortCutCard
 import com.example.comp4521_ustrade.app.models.ShortCutCardItem
+import com.example.comp4521_ustrade.auth.AuthViewModel
 
 @Composable
 fun DisplayShortCutCards(
     navigateController: NavController,
+    authViewModel: AuthViewModel,
     modifier: Modifier = Modifier
 ) {
 
@@ -45,7 +47,7 @@ fun DisplayShortCutCards(
             userScrollEnabled = false,
         ) {
             items(shortcutList.size) { index ->
-                ShortCutCard(ShortCutCardItem = shortcutList[index], navigateController = navigateController)
+                ShortCutCard(ShortCutCardItem = shortcutList[index], navigateController = navigateController, authViewModel = authViewModel)
             }
         }
     }

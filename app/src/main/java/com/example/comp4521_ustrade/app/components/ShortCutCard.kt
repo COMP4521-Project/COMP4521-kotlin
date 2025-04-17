@@ -22,11 +22,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.comp4521_ustrade.app.models.ShortCutCardItem
 import com.example.comp4521_ustrade.app.screens.Screens
+import com.example.comp4521_ustrade.auth.AuthViewModel
 
 @Composable
 fun ShortCutCard(
     ShortCutCardItem: ShortCutCardItem,
-    navigateController: NavController
+    navigateController: NavController,
+    authViewModel: AuthViewModel
 ) {
     val context = LocalContext.current
 
@@ -39,13 +41,14 @@ fun ShortCutCard(
             ).show()
             when (ShortCutCardItem.title) {
                 "AI" -> navigateController.navigate(Screens.AIDetails.screen)
-                "Search" -> navigateController.navigate(Screens.Search.screen)
-                "Favorite" -> navigateController.navigate(Screens.Favorite.screen)
-                "Chat" -> navigateController.navigate(Screens.ChatRoom.screen)
-                "Settings" -> navigateController.navigate(Screens.Settings.screen)
-                "Download" -> navigateController.navigate(Screens.Download.screen)
-                "Notification" -> navigateController.navigate(Screens.Notification.screen)
-                "Profile" -> navigateController.navigate(Screens.Profile.screen)
+                "Preference" -> navigateController.navigate(Screens.Preferences.screen)
+                "Logout" -> {
+                    authViewModel.signOut()
+                    navigateController.navigate(Screens.Landing.screen) {
+                        // Clear the back stack so user can't go back after logging out
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             }
         },
         shape = RoundedCornerShape(10.dp),

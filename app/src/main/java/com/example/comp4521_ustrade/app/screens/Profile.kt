@@ -28,13 +28,15 @@ import androidx.navigation.NavController
 import com.example.comp4521_ustrade.app.components.ContributorCard
 import com.example.comp4521_ustrade.app.display.DisplayShortCutCards
 import com.example.comp4521_ustrade.app.display.displayProfileCard
+import com.example.comp4521_ustrade.auth.AuthViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTWhite
 
 @Composable
 fun Profile(
     modifier: Modifier = Modifier,
-    navigationController: NavController
+    navigationController: NavController,
+    authViewModel: AuthViewModel
 ) {
 
     Box(
@@ -96,7 +98,7 @@ fun Profile(
                 displayProfileCard()
             }
 
-            DisplayShortCutCards(navigateController = navigationController)
+            DisplayShortCutCards(navigateController = navigationController, authViewModel)
 
             Box(
                 modifier = Modifier

@@ -18,11 +18,16 @@ import androidx.compose.ui.unit.sp
 data class DisplayFieldItem(
     val title: String,
     val value: String,
-    val onClick: (() -> Unit)? = null  // Optional click handler
+    val onClick: (() -> Unit)? = null,  // Optional click handler
 )
 
 @Composable
-fun DisplayFields(fields: List<DisplayFieldItem>, modifier: Modifier = Modifier) {
+fun DisplayFields(
+    fields: List<DisplayFieldItem>, 
+    modifier: Modifier = Modifier,
+    defaultFontSize: Int = 16,  // Added defaultFontSize parameter
+    defaultTextStyle: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.bodyMedium  // Added defaultTextStyle parameter
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -36,14 +41,15 @@ fun DisplayFields(fields: List<DisplayFieldItem>, modifier: Modifier = Modifier)
             ) {
                 Text(
                     text = field.title,
-                    fontSize = 16.sp,
-                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = (defaultFontSize).sp,  // Use field-specific font size
+                    style = defaultTextStyle,  // Use field-specific style or default
                     modifier = Modifier.weight(1f)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = field.value,
-                    style = MaterialTheme.typography.bodyMedium.copy(
+                    fontSize = (defaultFontSize).sp,  // Use field-specific font size
+                    style = (defaultTextStyle).copy(  // Use field-specific style or default
                         color = MaterialTheme.colorScheme.primary
                     ),
                     modifier = Modifier

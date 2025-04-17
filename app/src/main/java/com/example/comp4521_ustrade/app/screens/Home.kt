@@ -106,7 +106,8 @@ fun HomePage(modifier: Modifier = Modifier) {
                             .padding(innerPadding)
                     ) {
                         Profile(
-                            navigationController = navigationController
+                            navigationController = navigationController,
+                            authViewModel = authViewModel
                         )
                     }
                 }
