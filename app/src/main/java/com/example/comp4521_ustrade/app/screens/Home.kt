@@ -89,7 +89,7 @@ fun HomePage(modifier: Modifier = Modifier) {
                     ) {
 
                         Pager()
-                        CourseMenu({ DisplayCourseCards() })
+                        CourseMenu({ DisplayCourseCards(navigateController=navigationController) })
 
                     }
                 }
@@ -178,6 +178,14 @@ fun HomePage(modifier: Modifier = Modifier) {
             // AI
             composable(Screens.AIDetails.screen) {
                 AIDetailsScreen(
+                    onNavigateBack = { navigationController.navigateUp() }
+                )
+            }
+
+            // Document Details
+            composable(Screens.DocumentDetails.screen) {
+                DocumentDetailsScreen(
+                    title = "COMP4521 Lecture 7",
                     onNavigateBack = { navigationController.navigateUp() }
                 )
             }

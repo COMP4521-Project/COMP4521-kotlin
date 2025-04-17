@@ -8,12 +8,13 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.CourseCard
 import com.example.comp4521_ustrade.app.models.CourseCardItem
 
 @Composable
-fun DisplayCourseCards(modifier: Modifier = Modifier) {
+fun DisplayCourseCards(modifier: Modifier = Modifier, navigateController: NavController) {
     val courseList = listOf(
 
         CourseCardItem(R.drawable.comp1, "COMP4521 Lecture7 Lecture note", "2025", "Spring"),
@@ -38,7 +39,7 @@ fun DisplayCourseCards(modifier: Modifier = Modifier) {
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(courseList.size) { index ->
-            CourseCard(CourseCardItem = courseList[index])
+            CourseCard(CourseCardItem = courseList[index],navigateController = navigateController)
         }
     }
 }

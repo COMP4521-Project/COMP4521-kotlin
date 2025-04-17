@@ -35,4 +35,7 @@ sealed class Screens(val screen: String) {
 
     // AI
     object AIDetails: Screens("AIDetails")
+
+    // Document Details
+    object DocumentDetails: Screens("DocumentDetails")
 }

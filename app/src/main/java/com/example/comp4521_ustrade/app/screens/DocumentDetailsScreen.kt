@@ -1,0 +1,192 @@
+package com.example.comp4521_ustrade.app.screens
+
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.ThumbDown
+import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.outlined.ThumbDown
+import androidx.compose.material.icons.outlined.ThumbUp
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import com.example.comp4521_ustrade.R
+import com.example.comp4521_ustrade.app.components.DisplayOnlyFieldItem
+import com.example.comp4521_ustrade.app.components.DisplayOnlyFields
+import com.example.comp4521_ustrade.app.components.DocumentPreviewSlider
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@Composable
+fun DocumentDetailsScreen(
+    title: String,
+    onNavigateBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val documentFields = listOf(
+        DisplayOnlyFieldItem(title = "Year", value= "2025 Spring"),
+        DisplayOnlyFieldItem(title="Subject code", value="COMP 4521"),
+        DisplayOnlyFieldItem(title = "Upload Date", value = "2024-03-20"),
+        DisplayOnlyFieldItem(title = "Description", value = "Latest lecture note!!!")
+    )
+
+    var isLiked by remember { mutableStateOf(false) }
+    var isDisliked by remember { mutableStateOf(false) }
+
+    // Sample preview images (replace with actual document preview images)
+    val previewImages = listOf(
+        R.drawable.comp1,  // Replace with your actual drawable resources
+        R.drawable.comp2,
+        R.drawable.comp3
+    )
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Document Details") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.Default.ArrowBack, "Back")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { /* Handle bookmark */ }) {
+                        Icon(Icons.Default.Bookmark, "Bookmark")
+                    }
+                    IconButton(onClick = { /* Handle share */ }) {
+                        Icon(Icons.Default.Share, "Share")
+                    }
+                }
+            )
+        }
+    ) { padding ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp)
+        ) {
+            // Replace the existing preview Surface with:
+            DocumentPreviewSlider(
+                images = previewImages,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+            // Document title
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // User info row
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.user1),
+                    contentDescription = "User Avatar",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                )
+                
+                Spacer(modifier = Modifier.width(12.dp))
+                
+                Text(
+                    text = "John Doe",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Document details
+            DisplayOnlyFields(
+                fields = documentFields,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Replace the existing download button section with:
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                IconButton(
+                    onClick = {
+                        isLiked = !isLiked
+                        if (isLiked) isDisliked = false
+                    }
+                ) {
+                    Icon(
+                        imageVector = if (isLiked) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp,
+                        contentDescription = "Like",
+                        tint = if (isLiked) MaterialTheme.colorScheme.primary else Color.Gray
+                    )
+                }
+
+                IconButton(
+                    onClick = {
+                        isDisliked = !isDisliked
+                        if (isDisliked) isLiked = false
+                    }
+                ) {
+                    Icon(
+                        imageVector = if (isDisliked) Icons.Filled.ThumbDown else Icons.Outlined.ThumbDown,
+                        contentDescription = "Dislike",
+                        tint = if (isDisliked) MaterialTheme.colorScheme.primary else Color.Gray
+                    )
+                }
+
+                Button(
+                    onClick = { /* Handle download */ },
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Icon(
+                        Icons.Default.Download,
+                        contentDescription = "Download",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Download Document")
+                }
+            }
+        }
+    }
+}
