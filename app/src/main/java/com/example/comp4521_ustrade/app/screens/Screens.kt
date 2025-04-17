@@ -32,4 +32,7 @@ sealed class Screens(val screen: String) {
     object Landing : Screens("landing")
     object Login: Screens("Login")
     object Register: Screens("Register")
+
+    // AI
+    object AIDetails: Screens("AIDetails")
 }

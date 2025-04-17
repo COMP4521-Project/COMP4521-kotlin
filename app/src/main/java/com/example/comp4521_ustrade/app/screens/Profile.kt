@@ -24,12 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.comp4521_ustrade.app.components.ContributorCard
 import com.example.comp4521_ustrade.app.display.DisplayShortCutCards
 import com.example.comp4521_ustrade.app.display.displayProfileCard
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTWhite
-import androidx.navigation.NavController
 
 @Composable
 fun Profile(
@@ -96,7 +96,7 @@ fun Profile(
                 displayProfileCard()
             }
 
-            DisplayShortCutCards()
+            DisplayShortCutCards(navigateController = navigationController)
 
             Box(
                 modifier = Modifier

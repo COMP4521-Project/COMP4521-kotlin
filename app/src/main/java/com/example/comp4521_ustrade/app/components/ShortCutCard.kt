@@ -19,10 +19,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.comp4521_ustrade.app.models.ShortCutCardItem
+import com.example.comp4521_ustrade.app.screens.Screens
 
 @Composable
-fun ShortCutCard(ShortCutCardItem: ShortCutCardItem, modifier: Modifier = Modifier) {
+fun ShortCutCard(
+    ShortCutCardItem: ShortCutCardItem,
+    navigateController: NavController
+) {
     val context = LocalContext.current
 
     Card(
@@ -32,6 +37,16 @@ fun ShortCutCard(ShortCutCardItem: ShortCutCardItem, modifier: Modifier = Modifi
                 "Clicked: ${ShortCutCardItem.title}",
                 Toast.LENGTH_SHORT
             ).show()
+            when (ShortCutCardItem.title) {
+                "AI" -> navigateController.navigate(Screens.AIDetails.screen)
+                "Search" -> navigateController.navigate(Screens.Search.screen)
+                "Favorite" -> navigateController.navigate(Screens.Favorite.screen)
+                "Chat" -> navigateController.navigate(Screens.ChatRoom.screen)
+                "Settings" -> navigateController.navigate(Screens.Settings.screen)
+                "Download" -> navigateController.navigate(Screens.Download.screen)
+                "Notification" -> navigateController.navigate(Screens.Notification.screen)
+                "Profile" -> navigateController.navigate(Screens.Profile.screen)
+            }
         },
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(4.dp),

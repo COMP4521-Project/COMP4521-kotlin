@@ -73,7 +73,6 @@ fun PreferencesScreen(
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 color = Color.Transparent,
-                shape = RoundedCornerShape(8.dp)
             ) {
                 DropdownList(
                     title = "Language",

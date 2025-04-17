@@ -36,11 +36,11 @@ fun DropdownList(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(title)
+            Text(text = title)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(selectedItem)
+                Text(text = selectedItem)
                 Icon(Icons.Default.ArrowDropDown, "Expand")
             }
         }

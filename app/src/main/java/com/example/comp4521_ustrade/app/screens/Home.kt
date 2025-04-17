@@ -173,6 +173,13 @@ fun HomePage(modifier: Modifier = Modifier) {
                     onNavigateToRegister = { navigationController.navigate(Screens.Register.screen) }
                 )
             }
+
+            // AI
+            composable(Screens.AIDetails.screen) {
+                AIDetailsScreen(
+                    onNavigateBack = { navigationController.navigateUp() }
+                )
+            }
         }
     }
 

@@ -11,12 +11,16 @@ import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.ShortCutCard
 import com.example.comp4521_ustrade.app.models.ShortCutCardItem
 
 @Composable
-fun DisplayShortCutCards(modifier: Modifier = Modifier) {
+fun DisplayShortCutCards(
+    navigateController: NavController,
+    modifier: Modifier = Modifier
+) {
 
     val shortcutList = listOf(
         ShortCutCardItem(R.drawable.bookmark, "Bookmark"),
@@ -41,8 +45,7 @@ fun DisplayShortCutCards(modifier: Modifier = Modifier) {
             userScrollEnabled = false,
         ) {
             items(shortcutList.size) { index ->
-                ShortCutCard(ShortCutCardItem = shortcutList[index]
-                )
+                ShortCutCard(ShortCutCardItem = shortcutList[index], navigateController = navigateController)
             }
         }
     }
