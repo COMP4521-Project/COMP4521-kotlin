@@ -15,6 +15,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,23 +26,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.comp4521_ustrade.app.screens.Screens
+import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_light
 import com.example.comp4521_ustrade.ui.theme.USTWhite
 
 
 @Composable
-fun USTBottomBar(navigationController: androidx.navigation.NavHostController = rememberNavController()) {
+fun USTBottomBar(navigationController: androidx.navigation.NavHostController = rememberNavController(), navViewModel: NavViewModel) {
     val context = LocalContext.current
-    val selected = remember {
-        mutableStateOf(Icons.Default.Home)
-    }
+
+    val selectedScreen = navViewModel.selectedScreen.observeAsState(Screens.Home)
 
     BottomAppBar(containerColor = Color.Transparent, modifier = Modifier.background(Brush.verticalGradient(colors = listOf(
         USTBlue_light, USTBlue)))) {
         IconButton(
             onClick = {
-                selected.value = Icons.Default.Home
+                navViewModel.setSelectedScreen(Screens.Home)
                 navigationController.navigate(Screens.Home.screen)
             },
             modifier = Modifier.weight(1f)
@@ -50,13 +51,13 @@ fun USTBottomBar(navigationController: androidx.navigation.NavHostController = r
                 imageVector = Icons.Default.Home,
                 contentDescription = null,
                 modifier = Modifier.padding(2.dp).size(32.dp),
-                tint = if (selected.value == Icons.Default.Home) USTWhite else Color.Gray
+                tint = if (selectedScreen.value == Screens.Home) USTWhite else Color.Gray
             )
         }
 
         IconButton(
             onClick = {
-                selected.value = Icons.Default.Download
+                navViewModel.setSelectedScreen(Screens.Download)
                 navigationController.navigate(Screens.Download.screen)
             },
             modifier = Modifier.weight(1f)
@@ -65,7 +66,7 @@ fun USTBottomBar(navigationController: androidx.navigation.NavHostController = r
                 imageVector = Icons.Default.Download,
                 contentDescription = null,
                 modifier = Modifier.padding(2.dp).size(32.dp),
-                tint = if (selected.value == Icons.Default.Download) USTWhite else Color.Gray
+                tint = if (selectedScreen.value == Screens.Download) USTWhite else Color.Gray
             )
         }
 
@@ -89,7 +90,7 @@ fun USTBottomBar(navigationController: androidx.navigation.NavHostController = r
 
         IconButton(
             onClick = {
-                selected.value = Icons.Default.Notifications
+                navViewModel.setSelectedScreen(Screens.Notification)
                 navigationController.navigate(Screens.Notification.screen)
             },
             modifier = Modifier.weight(1f)
@@ -98,13 +99,13 @@ fun USTBottomBar(navigationController: androidx.navigation.NavHostController = r
                 imageVector = Icons.Default.Notifications,
                 contentDescription = null,
                 modifier = Modifier.padding(2.dp).size(32.dp),
-                tint = if (selected.value == Icons.Default.Notifications) USTWhite else Color.Gray
+                tint = if (selectedScreen.value == Screens.Notification) USTWhite else Color.Gray
             )
         }
 
         IconButton(
             onClick = {
-                selected.value = Icons.Default.Person
+                navViewModel.setSelectedScreen(Screens.Profile)
                 navigationController.navigate(Screens.Profile.screen)
             },
             modifier = Modifier.weight(1f)
@@ -113,7 +114,7 @@ fun USTBottomBar(navigationController: androidx.navigation.NavHostController = r
                 imageVector = Icons.Default.Person,
                 contentDescription = null,
                 modifier = Modifier.padding(2.dp).size(32.dp),
-                tint = if (selected.value == Icons.Default.Person) USTWhite else Color.Gray
+                tint = if (selectedScreen.value == Screens.Profile) USTWhite else Color.Gray
             )
         }
     }

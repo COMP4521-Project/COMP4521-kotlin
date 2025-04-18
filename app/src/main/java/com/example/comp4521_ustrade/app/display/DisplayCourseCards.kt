@@ -32,8 +32,8 @@ fun DisplayCourseCards(modifier: Modifier = Modifier, navigateController: NavCon
         columns = GridCells.Fixed(2),
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 8.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(horizontal = 16.dp, vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(courseList.size) { index ->

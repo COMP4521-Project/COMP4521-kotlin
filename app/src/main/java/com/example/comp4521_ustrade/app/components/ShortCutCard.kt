@@ -15,6 +15,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -33,7 +35,7 @@ fun ShortCutCard(
     val context = LocalContext.current
 
     Card(
-        modifier = Modifier.size(85.dp).clickable {
+        modifier = Modifier.size(76.dp).clickable {
             Toast.makeText(
                 context,
                 "Clicked: ${ShortCutCardItem.title}",
@@ -57,8 +59,8 @@ fun ShortCutCard(
             }
         },
         shape = RoundedCornerShape(10.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(containerColor = androidx.compose.ui.graphics.Color.White)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -67,15 +69,15 @@ fun ShortCutCard(
         ) {
             Image(
                 modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp),
+                    .width(45.dp)
+                    .height(45.dp),
                 contentDescription = "shortcut_item",
                 painter = painterResource(id = ShortCutCardItem.icon),
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = ShortCutCardItem.title,
-                fontSize = 12.sp,
+                fontSize = 10.sp,
             )
         }
     }

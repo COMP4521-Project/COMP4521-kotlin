@@ -31,12 +31,13 @@ import androidx.compose.ui.unit.sp
 import com.example.comp4521_ustrade.app.components.RedeemCard
 import com.example.comp4521_ustrade.app.display.DisplayPrize
 import com.example.comp4521_ustrade.app.display.displayProfileCard
+import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTWhite
 import com.example.comp4521_ustrade.ui.theme.USTgray
 
 @Composable
-fun Redeem(modifier: Modifier = Modifier,    onNavigateBack: () -> Unit) {
+fun Redeem(modifier: Modifier = Modifier,    onNavigateBack: () -> Unit, userViewModel : UserViewModel) {
     val isButtonEnabled = remember { mutableStateOf(true) }
 
     Box(
@@ -66,7 +67,7 @@ fun Redeem(modifier: Modifier = Modifier,    onNavigateBack: () -> Unit) {
                     .width(420.dp).height(300.dp)
                     .padding(start = 16.dp, top = 120.dp, end = 16.dp),
             ) {
-                RedeemCard()
+                RedeemCard(userViewModel = userViewModel)
             }
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Button(onClick = {  },
@@ -82,7 +83,7 @@ fun Redeem(modifier: Modifier = Modifier,    onNavigateBack: () -> Unit) {
 
                 { Text(text = "Redeem") }
             }
-            DisplayPrize()
+            DisplayPrize(userViewModel = userViewModel)
         }
 
 
@@ -93,5 +94,5 @@ fun Redeem(modifier: Modifier = Modifier,    onNavigateBack: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewRedeem() {
-    Redeem(onNavigateBack = {})
+//    Redeem(onNavigateBack = {})
 }

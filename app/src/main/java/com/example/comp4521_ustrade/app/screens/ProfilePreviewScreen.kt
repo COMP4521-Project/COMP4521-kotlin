@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.comp4521_ustrade.app.display.DisplayCourseCards
 import com.example.comp4521_ustrade.app.display.displayProfileCard
+import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTWhite
 
@@ -33,7 +34,8 @@ import com.example.comp4521_ustrade.ui.theme.USTWhite
 fun ProfilePreviewScreen(
     modifier: Modifier = Modifier,
     onNavigateBack: () -> Unit,
-    navigationController: NavController
+    navigationController: NavController,
+    userViewModel: UserViewModel
 ) {
     Box(
         modifier = modifier
@@ -71,7 +73,7 @@ fun ProfilePreviewScreen(
                     .width(420.dp).height(280.dp)
                     .padding(start = 16.dp, top = 80.dp, end = 16.dp),
             ) {
-                displayProfileCard()
+                displayProfileCard(userViewModel = userViewModel)
             }
             
             // Add these sections below the profile card

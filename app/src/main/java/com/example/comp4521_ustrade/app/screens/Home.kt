@@ -29,16 +29,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.comp4521_ustrade.app.components.CourseMenu
 import com.example.comp4521_ustrade.app.components.DrawerContent
-import com.example.comp4521_ustrade.app.components.Pager
+import com.example.comp4521_ustrade.app.components.USTPager
 import com.example.comp4521_ustrade.app.components.USTBottomBar
 import com.example.comp4521_ustrade.app.components.USTTopBar
 import com.example.comp4521_ustrade.app.display.DisplayCourseCards
+import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
+import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.auth.AuthViewModel
 import com.example.comp4521_ustrade.auth.screens.LandingScreen
 import com.example.comp4521_ustrade.ui.theme.USTBlue
@@ -53,6 +56,9 @@ fun HomePage(modifier: Modifier = Modifier) {
     val scope = rememberCoroutineScope()
     val navigationController = rememberNavController()
     val authViewModel: AuthViewModel = viewModel()
+
+    val userViewModel : UserViewModel = viewModel()
+    val navViewModel : NavViewModel = viewModel()
 
     val onOpenDrawer: () -> Unit = {
         scope.launch {
@@ -85,7 +91,7 @@ fun HomePage(modifier: Modifier = Modifier) {
             composable(Screens.Home.screen) {
                 Scaffold(
                     topBar = { USTTopBar(onOpenDrawer = onOpenDrawer, navigationController) },
-                    bottomBar = { USTBottomBar(navigationController) },
+                    bottomBar = { USTBottomBar(navigationController,  navViewModel = navViewModel) },
                 ) { innerPadding ->
                     Column(
                         modifier = Modifier
@@ -94,7 +100,7 @@ fun HomePage(modifier: Modifier = Modifier) {
                             .padding(innerPadding)
                     ) {
 
-                        Pager()
+                        USTPager()
                         CourseMenu({ DisplayCourseCards(navigateController=navigationController) })
 
                     }
@@ -108,7 +114,7 @@ fun HomePage(modifier: Modifier = Modifier) {
             )}
             composable(Screens.Profile.screen) {
                 Scaffold(
-                    bottomBar = { USTBottomBar(navigationController) },
+                    bottomBar = { USTBottomBar(navigationController, navViewModel = navViewModel) },
                 ) { innerPadding ->
                     Column(
                         modifier = Modifier
@@ -118,7 +124,8 @@ fun HomePage(modifier: Modifier = Modifier) {
                     ) {
                         Profile(
                             navigationController = navigationController,
-                            authViewModel = authViewModel
+                            authViewModel = authViewModel,
+                            userViewModel = userViewModel
                         )
 
                     }
@@ -129,7 +136,8 @@ fun HomePage(modifier: Modifier = Modifier) {
             composable(Screens.ProfilePreview.screen) {
                 ProfilePreviewScreen(
                     onNavigateBack = { navigationController.navigateUp() },
-                    navigationController = navigationController
+                    navigationController = navigationController,
+                    userViewModel = userViewModel
                 )
             }
             composable(Screens.Notification.screen) { Notification(
@@ -138,7 +146,7 @@ fun HomePage(modifier: Modifier = Modifier) {
             composable(Screens.Search.screen) {
                 Scaffold(
                     topBar = { Search() },
-                    bottomBar = { USTBottomBar(navigationController) },
+                    bottomBar = { USTBottomBar(navigationController, navViewModel = navViewModel) },
                 ) { innerPadding ->
                     Column(
                         modifier = Modifier
@@ -180,14 +188,15 @@ fun HomePage(modifier: Modifier = Modifier) {
             // Setting page: Redeem Gifts
             composable(Screens.RedeemGifts.screen) {
                 Scaffold(
-                    bottomBar = { USTBottomBar(navigationController) },
+                    bottomBar = { USTBottomBar(navigationController, navViewModel = navViewModel) },
                 ) { innerPadding ->
                     Column (modifier
                         .fillMaxSize()
                         .background(USTBlue)
                         .padding(innerPadding)){
                         Redeem(
-                            onNavigateBack = { navigationController.navigateUp() }
+                            onNavigateBack = { navigationController.navigateUp()},
+                            userViewModel = userViewModel
                         )
                     }
                 }
