@@ -119,7 +119,9 @@ fun HomePage(modifier: Modifier = Modifier) {
                     navigationController = navigationController
                 )
             }
-            composable(Screens.Notification.screen) { Notification() }
+            composable(Screens.Notification.screen) { Notification(
+                onNavigateBack = { navigationController.navigateUp() },
+            ) }
             composable(Screens.Search.screen) {
                 Scaffold(
                     topBar = { Search() },
