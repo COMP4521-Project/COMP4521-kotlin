@@ -196,7 +196,42 @@ fun HomePage(modifier: Modifier = Modifier) {
                     onNavigateBack = { navigationController.navigateUp() }
                 )
             }
-            
+
+            // Bookmarked document List
+            composable(Screens.DocumentBookmarkedList.screen) {
+                DocumentListScreen(
+                    pageTitle = "bookmarked",
+                    onNavigateBack = { navigationController.navigateUp() },
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                )
+            }
+
+            // Uploaded document List
+            composable(Screens.DocumentUploadedList.screen) {
+                DocumentListScreen(
+                    pageTitle = "uploaded",
+                    onNavigateBack = { navigationController.navigateUp() },
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                )
+            }
+
+            // Downloaded document List
+            composable(Screens.DocumentDownloadedList.screen) {
+                DocumentListScreen(
+                    pageTitle = "downloaded",
+                    onNavigateBack = { navigationController.navigateUp() },
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                )
+            }   
+
+            // Search results document List
+            composable(Screens.DocumentSearchResults.screen) {
+                DocumentListScreen(
+                    pageTitle = "search results",
+                    onNavigateBack = { navigationController.navigateUp() }, 
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                )
+            }
         }
     }
 

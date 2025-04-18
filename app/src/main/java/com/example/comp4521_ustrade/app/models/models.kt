@@ -43,3 +43,12 @@ data class ShortCutCardItem(
     @DrawableRes val icon: Int,
     val title: String,
 )
+
+data class Document(
+    val id: String,
+    val title: String,
+    val subtitle: String,
+    val term: String,
+    val type: String,
+    val imageUrl: String
+)

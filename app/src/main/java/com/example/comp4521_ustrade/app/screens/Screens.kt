@@ -36,9 +36,13 @@ sealed class Screens(val screen: String) {
     // AI
     object AIDetails: Screens("AIDetails")
 
-    // Document Details
+    // Document
     object DocumentDetails: Screens("DocumentDetails")
-
-    // Document Upload
     object DocumentUpload: Screens("DocumentUpload")
+    object DocumentList: Screens("DocumentList")
+
+    object DocumentBookmarkedList: Screens("DocumentBookmarkedList")
+    object DocumentUploadedList: Screens("DocumentUploadedList")
+    object DocumentDownloadedList: Screens("DocumentDownloadedList")
+    object DocumentSearchResults: Screens("DocumentSearchResults")
 }
