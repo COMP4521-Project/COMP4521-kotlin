@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.R
+import com.example.comp4521_ustrade.ui.theme.Badges
 
 @Composable
 fun ContributorCard(modifier: Modifier = Modifier) {
@@ -113,7 +114,7 @@ fun ContributorCard(modifier: Modifier = Modifier) {
                         .fillMaxWidth(size)
                         .fillMaxHeight()
                         .clip(RoundedCornerShape(9.dp))
-                        .background(Color(0xFF90EE90))
+                        .background(Badges)
                         .animateContentSize()
                 )
             }

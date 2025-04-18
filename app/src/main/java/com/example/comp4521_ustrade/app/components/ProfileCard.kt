@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.comp4521_ustrade.app.models.ProfileCardData
+import com.example.comp4521_ustrade.ui.theme.Badges
 
 @Composable
 fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData) {
@@ -54,7 +55,7 @@ fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData
                 Text(text = ProfileCardData.name, fontSize = 24.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier.padding(2.dp))
                 Surface(
-                    color = Color(0xFF90EE90),
+                    color = Badges,
                     shape = MaterialTheme.shapes.small
                 ) {
                     Text(
