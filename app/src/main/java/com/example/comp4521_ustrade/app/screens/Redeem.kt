@@ -10,8 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +33,7 @@ import com.example.comp4521_ustrade.app.display.DisplayPrize
 import com.example.comp4521_ustrade.app.display.displayProfileCard
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTWhite
+import com.example.comp4521_ustrade.ui.theme.USTgray
 
 @Composable
 fun Redeem(modifier: Modifier = Modifier,    onNavigateBack: () -> Unit) {
@@ -45,7 +50,10 @@ fun Redeem(modifier: Modifier = Modifier,    onNavigateBack: () -> Unit) {
                 .height(220.dp)
                 .background(USTBlue)
         ) {
-            Column (modifier = Modifier.padding(top = 36.dp, start = 16.dp)){
+            IconButton(onClick = onNavigateBack) {
+                Icon(Icons.Default.ArrowBack, "Back",tint = USTgray)
+            }
+            Column (modifier = Modifier.padding(top = 38.dp, start = 16.dp)){
                 Text(text = "Upload sources", fontSize = 24.sp, color = USTWhite)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "Level up and redeem rewards", fontSize = 24.sp, color = USTWhite)

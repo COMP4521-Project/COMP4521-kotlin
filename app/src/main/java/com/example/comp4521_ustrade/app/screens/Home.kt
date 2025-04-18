@@ -100,7 +100,12 @@ fun HomePage(modifier: Modifier = Modifier) {
                     }
                 }
             }
-            composable(Screens.Download.screen) { Download() }
+            composable(Screens.Download.screen) {
+                DocumentListScreen(
+                pageTitle = "downloaded",
+                onNavigateBack = { navigationController.navigateUp() },
+                onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+            )}
             composable(Screens.Profile.screen) {
                 Scaffold(
                     bottomBar = { USTBottomBar(navigationController) },
