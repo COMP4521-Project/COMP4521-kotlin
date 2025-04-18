@@ -23,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.models.Document
+import com.example.comp4521_ustrade.ui.theme.USTgray
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,7 +37,7 @@ fun DocumentCard(
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),
-        border = BorderStroke(1.dp, Color(0xFFE6E6E6))
+        border = BorderStroke(1.dp, USTgray)
     ) {
         Row(
             modifier = Modifier

@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.app.components.DropdownList
 import com.example.comp4521_ustrade.app.components.ToggleButton
+import com.example.comp4521_ustrade.ui.theme.USTBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +57,7 @@ fun PreferencesScreen(
         ) {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = Color(0xFF242760).copy(alpha = 0.1f),
+                color = USTBlue.copy(alpha = 0.1f),
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Column {

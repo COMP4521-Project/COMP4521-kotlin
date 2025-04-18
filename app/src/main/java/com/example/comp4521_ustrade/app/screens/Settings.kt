@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.comp4521_ustrade.app.screens.Screens
 import com.example.comp4521_ustrade.auth.AuthViewModel
+import com.example.comp4521_ustrade.ui.theme.USTBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,7 +71,7 @@ fun Settings(
             item {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    color = Color(0xFF242760).copy(alpha = 0.1f), // Add transparent background
+                    color = USTBlue.copy(alpha = 0.1f), // Add transparent background
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Column {
@@ -101,7 +102,7 @@ fun Settings(
             item {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    color = Color(0xFF242760).copy(alpha = 0.1f), // Add transparent background
+                    color = USTBlue.copy(alpha = 0.1f), // Add transparent background
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Column {
@@ -137,7 +138,7 @@ fun Settings(
             item {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    color = Color(0xFF242760).copy(alpha = 0.1f), // Add transparent background
+                    color = USTBlue.copy(alpha = 0.1f), // Add transparent background
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Column {
