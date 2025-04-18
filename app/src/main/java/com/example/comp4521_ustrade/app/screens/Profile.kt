@@ -29,6 +29,7 @@ import androidx.navigation.NavController
 import com.example.comp4521_ustrade.app.components.ContributorCard
 import com.example.comp4521_ustrade.app.display.DisplayShortCutCards
 import com.example.comp4521_ustrade.app.display.displayProfileCard
+import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.auth.AuthViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTWhite
@@ -37,7 +38,8 @@ import com.example.comp4521_ustrade.ui.theme.USTWhite
 fun Profile(
     modifier: Modifier = Modifier,
     navigationController: NavController,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    userViewModel: UserViewModel
 ) {
 
     Box(
@@ -91,23 +93,37 @@ fun Profile(
                 }
             }
         }
-        Column {
+        Column (modifier = Modifier.fillMaxWidth(),){
             Box(
                 modifier = Modifier
                     .width(420.dp).height(280.dp)
-                    .padding(start = 16.dp, top = 80.dp, end = 16.dp),
+                    .padding(start = 24.dp, top = 80.dp, end = 24.dp)
+                    .align(Alignment.CenterHorizontally)
+
             ) {
-                displayProfileCard()
+                displayProfileCard(userViewModel = userViewModel)
+            }
+            Box(
+                modifier = Modifier
+                    .width(420.dp)
+                    .padding(16.dp)
+                    .align(Alignment.CenterHorizontally),
+                contentAlignment = Alignment.Center
+
+            ) {
+                DisplayShortCutCards(navigateController = navigationController, authViewModel)
             }
 
-            DisplayShortCutCards(navigateController = navigationController, authViewModel)
 
             Box(
                 modifier = Modifier
                     .width(420.dp).fillMaxHeight()
-                    .padding(start = 20.dp, end = 20.dp),
+                    .padding(start = 20.dp, end = 20.dp)
+                    .align(Alignment.CenterHorizontally),
+
             ){
-                ContributorCard()
+
+            ContributorCard(modifier = modifier, userViewModel = userViewModel)
             }
 
         }

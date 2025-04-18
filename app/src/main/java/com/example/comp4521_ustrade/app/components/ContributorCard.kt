@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,17 +38,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.R
+import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.Badges
 
 @Composable
-fun ContributorCard(modifier: Modifier = Modifier) {
-    var uploadCount : Int by remember {
-        mutableStateOf(0)
-    }
+fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel) {
+
+    val uploadCount = userViewModel.uploadCount.observeAsState().value
 
     var progress by remember { mutableStateOf(0f) }
 
-    progress = uploadCount / 20.0f
+    if (uploadCount != null && uploadCount <= 20) {
+        progress = uploadCount / 20.0f
+    }
+    else if (uploadCount != null && uploadCount > 20) {
+        progress = 1f
+    }
 
     val size by animateFloatAsState(
         targetValue = progress,
@@ -126,28 +132,32 @@ fun ContributorCard(modifier: Modifier = Modifier) {
                     .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 0.dp),
                 contentAlignment = Alignment.Center
             ) {
-                if(uploadCount == 20) {
-                    Column {
-                        Text(
-                            text = "Congratulations! You have reached the max level.",
-                            color = Color.Black,
-                        )
+                if (uploadCount != null) {
+                    if(uploadCount >= 20) {
+                        Column {
+                            Text(
+                                text = "Congratulations! You have reached the max level.",
+                                color = Color.Black,
+                            )
+                        }
+                    } else {
+                        if (uploadCount >= 12){
+                            Text(
+                                text = "Upload ${20 - uploadCount} more documents to become Lv.3 contributor",
+                                color = Color.Black,
+                            )
+                        }else if (uploadCount >= 5){
+                            Text(
+                                text = "Upload ${12 - uploadCount} more documents to to become Lv.2 contributor",
+                                color = Color.Black,
+                            )
+                        } else {
+                            Text(
+                                text = "Upload ${5 - uploadCount} more documents to to become Lv.1 contributor",
+                                color = Color.Black,
+                            )
+                        }
                     }
-                } else if (uploadCount >= 12){
-                    Text(
-                        text = "Upload ${20 - uploadCount} more documents to become Lv.3 contributor",
-                        color = Color.Black,
-                    )
-                }else if (uploadCount >= 5){
-                    Text(
-                        text = "Upload ${12 - uploadCount} more documents to to become Lv.2 contributor",
-                        color = Color.Black,
-                    )
-                } else {
-                    Text(
-                        text = "Upload ${5 - uploadCount} more documents to to become Lv.1 contributor",
-                        color = Color.Black,
-                    )
                 }
             }
 
@@ -173,8 +183,9 @@ fun ContributorCard(modifier: Modifier = Modifier) {
                 Box(
                 ) {
                     Button(onClick = {
-                        if (uploadCount < 20) {
-                            uploadCount++
+                        if (uploadCount != null) {
+                            userViewModel.addUploadCount()
+
                         }
                     }) {
                         Text(text = "Upload test")

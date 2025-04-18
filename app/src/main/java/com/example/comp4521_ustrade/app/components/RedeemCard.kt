@@ -30,7 +30,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,22 +48,46 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.models.ProfileCardData
-import com.example.comp4521_ustrade.ui.theme.USTgold
+import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 
 @Composable
-fun RedeemCard(modifier: Modifier = Modifier) {
+fun RedeemCard(modifier: Modifier = Modifier, userViewModel : UserViewModel) {
+
+    val uploadCount = userViewModel.uploadCount.observeAsState().value
+
+    var level = 0;
+
+    var progress by remember { mutableStateOf(0f) }
 
 
-    var progress = 12 / 20.0f
 
-    val size by animateFloatAsState(
-        targetValue = progress,
-        tween(
-            durationMillis = 1000,
-            delayMillis = 100,
-            easing = LinearOutSlowInEasing
-        )
-    )
+    if (uploadCount != null && uploadCount <= 20) {
+            progress = uploadCount / 20.0f
+        }
+
+    if (uploadCount != null) {
+        if (uploadCount >= 5 && uploadCount < 12) {
+            level = 1
+        } else if (uploadCount >= 12 && uploadCount < 20) {
+            level = 2
+        } else if (uploadCount >= 20) {
+            level = 3
+            progress = 1f
+        }
+    }
+
+
+
+    val size = progress.let {
+        animateFloatAsState(
+            targetValue = it,
+            tween(
+                durationMillis = 1000,
+                delayMillis = 100,
+                easing = LinearOutSlowInEasing
+            )
+        ).value
+    } ?: 0f
 
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -87,9 +113,9 @@ fun RedeemCard(modifier: Modifier = Modifier) {
                 )
 
                 Column(modifier = modifier.weight(3f), verticalArrangement = Arrangement.SpaceAround) {
-                    Text(text = "Contributor Lv.1", fontSize = 26.sp, fontWeight = Bold)
+                    Text(text = "Contributor Lv.$level", fontSize = 26.sp, fontWeight = Bold)
                     Spacer(modifier.padding(4.dp))
-                    Text(text = "You have uploaded 12 documents", fontSize = 14.sp)
+                    Text(text = "You have uploaded $uploadCount documents", fontSize = 14.sp)
                 }
             }
             Spacer(modifier.padding(2.dp))
@@ -126,7 +152,11 @@ fun RedeemCard(modifier: Modifier = Modifier) {
                     contentDescription = "reward"
                 )
 
-                Text(text = "Pick a prize below", fontSize = 12.sp, modifier = modifier.padding(start = 8.dp).weight(6f))
+                if (level == 0) {
+                    Text(text = "Level up to redeem your first prize", fontSize = 12.sp, modifier = modifier.padding(start = 8.dp).weight(6f))
+                } else {
+                    Text(text = "Pick a prize below", fontSize = 12.sp, modifier = modifier.padding(start = 8.dp).weight(6f))
+                }
             }
         Spacer(modifier.padding(2.dp))
         }
@@ -136,5 +166,5 @@ fun RedeemCard(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewRedeemCard() {
-    RedeemCard()
+//    RedeemCard()
 }

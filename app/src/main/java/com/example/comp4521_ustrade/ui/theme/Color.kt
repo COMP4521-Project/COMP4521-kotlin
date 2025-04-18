@@ -19,3 +19,5 @@ val USTgold = Color(0xFFA58035)
 val TabSelector = Color(0xFF027262)
 
 val Badges = Color(0xFF90EE90)
+val Badges2 = Color(0xFFFFD700)
+val Badges3 = Color(0xFF5865F2)

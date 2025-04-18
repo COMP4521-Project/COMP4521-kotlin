@@ -20,6 +20,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,10 +30,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.comp4521_ustrade.app.models.ProfileCardData
+import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.Badges
 
 @Composable
-fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData) {
+fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData, userViewModel : UserViewModel) {
+    val uploadCount = userViewModel.uploadCount.observeAsState().value
+
+    var level = 0;
+
+    if (uploadCount != null) {
+        if (uploadCount >= 5 && uploadCount < 12) {
+            level = 1
+        } else if (uploadCount >= 12 && uploadCount < 20) {
+            level = 2
+        } else if (uploadCount >= 20) {
+            level = 3
+        }
+}
+
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
@@ -54,16 +70,7 @@ fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData
             Column(modifier = modifier.weight(3f), verticalArrangement = Arrangement.SpaceAround) {
                 Text(text = ProfileCardData.name, fontSize = 24.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier.padding(2.dp))
-                Surface(
-                    color = Badges,
-                    shape = MaterialTheme.shapes.small
-                ) {
-                    Text(
-                        text = "Lv.1 Contributor",
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        color = Color.Black
-                    )
-                }
+                ContributorTag(level = level)
             }
 
             IconButton(onClick = {}) {
@@ -86,7 +93,7 @@ fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "${ProfileCardData.upload_count}", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(text = "$uploadCount", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 Text(text = "Uploads", fontSize = 16.sp, modifier = modifier.padding(top = 8.dp))
             }
             VerticalDivider(
