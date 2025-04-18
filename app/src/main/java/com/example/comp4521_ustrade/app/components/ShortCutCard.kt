@@ -49,6 +49,10 @@ fun ShortCutCard(
                         popUpTo(0) { inclusive = true }
                     }
                 }
+                "Bookmark" -> navigateController.navigate(Screens.DocumentBookmarkedList.screen)
+                "Upload" -> navigateController.navigate(Screens.DocumentUploadedList.screen)
+                "Download" -> navigateController.navigate(Screens.DocumentDownloadedList.screen)
+                "Preview" -> navigateController.navigate(Screens.DocumentDetails.screen)
             }
         },
         shape = RoundedCornerShape(10.dp),
