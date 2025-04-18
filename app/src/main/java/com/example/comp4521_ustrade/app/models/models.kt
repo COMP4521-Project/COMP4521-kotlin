@@ -76,3 +76,8 @@ data class FunctionCardData(
     val icon: ImageVector,
     val title: String
 )
+
+//prize
+data class Prize(
+    @DrawableRes val icon: Int,
+)

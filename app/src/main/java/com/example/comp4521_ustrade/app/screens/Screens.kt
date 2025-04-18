@@ -20,7 +20,7 @@ sealed class Screens(val screen: String) {
     object NotificationSettings : Screens("settings_notifications") //TODO: generated
 
     // Settings screens - Resources
-    object RedeemGifts : Screens("settings_redeem_gifts") //TODO: Implement
+    object RedeemGifts : Screens("settings_redeem_gifts")
     object Bookmarks : Screens("settings_bookmarks") //TODO: Implement
     object UploadedFiles : Screens("settings_uploaded_files") //TODO: Implement
     object DownloadedFiles : Screens("settings_downloaded_files") //TODO: Implement
