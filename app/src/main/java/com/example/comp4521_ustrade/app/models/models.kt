@@ -53,6 +53,30 @@ data class Document(
     val imageUrl: String
 )
 
+data class NotificationData(
+    val userAvatar: String,
+    val userName: String,
+    val message: String,
+    val time: String,
+    val isRead: Boolean
+)
+
+data class DisplayFieldItem(
+    val title: String,
+    val value: String,
+    val onClick: (() -> Unit)? = null,  // Optional click handler
+)
+
+data class DisplayOnlyFieldItem(
+    val title: String,
+    val value: String
+)
+
+data class FunctionCardData(
+    val icon: ImageVector,
+    val title: String
+)
+
 //prize
 data class Prize(
     @DrawableRes val icon: Int,

@@ -10,7 +10,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.comp4521_ustrade.app.components.DisplayFieldItem
+import com.example.comp4521_ustrade.app.models.DisplayFieldItem
 import com.example.comp4521_ustrade.app.components.DisplayFields
 
 @OptIn(ExperimentalMaterial3Api::class)
