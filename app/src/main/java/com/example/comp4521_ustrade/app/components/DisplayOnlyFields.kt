@@ -10,11 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.comp4521_ustrade.app.models.DisplayOnlyFieldItem
 
-data class DisplayOnlyFieldItem(
-    val title: String,
-    val value: String
-)
 
 @Composable
 fun DisplayOnlyField(

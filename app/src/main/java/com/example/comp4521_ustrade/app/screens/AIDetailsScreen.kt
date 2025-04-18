@@ -23,9 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.comp4521_ustrade.app.components.DisplayFieldItem
+import com.example.comp4521_ustrade.app.models.DisplayFieldItem
 import com.example.comp4521_ustrade.app.components.DisplayFields
-import com.example.comp4521_ustrade.app.components.FunctionCardData
+import com.example.comp4521_ustrade.app.models.FunctionCardData
 import com.example.comp4521_ustrade.app.components.FunctionCardsGrid
 
 @OptIn(ExperimentalMaterial3Api::class)
