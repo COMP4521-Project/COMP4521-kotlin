@@ -11,8 +11,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DrawerValue
@@ -38,6 +41,8 @@ import com.example.comp4521_ustrade.app.components.USTTopBar
 import com.example.comp4521_ustrade.app.display.DisplayCourseCards
 import com.example.comp4521_ustrade.auth.AuthViewModel
 import com.example.comp4521_ustrade.auth.screens.LandingScreen
+import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTgold
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,16 +108,19 @@ fun HomePage(modifier: Modifier = Modifier) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color.White)
+                            .background(USTBlue)
                             .padding(innerPadding)
                     ) {
                         Profile(
                             navigationController = navigationController,
                             authViewModel = authViewModel
                         )
+
                     }
                 }
             }
+
+
             composable(Screens.ProfilePreview.screen) {
                 ProfilePreviewScreen(
                     onNavigateBack = { navigationController.navigateUp() },
@@ -161,6 +169,23 @@ fun HomePage(modifier: Modifier = Modifier) {
                 )
             }
             //TODO: Add Resources Setting
+
+            // Setting page: Redeem Gifts
+            composable(Screens.RedeemGifts.screen) {
+                Scaffold(
+                    bottomBar = { USTBottomBar(navigationController) },
+                ) { innerPadding ->
+                    Column (modifier
+                        .fillMaxSize()
+                        .background(USTBlue)
+                        .padding(innerPadding)){
+                        Redeem(
+                            onNavigateBack = { navigationController.navigateUp() }
+                        )
+                    }
+                }
+            }
+
 
             // Setting page: Support & About
             composable(Screens.Preferences.screen) {

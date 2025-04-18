@@ -52,3 +52,8 @@ data class Document(
     val type: String,
     val imageUrl: String
 )
+
+//prize
+data class Prize(
+    @DrawableRes val icon: Int,
+)

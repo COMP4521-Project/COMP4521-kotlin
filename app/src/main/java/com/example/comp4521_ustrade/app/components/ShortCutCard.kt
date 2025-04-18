@@ -49,6 +49,7 @@ fun ShortCutCard(
                         popUpTo(0) { inclusive = true }
                     }
                 }
+                "Redeem" -> navigateController.navigate(Screens.RedeemGifts.screen)
                 "Bookmark" -> navigateController.navigate(Screens.DocumentBookmarkedList.screen)
                 "Upload" -> navigateController.navigate(Screens.DocumentUploadedList.screen)
                 "Download" -> navigateController.navigate(Screens.DocumentDownloadedList.screen)
