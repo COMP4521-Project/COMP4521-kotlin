@@ -40,6 +40,7 @@ import com.example.comp4521_ustrade.app.components.USTPager
 import com.example.comp4521_ustrade.app.components.USTBottomBar
 import com.example.comp4521_ustrade.app.components.USTTopBar
 import com.example.comp4521_ustrade.app.display.DisplayCourseCards
+import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.auth.AuthViewModel
 import com.example.comp4521_ustrade.auth.screens.LandingScreen
@@ -57,6 +58,7 @@ fun HomePage(modifier: Modifier = Modifier) {
     val authViewModel: AuthViewModel = viewModel()
 
     val userViewModel : UserViewModel = viewModel()
+    val navViewModel : NavViewModel = viewModel()
 
     val onOpenDrawer: () -> Unit = {
         scope.launch {
@@ -89,7 +91,7 @@ fun HomePage(modifier: Modifier = Modifier) {
             composable(Screens.Home.screen) {
                 Scaffold(
                     topBar = { USTTopBar(onOpenDrawer = onOpenDrawer, navigationController) },
-                    bottomBar = { USTBottomBar(navigationController) },
+                    bottomBar = { USTBottomBar(navigationController,  navViewModel = navViewModel) },
                 ) { innerPadding ->
                     Column(
                         modifier = Modifier
@@ -112,7 +114,7 @@ fun HomePage(modifier: Modifier = Modifier) {
             )}
             composable(Screens.Profile.screen) {
                 Scaffold(
-                    bottomBar = { USTBottomBar(navigationController) },
+                    bottomBar = { USTBottomBar(navigationController, navViewModel = navViewModel) },
                 ) { innerPadding ->
                     Column(
                         modifier = Modifier
@@ -144,7 +146,7 @@ fun HomePage(modifier: Modifier = Modifier) {
             composable(Screens.Search.screen) {
                 Scaffold(
                     topBar = { Search() },
-                    bottomBar = { USTBottomBar(navigationController) },
+                    bottomBar = { USTBottomBar(navigationController, navViewModel = navViewModel) },
                 ) { innerPadding ->
                     Column(
                         modifier = Modifier
@@ -186,7 +188,7 @@ fun HomePage(modifier: Modifier = Modifier) {
             // Setting page: Redeem Gifts
             composable(Screens.RedeemGifts.screen) {
                 Scaffold(
-                    bottomBar = { USTBottomBar(navigationController) },
+                    bottomBar = { USTBottomBar(navigationController, navViewModel = navViewModel) },
                 ) { innerPadding ->
                     Column (modifier
                         .fillMaxSize()

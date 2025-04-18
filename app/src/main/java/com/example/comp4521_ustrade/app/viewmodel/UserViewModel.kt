@@ -8,11 +8,12 @@ class UserViewModel : ViewModel() {
 
     private val _level = MutableLiveData(0)
     private val _progress = MutableLiveData(0f)
+
     private val _uploadCount = MutableLiveData(0)
 
-    //Todo: from database
+
     fun getUploadCount() {
-        // This function is used to get the upload count from the database or any other source.
+        // Todo: This function is used to get the upload count from the database or any other source.
         // The implementation of this function is not provided in the current code.
         // You can add your logic here to fetch the upload count and update _uploadCount LiveData.
     }

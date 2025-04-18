@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,7 +32,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -70,6 +73,7 @@ fun USTPager() {
             state = pagerState,
             modifier = Modifier
                 .padding(0.dp),
+//            pageSize = if(pagerState.currentPage < 3) PageSize.Fixed(410.dp) else PageSize.Fill,
             contentPadding = PaddingValues(0.dp),
         ) { currentPage ->
                 Banner(images[currentPage], modifier, currentPage, pagerState)
@@ -115,8 +119,8 @@ fun IndicatorDots(isSelected: Boolean, modifier: Modifier) {
 @Composable
 fun Banner(imagesRes: Int, modifier: Modifier = Modifier, page:Int, pagerState:PagerState) {
     Card(
-        modifier = Modifier.padding(0.dp).fillMaxSize(),
-        elevation = CardDefaults.cardElevation(0.dp)
+        modifier = Modifier.padding(0.dp).fillMaxSize().offset(x = -3.dp, y = 0.dp).graphicsLayer(scaleX = 1.05f, scaleY = 1f),
+        elevation = CardDefaults.cardElevation(0.dp),
     ) {
         Image(
             painter = painterResource(id = imagesRes),
