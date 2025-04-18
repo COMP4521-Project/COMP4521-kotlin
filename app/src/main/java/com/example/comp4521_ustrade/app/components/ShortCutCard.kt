@@ -52,7 +52,7 @@ fun ShortCutCard(
                 "Bookmark" -> navigateController.navigate(Screens.DocumentBookmarkedList.screen)
                 "Upload" -> navigateController.navigate(Screens.DocumentUploadedList.screen)
                 "Download" -> navigateController.navigate(Screens.DocumentDownloadedList.screen)
-                "Preview" -> navigateController.navigate(Screens.DocumentDetails.screen)
+                "Preview" -> navigateController.navigate(Screens.ProfilePreview.screen)
             }
         },
         shape = RoundedCornerShape(10.dp),

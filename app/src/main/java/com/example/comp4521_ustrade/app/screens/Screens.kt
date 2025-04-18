@@ -12,6 +12,7 @@ sealed class Screens(val screen: String) {
     object Download : Screens("download")
     object Notification : Screens("Notification")
     object Profile : Screens("Profile")
+    object ProfilePreview : Screens("ProfilePreview")
 
     // Settings screens - Account
     object EditProfile : Screens("settings_edit_profile") //TODO: generated

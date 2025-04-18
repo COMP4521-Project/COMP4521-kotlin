@@ -5,6 +5,7 @@ import EditPasswordScreen
 import EditProfileScreen
 import NotificationSettingsScreen
 import PreferencesScreen
+import ProfilePreviewScreen
 import Settings
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -112,6 +113,12 @@ fun HomePage(modifier: Modifier = Modifier) {
                     }
                 }
             }
+            composable(Screens.ProfilePreview.screen) {
+                ProfilePreviewScreen(
+                    onNavigateBack = { navigationController.navigateUp() },
+                    navigationController = navigationController
+                )
+            }
             composable(Screens.Notification.screen) { Notification() }
             composable(Screens.Search.screen) {
                 Scaffold(
@@ -137,7 +144,7 @@ fun HomePage(modifier: Modifier = Modifier) {
                     authViewModel = authViewModel
                 )
             }
-            // Setting page: Profile setting
+            // Setting page
             composable(Screens.EditProfile.screen) {
                 EditProfileScreen(
                     onNavigateBack = { navigationController.navigateUp() }
