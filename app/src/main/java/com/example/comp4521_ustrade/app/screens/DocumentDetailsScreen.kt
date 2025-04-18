@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +46,7 @@ import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.models.DisplayOnlyFieldItem
 import com.example.comp4521_ustrade.app.components.DisplayOnlyFields
 import com.example.comp4521_ustrade.app.components.DocumentPreviewSlider
+import com.example.comp4521_ustrade.ui.theme.USTBlue
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -79,6 +81,7 @@ fun DocumentDetailsScreen(
                         Icon(Icons.Default.ArrowBack, "Back")
                     }
                 },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = USTBlue),
                 actions = {
                     IconButton(onClick = { /* Handle bookmark */ }) {
                         Icon(Icons.Default.Bookmark, "Bookmark")

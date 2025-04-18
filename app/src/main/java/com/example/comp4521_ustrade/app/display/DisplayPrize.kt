@@ -45,7 +45,7 @@ fun DisplayPrize(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .background(Color.White)
             .padding(horizontal = 8.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         when (level) {

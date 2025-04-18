@@ -35,7 +35,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.comp4521_ustrade.app.components.CourseMenu
 import com.example.comp4521_ustrade.app.components.DrawerContent
-import com.example.comp4521_ustrade.app.components.Pager
+import com.example.comp4521_ustrade.app.components.USTPager
 import com.example.comp4521_ustrade.app.components.USTBottomBar
 import com.example.comp4521_ustrade.app.components.USTTopBar
 import com.example.comp4521_ustrade.app.display.DisplayCourseCards
@@ -94,7 +94,7 @@ fun HomePage(modifier: Modifier = Modifier) {
                             .padding(innerPadding)
                     ) {
 
-                        Pager()
+                        USTPager()
                         CourseMenu({ DisplayCourseCards(navigateController=navigationController) })
 
                     }
