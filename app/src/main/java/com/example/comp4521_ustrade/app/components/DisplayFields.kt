@@ -14,12 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-data class DisplayFieldItem(
-    val title: String,
-    val value: String,
-    val onClick: (() -> Unit)? = null,  // Optional click handler
-)
+import com.example.comp4521_ustrade.app.models.DisplayFieldItem
 
 @Composable
 fun DisplayFields(

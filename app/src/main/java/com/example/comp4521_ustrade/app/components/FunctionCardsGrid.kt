@@ -7,11 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.example.comp4521_ustrade.app.models.FunctionCardData
 
-data class FunctionCardData(
-    val icon: ImageVector,
-    val title: String
-)
 
 @Composable
 fun FunctionCardsGrid(
