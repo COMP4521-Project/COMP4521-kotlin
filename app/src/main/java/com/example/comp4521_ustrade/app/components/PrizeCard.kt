@@ -20,27 +20,23 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.app.models.Prize
+import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 
 @Composable
 fun PrizeCard(
     modifier: Modifier = Modifier,
     prize: Prize,
-    isSelected: Boolean,
-    onSelect: () -> Unit
+    onClick: () -> Unit,
+    userViewModel : UserViewModel
 ) {
     Image(
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
             .graphicsLayer(alpha = 1f)
-            .clickable { onSelect() }
-            .then(if (isSelected)
-                {
-                    Modifier
-                        .border(3.dp, Color.Green, shape = RoundedCornerShape(3.dp))
-                        .shadow(15.dp, shape = RoundedCornerShape(3.dp))
-                }else {
-             Modifier}),
+            .clickable {
+                onClick()
+                userViewModel.setSelectedPrize(prize)},
         painter = painterResource(id = prize.icon),
         contentDescription = null,
         contentScale = ContentScale.Crop,

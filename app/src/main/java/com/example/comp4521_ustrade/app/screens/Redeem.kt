@@ -1,5 +1,6 @@
 package com.example.comp4521_ustrade.app.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,17 +22,27 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ModifierInfo
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,10 +57,12 @@ import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTWhite
 import com.example.comp4521_ustrade.ui.theme.USTgray
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Redeem(modifier: Modifier = Modifier,    onNavigateBack: () -> Unit, userViewModel : UserViewModel, navigationController: NavController) {
     val isButtonEnabled = remember { mutableStateOf(true) }
     val isDialogVisible = remember { mutableStateOf(false) }
+    val showBottomSheet = remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier
@@ -101,21 +114,10 @@ fun Redeem(modifier: Modifier = Modifier,    onNavigateBack: () -> Unit, userVie
             ) {
                 RedeemCard(userViewModel = userViewModel)
             }
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Button(onClick = {  },
-                    contentPadding = contentPadding(start = 50.dp,end = 50.dp, top = 5.dp, bottom = 5.dp),
-                    colors = ButtonColors(
-                        containerColor = USTBlue,
-                        contentColor = Color.White,
-                        disabledContainerColor = Color.Gray,
-                        disabledContentColor = Color.DarkGray
-                    ),
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
-                )
-
-                { Text(text = "Redeem") }
-            }
-            DisplayPrize(userViewModel = userViewModel)
+            DisplayPrize(userViewModel = userViewModel,
+                onPrizeClick = {
+                    showBottomSheet.value = true
+                })
         }
 
         // Show the dialog if the state is true
@@ -126,6 +128,66 @@ fun Redeem(modifier: Modifier = Modifier,    onNavigateBack: () -> Unit, userVie
             })
         }
 
+        val selectedPrize by userViewModel.selectedPrize.observeAsState()
+
+        if (showBottomSheet.value) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet.value = false }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(text = "Redeem this prize", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    selectedPrize?.let { prize ->
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = prize.icon),
+                                contentDescription = "Prize Icon",
+                                modifier = Modifier.height(256.dp),
+                                contentScale = ContentScale.Crop
+                            )
+
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Button(
+                                onClick = {
+                                    showBottomSheet.value = false
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = USTBlue,
+                                    contentColor = USTWhite
+
+                                ),
+                            ) {
+                                Text(text = "Confirm")
+                            }
+                            Button(
+                                onClick = {
+                                    showBottomSheet.value = false
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.Gray,
+                                    contentColor = USTWhite
+                                ),
+                            ) {
+                                Text(text = "Cancel")
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
     }
 }
 
