@@ -196,7 +196,8 @@ fun HomePage(modifier: Modifier = Modifier) {
                         .padding(innerPadding)){
                         Redeem(
                             onNavigateBack = { navigationController.navigateUp()},
-                            userViewModel = userViewModel
+                            userViewModel = userViewModel,
+                            navigationController = navigationController
                         )
                     }
                 }

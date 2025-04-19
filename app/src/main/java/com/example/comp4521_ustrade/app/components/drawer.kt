@@ -22,7 +22,7 @@ import com.example.comp4521_ustrade.app.models.DrawerItem
 //side navigation drawer
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DrawerContent(modifier: Modifier = Modifier) {
+fun  DrawerContent(modifier: Modifier = Modifier) {
     val items = listOf(
         DrawerItem(Icons.Filled.Home, "COMP", ""),
         DrawerItem(Icons.Filled.Person, "PHYS", ""),
