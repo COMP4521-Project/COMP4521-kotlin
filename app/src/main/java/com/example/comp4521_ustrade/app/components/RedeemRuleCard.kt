@@ -1,6 +1,7 @@
 package com.example.comp4521_ustrade.app.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -22,6 +24,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.comp4521_ustrade.R
+import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTWhite
 
 
 @Composable
@@ -45,7 +49,7 @@ fun DialogContent(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(400.dp)
+            .height(420.dp)
             .padding(16.dp),
         shape = RoundedCornerShape(16.dp),
     ) {
@@ -62,17 +66,17 @@ fun DialogContent(
                     painter = painterResource(id = R.drawable.guide),
                     contentDescription = "Settings",
                     modifier = Modifier
-                        .padding(4.dp)
+                        .padding(2.dp)
                         .size(30.dp),
                 )
             }
 
             Text(
-                text = "Redeem gift rules",
+                text = "Redeem prize rules",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 4.dp),
+                modifier = Modifier.padding(top = 2.dp),
             )
 
 
@@ -82,27 +86,32 @@ fun DialogContent(
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Upload", fontSize = 12.sp)
-                Text("• 5 documents → Lv.1 contributor", fontSize = 12.sp)
-                Text("• 12 documents → Lv.2 contributor", fontSize = 12.sp)
-                Text("• 20 documents → Lv.3 contributor", fontSize = 12.sp)
-                Text("Each level unlocks 2 gifts to pick one from", fontSize = 12.sp)
+                Text("Upload", fontSize = 10.sp)
+                Text("• 5 documents → Lv.1 contributor", fontSize = 10.sp)
+                Text("• 12 documents → Lv.2 contributor", fontSize = 10.sp)
+                Text("• 20 documents → Lv.3 contributor", fontSize = 10.sp)
+                Text("Each level unlocks 2 prize options to pick", fontSize = 10.sp)
                 Text(
-                    "Go to the souvenir shop to collect your prize after you press the Redeem Button",
-                    fontSize = 12.sp,
+                    "Go to the souvenir shop to collect your prize after you press the confirm Button",
+                    fontSize = 10.sp,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Start
                 )
+                Text("* Each account can only redeem one gift at most", fontSize = 10.sp)
             }
 
             // Action button
             TextButton(
                 onClick = { onDismissRequest() },
                 modifier = Modifier
-                    .padding(top = 12.dp)
+                    .padding(top = 4.dp)
                     .align(Alignment.CenterHorizontally),
+                colors = buttonColors(
+                    containerColor = USTBlue,
+                    contentColor = USTWhite
+                )
             ) {
-                Text("Got it", fontSize = 16.sp)
+                Text("Got it", fontSize = 12.sp)
             }
         }
     }

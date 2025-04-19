@@ -47,6 +47,7 @@ import com.example.comp4521_ustrade.app.models.DisplayOnlyFieldItem
 import com.example.comp4521_ustrade.app.components.DisplayOnlyFields
 import com.example.comp4521_ustrade.app.components.DocumentPreviewSlider
 import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTWhite
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -81,13 +82,13 @@ fun DocumentDetailsScreen(
                         Icon(Icons.Default.ArrowBack, "Back")
                     }
                 },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = USTBlue),
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = USTBlue, titleContentColor = USTWhite, navigationIconContentColor = USTWhite),
                 actions = {
                     IconButton(onClick = { /* Handle bookmark */ }) {
-                        Icon(Icons.Default.Bookmark, "Bookmark")
+                        Icon(Icons.Default.Bookmark, "Bookmark",tint = USTWhite)
                     }
                     IconButton(onClick = { /* Handle share */ }) {
-                        Icon(Icons.Default.Share, "Share")
+                        Icon(Icons.Default.Share, "Share", tint = USTWhite)
                     }
                 }
             )

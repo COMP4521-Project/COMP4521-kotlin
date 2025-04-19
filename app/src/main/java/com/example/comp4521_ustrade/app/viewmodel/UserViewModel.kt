@@ -10,6 +10,7 @@ class UserViewModel : ViewModel() {
 
     private val _uploadCount = MutableLiveData(0)
     private val _selectedPrize = MutableLiveData<Prize?>()
+    private val _confirmedPrize = MutableLiveData<Prize?>()
 
 
     fun getUploadCount() {
@@ -22,6 +23,7 @@ class UserViewModel : ViewModel() {
     // open for access
     val uploadCount : LiveData<Int> = _uploadCount
     val selectedPrize : LiveData<Prize?> = _selectedPrize
+    val confirmPrize : LiveData<Prize?> = _confirmedPrize
 
 
     fun addUploadCount() {
@@ -33,6 +35,9 @@ class UserViewModel : ViewModel() {
         _selectedPrize.value = prize
     }
 
+    fun setConfirmedPrize(prize: Prize) {
+        _confirmedPrize.value = prize
+    }
 
 
 }

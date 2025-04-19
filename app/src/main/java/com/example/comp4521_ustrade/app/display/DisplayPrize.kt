@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
@@ -52,6 +53,7 @@ fun DisplayPrize(modifier: Modifier = Modifier, userViewModel : UserViewModel, o
         Prize(R.drawable.prize6))
 
     val uploadCount = userViewModel.uploadCount.observeAsState().value
+    val confirmPrize = userViewModel.confirmPrize.observeAsState().value
 
     var level = 1
 
@@ -75,33 +77,16 @@ fun DisplayPrize(modifier: Modifier = Modifier, userViewModel : UserViewModel, o
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        when (level) {
-            0 -> {
-                items(prizeList.size) { index: Int ->
-                    GreyPrizeCard(Prize = prizeList[index])
-                }
-            }
-            1 -> {
-                items(prizeList.size) { index: Int ->
-                    if (index < 2) {
-                        val prize = prizeList[index]
-                        PrizeCard(
-                            prize = prize,
-                            onClick = {
-                                onPrizeClick()
-                                selectedPrize = prize
-                            },
-                            userViewModel = userViewModel
-                        )
-                    }
-                    else {
+        if(confirmPrize == null) {
+            when (level) {
+                0 -> {
+                    items(prizeList.size) { index: Int ->
                         GreyPrizeCard(Prize = prizeList[index])
                     }
                 }
-            }
-            2 -> {
-                items(prizeList.size) { index: Int ->
-                        if (index < 4) {
+                1 -> {
+                    items(prizeList.size) { index: Int ->
+                        if (index < 2) {
                             val prize = prizeList[index]
                             PrizeCard(
                                 prize = prize,
@@ -117,20 +102,56 @@ fun DisplayPrize(modifier: Modifier = Modifier, userViewModel : UserViewModel, o
                         }
                     }
                 }
+                2 -> {
+                    items(prizeList.size) { index: Int ->
+                            if (index < 4) {
+                                val prize = prizeList[index]
+                                PrizeCard(
+                                    prize = prize,
+                                    onClick = {
+                                        onPrizeClick()
+                                        selectedPrize = prize
+                                    },
+                                    userViewModel = userViewModel
+                                )
+                            }
+                            else {
+                                GreyPrizeCard(Prize = prizeList[index])
+                            }
+                        }
+                    }
 
-            3 -> {
-                items(prizeList.size) { index: Int ->
-                    val prize = prizeList[index]
-                    PrizeCard(
-                        prize = prize,
-                        onClick = {
-                            onPrizeClick()
-                            selectedPrize = prize
-                        },
-                        userViewModel = userViewModel
-                    )
+                3 -> {
+                    items(prizeList.size) { index: Int ->
+                        val prize = prizeList[index]
+                        PrizeCard(
+                            prize = prize,
+                            onClick = {
+                                onPrizeClick()
+                                selectedPrize = prize
+                            },
+                            userViewModel = userViewModel
+                        )
+                    }
                 }
             }
+            }
+        else{
+            items(prizeList.size) { index: Int ->
+                if (confirmPrize.icon == prizeList[index].icon) {
+                    PrizeCard(
+                        prize = confirmPrize,
+                        onClick = {
+                        },
+                        userViewModel = userViewModel,
+                        modifier = Modifier
+                            .padding(4.dp)
+                    )
+                } else {
+                    GreyPrizeCard(Prize = prizeList[index])
+                }
+            }
+
         }
     }
 }

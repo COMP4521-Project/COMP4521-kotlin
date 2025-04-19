@@ -40,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ModifierInfo
 import androidx.compose.ui.res.painterResource
@@ -48,6 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.comp4521_ustrade.app.components.ConfirmRedeemSheet
 import com.example.comp4521_ustrade.app.components.RedeemCard
 import com.example.comp4521_ustrade.app.components.RedeemDialog
 import com.example.comp4521_ustrade.app.display.DisplayPrize
@@ -63,6 +65,10 @@ fun Redeem(modifier: Modifier = Modifier,    onNavigateBack: () -> Unit, userVie
     val isButtonEnabled = remember { mutableStateOf(true) }
     val isDialogVisible = remember { mutableStateOf(false) }
     val showBottomSheet = remember { mutableStateOf(false) }
+
+
+    val selectedPrize by userViewModel.selectedPrize.observeAsState()
+    val confirmPrize by userViewModel.confirmPrize.observeAsState()
 
     Box(
         modifier = modifier
@@ -114,11 +120,20 @@ fun Redeem(modifier: Modifier = Modifier,    onNavigateBack: () -> Unit, userVie
             ) {
                 RedeemCard(userViewModel = userViewModel)
             }
+            if (confirmPrize != null) {
+                  Text(
+                      text = "You have selected your prize. Please go to the souvenir shop to collect your prize",
+                      modifier = Modifier
+                          .align(Alignment.CenterHorizontally)
+                          .padding(horizontal = 16.dp),
+                  )
+            }
             DisplayPrize(userViewModel = userViewModel,
                 onPrizeClick = {
                     showBottomSheet.value = true
                 })
         }
+
 
         // Show the dialog if the state is true
         if (isDialogVisible.value) {
@@ -128,65 +143,11 @@ fun Redeem(modifier: Modifier = Modifier,    onNavigateBack: () -> Unit, userVie
             })
         }
 
-        val selectedPrize by userViewModel.selectedPrize.observeAsState()
 
+
+        //Show bottom sheet if the state is true
         if (showBottomSheet.value) {
-            ModalBottomSheet(
-                onDismissRequest = { showBottomSheet.value = false }
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text(text = "Redeem this prize", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    selectedPrize?.let { prize ->
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Image(
-                                painter = painterResource(id = prize.icon),
-                                contentDescription = "Prize Icon",
-                                modifier = Modifier.height(256.dp),
-                                contentScale = ContentScale.Crop
-                            )
-
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Button(
-                                onClick = {
-                                    showBottomSheet.value = false
-                                },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = USTBlue,
-                                    contentColor = USTWhite
-
-                                ),
-                            ) {
-                                Text(text = "Confirm")
-                            }
-                            Button(
-                                onClick = {
-                                    showBottomSheet.value = false
-                                },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.Gray,
-                                    contentColor = USTWhite
-                                ),
-                            ) {
-                                Text(text = "Cancel")
-                            }
-                        }
-                    }
-
-                }
-            }
+            ConfirmRedeemSheet(modifier, selectedPrize, showBottomSheet, userViewModel )
         }
     }
 }
