@@ -74,7 +74,7 @@ fun ShortCutCard(
                 contentDescription = "shortcut_item",
                 painter = painterResource(id = ShortCutCardItem.icon),
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(1.dp))
             Text(
                 text = ShortCutCardItem.title,
                 fontSize = 10.sp,

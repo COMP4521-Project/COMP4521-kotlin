@@ -65,7 +65,7 @@ fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel
     )
 
     Card(        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),){
         Column {
             Box(modifier= Modifier.fillMaxWidth().padding(top = 8.dp), contentAlignment = Alignment.TopEnd) {

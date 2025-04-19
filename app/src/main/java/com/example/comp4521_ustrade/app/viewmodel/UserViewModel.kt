@@ -3,13 +3,14 @@ package com.example.comp4521_ustrade.app.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.comp4521_ustrade.app.models.Prize
 
 class UserViewModel : ViewModel() {
 
-    private val _level = MutableLiveData(0)
-    private val _progress = MutableLiveData(0f)
 
     private val _uploadCount = MutableLiveData(0)
+    private val _selectedPrize = MutableLiveData<Prize?>()
+    private val _confirmedPrize = MutableLiveData<Prize?>()
 
 
     fun getUploadCount() {
@@ -21,21 +22,22 @@ class UserViewModel : ViewModel() {
 
     // open for access
     val uploadCount : LiveData<Int> = _uploadCount
-//    val level : LiveData<Int> = _level
-//    val progress : LiveData<Float> = _progress
+    val selectedPrize : LiveData<Prize?> = _selectedPrize
+    val confirmPrize : LiveData<Prize?> = _confirmedPrize
 
-    fun levelUp() {
-        _level.value = _level.value?.plus(1)
-    }
 
     fun addUploadCount() {
         _uploadCount.value = _uploadCount.value?.plus(1)
     }
 
-    fun setProgress(value: Float) {
-        _progress.value = value
+
+    fun setSelectedPrize(prize: Prize) {
+        _selectedPrize.value = prize
     }
 
+    fun setConfirmedPrize(prize: Prize) {
+        _confirmedPrize.value = prize
+    }
 
 
 }
