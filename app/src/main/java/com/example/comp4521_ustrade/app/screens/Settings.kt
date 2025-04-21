@@ -33,9 +33,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.screens.Screens
 import com.example.comp4521_ustrade.auth.AuthViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
@@ -67,7 +69,7 @@ fun Settings(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Account Section
-            item { Text("Account", fontWeight = FontWeight.Bold) }
+            item { Text(stringResource(id = R.string.Account), fontWeight = FontWeight.Bold) }
             item {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),

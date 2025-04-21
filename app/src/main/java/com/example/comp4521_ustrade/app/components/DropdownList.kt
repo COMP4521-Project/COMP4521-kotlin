@@ -31,7 +31,7 @@ fun DropdownList(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onExpandedChange(true) }
+                .clickable { onExpandedChange(!expanded) }
                 .padding(vertical = 12.dp, horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
