@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">USTrade</string>
+    <string name="Language">Language</string>
+    <string name="Account">Account</string>
 </resources>
