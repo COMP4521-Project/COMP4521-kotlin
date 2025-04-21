@@ -15,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.comp4521_ustrade.R
@@ -30,14 +31,14 @@ fun DisplayShortCutCards(
 ) {
 
     val shortcutList = listOf(
-        ShortCutCardItem(R.drawable.bookmark, "Bookmark"),
-        ShortCutCardItem(R.drawable.upload, "Upload"),
-        ShortCutCardItem(R.drawable.redeem, "Redeem"),
-        ShortCutCardItem(R.drawable.download, "Download"),
-        ShortCutCardItem(R.drawable.bot, "AI"),
-        ShortCutCardItem(R.drawable.preview, "Preview"),
-        ShortCutCardItem(R.drawable.preference, "Preference"),
-        ShortCutCardItem(R.drawable.logout, "Logout"),
+        ShortCutCardItem(R.drawable.bookmark, stringResource(R.string.Bookmark)),
+        ShortCutCardItem(R.drawable.upload, stringResource(R.string.Upload)),
+        ShortCutCardItem(R.drawable.redeem, stringResource(R.string.Redeem)),
+        ShortCutCardItem(R.drawable.download, stringResource(R.string.Download)),
+        ShortCutCardItem(R.drawable.bot, stringResource(R.string.AI)),
+        ShortCutCardItem(R.drawable.preview, stringResource(R.string.Preview)),
+        ShortCutCardItem(R.drawable.preference, stringResource(R.string.Preference)),
+        ShortCutCardItem(R.drawable.logout, stringResource(R.string.Logout))
     )
 
     Box(modifier = Modifier

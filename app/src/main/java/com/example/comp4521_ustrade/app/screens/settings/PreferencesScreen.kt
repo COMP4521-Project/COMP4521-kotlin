@@ -50,6 +50,7 @@ fun PreferencesScreen(
     var selectedLanguage by remember {
         mutableStateOf(sharedPreferences.getString("selected_language", "English") ?: "English")
     }
+
     var expanded by remember { mutableStateOf(false) }
     val languages = listOf("English", "Traditional Chinese", "Simplified Chinese")
 
@@ -98,11 +99,10 @@ fun PreferencesScreen(
                         selectedLanguage = it
                         sharedPreferences.edit().putString("selected_language", it).apply()
                         when (it) {
-                            "English" -> updateLocale(context, Locale("en"))
+                            "English" -> updateLocale(context, Locale.ENGLISH)
                             "Traditional Chinese" -> updateLocale(context, Locale("zh", "TW"))
                             "Simplified Chinese" -> updateLocale(context, Locale("zh", "CN"))
                         }
-                        Log.d("PreferencesScreen", "Locale changed to $it")
                     },
                     expanded = expanded,
                     onExpandedChange = { expanded = it },
@@ -117,22 +117,12 @@ private fun updateLocale(context: Context, locale: Locale) {
     val resources = context.resources
     val configuration = Configuration(resources.configuration)
     configuration.setLocale(locale)
-    
-    // Apply the configuration to the application context
-    val appContext = context.applicationContext
-    appContext.createConfigurationContext(configuration)
-    
-    // Update the default locale
-    Locale.setDefault(locale)
-    
+
     // Update the resources configuration
     resources.updateConfiguration(configuration, resources.displayMetrics)
-    
-    Log.d("PreferencesScreen", "Locale set to ${locale.displayLanguage}")
-    
+
     // Recreate the activity
     if (context is Activity) {
-        Log.d("PreferencesScreen", "Recreating activity for locale change")
         context.recreate()
     }
 }

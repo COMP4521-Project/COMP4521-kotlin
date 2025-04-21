@@ -19,9 +19,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.models.ShortCutCardItem
 import com.example.comp4521_ustrade.app.screens.Screens
 import com.example.comp4521_ustrade.auth.AuthViewModel
@@ -34,6 +36,15 @@ fun ShortCutCard(
 ) {
     val context = LocalContext.current
 
+    val bookMarkTitle= stringResource(R.string.Bookmark)
+    val uploadTitle = stringResource(R.string.Upload)
+    val redeemTitle = stringResource(R.string.Redeem)
+    val downloadTitle = stringResource(R.string.Download)
+    val aiTitle = stringResource(R.string.AI)
+    val previewTitle = stringResource(R.string.Preview)
+    val preferenceTitle = stringResource(R.string.Preference)
+    val logoutTitle = stringResource(R.string.Logout)
+
     Card(
         modifier = Modifier.size(76.dp).clickable {
             Toast.makeText(
@@ -42,20 +53,20 @@ fun ShortCutCard(
                 Toast.LENGTH_SHORT
             ).show()
             when (ShortCutCardItem.title) {
-                "AI" -> navigateController.navigate(Screens.AIDetails.screen)
-                "Preference" -> navigateController.navigate(Screens.Preferences.screen)
-                "Logout" -> {
+                aiTitle -> navigateController.navigate(Screens.AIDetails.screen)
+                preferenceTitle -> navigateController.navigate(Screens.Preferences.screen)
+                logoutTitle -> {
                     authViewModel.signOut()
                     navigateController.navigate(Screens.Landing.screen) {
                         // Clear the back stack so user can't go back after logging out
                         popUpTo(0) { inclusive = true }
                     }
                 }
-                "Redeem" -> navigateController.navigate(Screens.RedeemGifts.screen)
-                "Bookmark" -> navigateController.navigate(Screens.DocumentBookmarkedList.screen)
-                "Upload" -> navigateController.navigate(Screens.DocumentUploadedList.screen)
-                "Download" -> navigateController.navigate(Screens.DocumentDownloadedList.screen)
-                "Preview" -> navigateController.navigate(Screens.ProfilePreview.screen)
+                redeemTitle -> navigateController.navigate(Screens.RedeemGifts.screen)
+                bookMarkTitle -> navigateController.navigate(Screens.DocumentBookmarkedList.screen)
+                uploadTitle -> navigateController.navigate(Screens.DocumentUploadedList.screen)
+                downloadTitle -> navigateController.navigate(Screens.DocumentDownloadedList.screen)
+                previewTitle -> navigateController.navigate(Screens.ProfilePreview.screen)
             }
         },
         shape = RoundedCornerShape(10.dp),

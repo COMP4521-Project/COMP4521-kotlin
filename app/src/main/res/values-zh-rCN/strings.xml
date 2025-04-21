@@ -3,4 +3,12 @@
     <string name="app_name">USTrade</string>
     <string name="Language">语言</string>
     <string name="Account">帐户</string>
+    <string name="Bookmark">书签</string>
+    <string name="Upload">上传</string>
+    <string name="Redeem">兑换</string>
+    <string name="Download">下载</string>
+    <string name="AI">人工智能</string>
+    <string name="Preview">预览</string>
+    <string name="Preference">偏好</string>
+    <string name="Logout">登出</string>
 </resources>

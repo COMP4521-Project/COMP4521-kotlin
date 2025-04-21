@@ -3,4 +3,12 @@
     <string name="app_name">USTrade</string>
     <string name="Language">語言</string>
     <string name="Account">帳戶</string>
+    <string name="Bookmark">書籤</string>
+    <string name="Upload">上傳</string>
+    <string name="Redeem">兌換</string>
+    <string name="Download">下載</string>
+    <string name="AI">人工智能</string>
+    <string name="Preview">預覽</string>
+    <string name="Preference">偏好設定</string>
+    <string name="Logout">登出</string>
 </resources>
