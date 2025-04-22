@@ -46,4 +46,10 @@ sealed class Screens(val screen: String) {
     object DocumentUploadedList: Screens("DocumentUploadedList")
     object DocumentDownloadedList: Screens("DocumentDownloadedList")
     object DocumentSearchResults: Screens("DocumentSearchResults")
+    object DocumentFavoritesList: Screens("DocumentFavoritesList")
+
+    // Subject
+    object Subject : Screens("subject/{subject}") {
+        fun createRoute(subject: String) = "subject/$subject"
+    }
 }

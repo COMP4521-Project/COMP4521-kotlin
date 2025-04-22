@@ -11,11 +11,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DrawerValue
@@ -29,15 +26,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.comp4521_ustrade.app.components.CourseMenu
 import com.example.comp4521_ustrade.app.components.DrawerContent
-import com.example.comp4521_ustrade.app.components.USTPager
 import com.example.comp4521_ustrade.app.components.USTBottomBar
+import com.example.comp4521_ustrade.app.components.USTPager
 import com.example.comp4521_ustrade.app.components.USTTopBar
 import com.example.comp4521_ustrade.app.display.DisplayCourseCards
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
@@ -45,7 +43,6 @@ import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.auth.AuthViewModel
 import com.example.comp4521_ustrade.auth.screens.LandingScreen
 import com.example.comp4521_ustrade.ui.theme.USTBlue
-import com.example.comp4521_ustrade.ui.theme.USTgold
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,7 +76,10 @@ fun HomePage(
             ModalDrawerSheet(
                 modifier = Modifier.width(200.dp)
             ) {
-                DrawerContent()
+                DrawerContent(
+                    navController = navigationController,
+                    drawerState = drawerState
+                )
             }
         }
     ) {
@@ -276,13 +276,36 @@ fun HomePage(
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
                 )
-            }   
-
+            }
+            
+            // Favorites document List
+            composable(Screens.DocumentFavoritesList.screen) {
+                DocumentListScreen(
+                    pageTitle = "favorites",
+                    onNavigateBack = { navigationController.navigateUp() },
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                )
+            }
             // Search results document List
             composable(Screens.DocumentSearchResults.screen) {
                 DocumentListScreen(
                     pageTitle = "search results",
                     onNavigateBack = { navigationController.navigateUp() }, 
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                )
+            }
+
+            // Subject screen
+            composable(
+                route = Screens.Subject.screen,
+                arguments = listOf(
+                    navArgument("subject") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val subject = backStackEntry.arguments?.getString("subject") ?: ""
+                DocumentListScreen(
+                    pageTitle = subject,
+                    onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
                 )
             }
