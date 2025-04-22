@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,9 +30,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.app.components.DocumentCard
 import com.example.comp4521_ustrade.app.models.Document
+import com.example.comp4521_ustrade.ui.theme.USTBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,9 +67,13 @@ fun DocumentListScreen(
                         IconButton(onClick = onNavigateBack) {
                             Icon(Icons.Default.ArrowBack, "Back")
                         }
-                    }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = USTBlue,
+                        titleContentColor = Color.White,
+                        navigationIconContentColor = Color.White
+                    )
                 )
-
             }
         }
     ) { padding ->
@@ -80,7 +87,7 @@ fun DocumentListScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {

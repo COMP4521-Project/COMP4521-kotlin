@@ -28,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,7 +58,12 @@ fun Settings(
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = USTBlue,
+                        titleContentColor = Color.White,
+                        navigationIconContentColor = Color.White
+                    )
             )
         }
     ) { padding ->
@@ -116,17 +122,17 @@ fun Settings(
                         SettingsItem(
                             icon = Icons.Default.Bookmark,
                             text = "Bookmarks",
-                            onClick = { navigationController.navigate(Screens.Bookmarks.screen) }
+                            onClick = { navigationController.navigate(Screens.DocumentBookmarkedList.screen) }
                         )
                         SettingsItem(
                             icon = Icons.Default.Upload,
                             text = "Uploaded files",
-                            onClick = { navigationController.navigate(Screens.UploadedFiles.screen) }
+                            onClick = { navigationController.navigate(Screens.DocumentUploadedList.screen) }
                         )
                         SettingsItem(
                             icon = Icons.Default.Download,
                             text = "Downloaded files",
-                            onClick = { navigationController.navigate(Screens.DownloadedFiles.screen) }
+                            onClick = { navigationController.navigate(Screens.DocumentDownloadedList.screen) }
                         )
                     }
                 }

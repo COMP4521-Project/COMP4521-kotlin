@@ -100,7 +100,7 @@ fun USTTopBar(onOpenDrawer: () -> Unit ,navigationController: androidx.navigatio
 
             IconButton(onClick = {
                 selected.value = Icons.Default.FavoriteBorder
-                navigationController.navigate(Screens.Favorite.screen)
+                navigationController.navigate(Screens.DocumentFavoritesList.screen)
             },interactionSource = interactionSource) {
                 Icon(
                     imageVector = Icons.Filled.FavoriteBorder,

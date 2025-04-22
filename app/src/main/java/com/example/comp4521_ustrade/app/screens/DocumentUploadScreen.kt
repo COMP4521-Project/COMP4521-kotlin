@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.app.components.CustomTextField
 import com.example.comp4521_ustrade.app.components.DropdownList
+import com.example.comp4521_ustrade.ui.theme.USTBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,7 +92,12 @@ fun DocumentUploadScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = USTBlue,
+                        titleContentColor = Color.White,
+                        navigationIconContentColor = Color.White
+                    )
             )
         }
     ) { padding ->

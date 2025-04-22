@@ -13,12 +13,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.app.components.ToggleButton
 import com.example.comp4521_ustrade.ui.theme.USTBlue
@@ -38,7 +40,12 @@ fun NotificationSettingsScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = USTBlue,
+                        titleContentColor = Color.White,
+                        navigationIconContentColor = Color.White
+                    )
             )
         }
     ) { padding ->
