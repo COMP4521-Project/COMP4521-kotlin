@@ -298,9 +298,10 @@ fun HomePage(modifier: Modifier = Modifier) {
                 )
             ) { backStackEntry ->
                 val subject = backStackEntry.arguments?.getString("subject") ?: ""
-                SubjectScreen(
-                    subject = subject,
-                    onNavigateBack = { navigationController.navigateUp() }
+                DocumentListScreen(
+                    pageTitle = subject,
+                    onNavigateBack = { navigationController.navigateUp() },
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
                 )
             }
         }

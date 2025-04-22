@@ -32,9 +32,9 @@ fun DrawerContent(
     drawerState: DrawerState
 ) {
     val items = listOf(
-        DrawerItem(Icons.Filled.Home, "COMP", "COMP"),
-        DrawerItem(Icons.Filled.Person, "PHYS", "PHYS"),
-        DrawerItem(Icons.Filled.Face, "ELEC", "ELEC")
+        DrawerItem(Icons.Filled.Home, "COMP", ""),
+        DrawerItem(Icons.Filled.Person, "PHYS", ""),
+        DrawerItem(Icons.Filled.Face, "ELEC", "")
     )
     val selectedItem = remember { mutableStateOf(items[0]) }
     val scope = rememberCoroutineScope()
@@ -60,7 +60,7 @@ fun DrawerContent(
             onClick = {
                 selectedItem.value = item
                 // Navigate to the subject screen with the subject as a parameter
-                navController.navigate("subject/${item.secondary_label}")
+                navController.navigate("subject/${item.label}")
                 // Close the drawer
                 scope.launch {
                     drawerState.close()
