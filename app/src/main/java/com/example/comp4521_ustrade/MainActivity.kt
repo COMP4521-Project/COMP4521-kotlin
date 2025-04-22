@@ -24,7 +24,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            COMP4521ustradeTheme {
+        var isDarkTheme by remember { mutableStateOf(false) }
+
+            COMP4521ustradeTheme(darkTheme = isDarkTheme)  {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -33,7 +35,10 @@ class MainActivity : ComponentActivity() {
 
                     AuthNavigation(
                         onAuthSuccess = {
-                            HomePage()
+                            HomePage(
+                                isDarkTheme = isDarkTheme,
+                                onThemeChange = { isDarkTheme = it },
+                            )
 
                         }
                     )

@@ -38,7 +38,9 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreferencesScreen(
-    onNavigateBack: () -> Unit = {}
+    onNavigateBack: () -> Unit = {},
+    isDarkTheme: Boolean,
+    onThemeChange: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -85,8 +87,8 @@ fun PreferencesScreen(
                 Column {
                     ToggleButton(
                         text = "Light mode",
-                        checked = lightModeEnabled,
-                        onCheckedChange = { lightModeEnabled = it }
+                        checked = isDarkTheme,
+                        onCheckedChange = onThemeChange
                     )
                 }
             }
