@@ -21,3 +21,11 @@ val TabSelector = Color(0xFF027262)
 val Badges = Color(0xFF90EE90)
 val Badges2 = Color(0xFFFFD700)
 val Badges3 = Color(0xFF5865F2)
+
+
+// Dark Theme Colors
+val USTBlue_dark = Color(0xFF364878)  // Darker shade of USTBlue
+val USTBlue_dark_light = Color(0xFF435689)  // Darker shade of USTBlue_light
+val USTDarkBackground = Color(0xFF121212)  // Standard dark theme background
+val USTgray_dark = Color(0xFF2C2C2C)
+val USTgold_dark = Color(0xFF8B6B2D)

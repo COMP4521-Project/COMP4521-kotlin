@@ -47,7 +47,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomePage(modifier: Modifier = Modifier) {
+fun HomePage(
+    modifier: Modifier = Modifier,
+    isDarkTheme: Boolean,
+    onThemeChange: (Boolean) -> Unit){
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -207,7 +210,9 @@ fun HomePage(modifier: Modifier = Modifier) {
             // Setting page: Support & About
             composable(Screens.Preferences.screen) {
                 PreferencesScreen(
-                    onNavigateBack = { navigationController.navigateUp() }
+                    onNavigateBack = { navigationController.navigateUp() },
+                    isDarkTheme = isDarkTheme,
+                    onThemeChange = onThemeChange
                 )
             }
             composable(Screens.AboutApp.screen) {
