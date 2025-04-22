@@ -19,14 +19,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.comp4521_ustrade.app.models.DisplayFieldItem
 import com.example.comp4521_ustrade.app.components.DisplayFields
-import com.example.comp4521_ustrade.app.models.FunctionCardData
 import com.example.comp4521_ustrade.app.components.FunctionCardsGrid
+import com.example.comp4521_ustrade.app.models.DisplayFieldItem
+import com.example.comp4521_ustrade.app.models.FunctionCardData
+import com.example.comp4521_ustrade.ui.theme.USTBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +64,12 @@ fun AIDetailsScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = USTBlue,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White
+                )
             )
         }
     ) { padding ->
