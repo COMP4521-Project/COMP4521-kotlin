@@ -1,5 +1,6 @@
 package com.example.comp4521_ustrade.app.screens
 
+import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -40,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.R
@@ -47,6 +49,7 @@ import com.example.comp4521_ustrade.app.components.DisplayOnlyFields
 import com.example.comp4521_ustrade.app.components.DocumentPreviewSlider
 import com.example.comp4521_ustrade.app.models.DisplayOnlyFieldItem
 import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 import com.example.comp4521_ustrade.ui.theme.USTWhite
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -66,6 +69,16 @@ fun DocumentDetailsScreen(
     var isLiked by remember { mutableStateOf(false) }
     var isDisliked by remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
+
+    val sharedPreferences = remember {
+        context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    }
+
+    var isDarkModeEnabled by remember {
+        mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
+    }
+
     // Sample preview images (replace with actual document preview images)
     val previewImages = listOf(
         R.drawable.comp1,  // Replace with your actual drawable resources
@@ -82,7 +95,10 @@ fun DocumentDetailsScreen(
                         Icon(Icons.Default.ArrowBack, "Back")
                     }
                 },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = USTBlue, titleContentColor = USTWhite, navigationIconContentColor = USTWhite),
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = if(isDarkModeEnabled) USTBlue_dark else USTBlue,
+            titleContentColor = USTWhite,
+            navigationIconContentColor = USTWhite),
                 actions = {
                     IconButton(onClick = { /* Handle bookmark */ }) {
                         Icon(Icons.Default.Bookmark, "Bookmark",tint = USTWhite)

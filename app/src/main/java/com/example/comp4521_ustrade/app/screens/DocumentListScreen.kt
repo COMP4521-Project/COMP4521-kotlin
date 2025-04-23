@@ -1,5 +1,6 @@
 package com.example.comp4521_ustrade.app.screens
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,11 +32,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.app.components.DocumentCard
 import com.example.comp4521_ustrade.app.models.Document
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,6 +50,17 @@ fun DocumentListScreen(
     navViewModel: NavViewModel
 ) {
     var searchQuery by remember { mutableStateOf("") }
+
+
+    val context = LocalContext.current
+
+    val sharedPreferences = remember {
+        context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    }
+
+    var isDarkModeEnabled by remember {
+        mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
+    }
 
     // Sample data - replace with actual data from your backend
     val documents = List(5) { index ->
@@ -74,7 +88,7 @@ fun DocumentListScreen(
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = USTBlue,
+                        containerColor = if(isDarkModeEnabled) USTBlue_dark else USTBlue,
                         titleContentColor = Color.White,
                         navigationIconContentColor = Color.White
                     )

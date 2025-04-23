@@ -1,5 +1,6 @@
 package com.example.comp4521_ustrade.app.components
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -15,7 +16,11 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -27,18 +32,40 @@ import androidx.navigation.compose.rememberNavController
 import com.example.comp4521_ustrade.app.screens.Screens
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 import com.example.comp4521_ustrade.ui.theme.USTBlue_light
+import com.example.comp4521_ustrade.ui.theme.USTBlue_lightdark
 import com.example.comp4521_ustrade.ui.theme.USTWhite
 
 
 @Composable
 fun USTBottomBar(navigationController: NavController = rememberNavController(), navViewModel: NavViewModel) {
     val context = LocalContext.current
+    val sharedPreferences = remember {
+        context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    }
+    var isDarkModeEnabled by remember {
+        mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
+    }
 
     val selectedScreen = navViewModel.selectedScreen.observeAsState(Screens.Home)
 
-    BottomAppBar(containerColor = Color.Transparent, modifier = Modifier.background(Brush.verticalGradient(colors = listOf(
-        USTBlue_light, USTBlue)))) {
+    BottomAppBar(containerColor = Color.Transparent,
+        modifier = Modifier.background(
+            if(isDarkModeEnabled) {
+                Brush.verticalGradient(
+                    colors = listOf(
+                        USTBlue_lightdark, USTBlue_dark
+                    )
+                )
+            }else{
+                Brush.verticalGradient(
+                    colors = listOf(
+                        USTBlue_light, USTBlue
+                    )
+                )
+            }
+        )) {
         IconButton(
             onClick = {
                 navViewModel.setSelectedScreen(Screens.Home)

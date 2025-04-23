@@ -1,5 +1,6 @@
 package com.example.comp4521_ustrade.app.screens
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ModifierInfo
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,6 +58,7 @@ import com.example.comp4521_ustrade.app.display.DisplayPrize
 import com.example.comp4521_ustrade.app.display.displayProfileCard
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 import com.example.comp4521_ustrade.ui.theme.USTWhite
 import com.example.comp4521_ustrade.ui.theme.USTgray
 
@@ -69,7 +72,7 @@ fun Redeem(modifier: Modifier = Modifier,    onNavigateBack: () -> Unit, userVie
 
     val selectedPrize by userViewModel.selectedPrize.observeAsState()
     val confirmPrize by userViewModel.confirmPrize.observeAsState()
-
+    
     Box(
         modifier = modifier
             .fillMaxSize()
