@@ -49,14 +49,10 @@ fun PreferencesScreen(
         context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
     }
 
-//    var lightModeEnabled by remember { mutableStateOf(false) }
     var selectedLanguage by remember {
         mutableStateOf(sharedPreferences.getString("selected_language", "English") ?: "English")
     }
 
-    var isDarkModeEnabled by remember {
-        mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
-    }
 
     var expanded by remember { mutableStateOf(false) }
     val languages = listOf("English", "Traditional Chinese", "Simplified Chinese")

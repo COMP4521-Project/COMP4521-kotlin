@@ -129,7 +129,8 @@ fun HomePage(
                 DocumentListScreen(
                 pageTitle = "downloaded",
                 onNavigateBack = { navigationController.navigateUp() },
-                onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
+                    navViewModel = navViewModel
             )}
             composable(Screens.Profile.screen) {
                   Profile(
@@ -150,6 +151,7 @@ fun HomePage(
             }
             composable(Screens.Notification.screen) { Notification(
                 onNavigateBack = { navigationController.navigateUp() },
+                navViewModel = navViewModel
             ) }
             composable(Screens.Search.screen) {
                 Scaffold(
@@ -252,7 +254,10 @@ fun HomePage(
             // Document Upload
             composable(Screens.DocumentUpload.screen) {
                 DocumentUploadScreen(
-                    onNavigateBack = { navigationController.navigateUp() }
+                    onNavigateBack = {
+                        navigationController.navigateUp()} ,
+                    navViewModel = navViewModel
+
                 )
             }
 
@@ -261,7 +266,8 @@ fun HomePage(
                 DocumentListScreen(
                     pageTitle = "bookmarked",
                     onNavigateBack = { navigationController.navigateUp() },
-                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
+                    navViewModel = navViewModel
                 )
             }
 
@@ -270,7 +276,8 @@ fun HomePage(
                 DocumentListScreen(
                     pageTitle = "uploaded",
                     onNavigateBack = { navigationController.navigateUp() },
-                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
+                    navViewModel = navViewModel
                 )
             }
 
@@ -279,7 +286,8 @@ fun HomePage(
                 DocumentListScreen(
                     pageTitle = "downloaded",
                     onNavigateBack = { navigationController.navigateUp() },
-                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
+                    navViewModel = navViewModel
                 )
             }
             
@@ -288,7 +296,8 @@ fun HomePage(
                 DocumentListScreen(
                     pageTitle = "favorites",
                     onNavigateBack = { navigationController.navigateUp() },
-                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
+                    navViewModel = navViewModel
                 )
             }
             // Search results document List
@@ -296,7 +305,8 @@ fun HomePage(
                 DocumentListScreen(
                     pageTitle = "search results",
                     onNavigateBack = { navigationController.navigateUp() }, 
-                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
+                    navViewModel = navViewModel
                 )
             }
 
@@ -311,7 +321,8 @@ fun HomePage(
                 DocumentListScreen(
                     pageTitle = subject,
                     onNavigateBack = { navigationController.navigateUp() },
-                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
+                    navViewModel = navViewModel
                 )
             }
         }

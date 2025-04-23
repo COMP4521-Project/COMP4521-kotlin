@@ -44,13 +44,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.models.NotificationData
+import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Notification(
     modifier: Modifier = Modifier,
-    onNavigateBack: () -> Unit = {}
+    onNavigateBack: () -> Unit = {},
+    navViewModel: NavViewModel
 ) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("All", "Read", "Unread")
@@ -61,7 +63,10 @@ fun Notification(
             TopAppBar(
                 title = { Text("Notifications") },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = {
+                        navViewModel.setSelectedScreen(Screens.Home)
+                        onNavigateBack()
+                    }) {
                         Icon(Icons.Default.ArrowBack, "Back")
                     }
                 },
