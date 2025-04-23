@@ -1,5 +1,6 @@
 package com.example.comp4521_ustrade.app.components
 
+import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,13 +18,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTWhite
+import com.example.comp4521_ustrade.ui.theme.USTWhite_dark
+import com.example.comp4521_ustrade.ui.theme.USTgray
 
 //Home Page
 
@@ -45,6 +51,16 @@ fun CourseMenu( content: @Composable () -> Unit) {
 //        "SEEN", "SHSS", "SMMG", "SOSC", "SUST", "TEMG", "UCOP", "UGOD",
 //        "UPOP", "UROP", "UTOP", "WBBA"
 //    )
+
+    val context = LocalContext.current
+
+    val sharedPreferences = remember {
+        context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    }
+
+    var isDarkModeEnabled by remember {
+        mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
+    }
 
     val courseTitles = listOf(
         "ACCT",  "BIEN", "BTEC", "CENG", "CHEM", "CIVL", "COMP", "CPEG",
@@ -68,7 +84,7 @@ fun CourseMenu( content: @Composable () -> Unit) {
         ScrollableTabRow(
             selectedTabIndex = selectedTabIndex,
             modifier = modifier.padding(8.dp),
-            contentColor = Color.Black,
+//            contentColor = Color.Green,
             containerColor = Color.Transparent,
             edgePadding = 8.dp,
             indicator =  { tabPositions ->
@@ -96,7 +112,7 @@ fun CourseMenu( content: @Composable () -> Unit) {
                         selectedTabIndex = index
                     },
                     selectedContentColor = USTBlue,
-                    unselectedContentColor = Color.Black,
+                    unselectedContentColor = if(isDarkModeEnabled) USTWhite_dark else Color.Black,
                     interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
                 )
             }
