@@ -6,12 +6,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -45,51 +48,59 @@ fun ShortCutCard(
     val preferenceTitle = stringResource(R.string.Preference)
     val logoutTitle = stringResource(R.string.Logout)
 
-    Card(
-        modifier = Modifier.size(76.dp).clickable {
-            Toast.makeText(
-                context,
-                "Clicked: ${ShortCutCardItem.title}",
-                Toast.LENGTH_SHORT
-            ).show()
-            when (ShortCutCardItem.title) {
-                aiTitle -> navigateController.navigate(Screens.AIDetails.screen)
-                preferenceTitle -> navigateController.navigate(Screens.Preferences.screen)
-                logoutTitle -> {
-                    authViewModel.signOut()
-                    navigateController.navigate(Screens.Landing.screen) {
-                        // Clear the back stack so user can't go back after logging out
-                        popUpTo(0) { inclusive = true }
-                    }
-                }
-                redeemTitle -> navigateController.navigate(Screens.RedeemGifts.screen)
-                bookMarkTitle -> navigateController.navigate(Screens.DocumentBookmarkedList.screen)
-                uploadTitle -> navigateController.navigate(Screens.DocumentUploadedList.screen)
-                downloadTitle -> navigateController.navigate(Screens.DocumentDownloadedList.screen)
-                previewTitle -> navigateController.navigate(Screens.ProfilePreview.screen)
-            }
-        },
+    val colorScheme = MaterialTheme.colorScheme
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        tonalElevation = 4.dp
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
-            verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+        Card(
+            modifier = Modifier.size(76.dp).clickable {
+                Toast.makeText(
+                    context,
+                    "Clicked: ${ShortCutCardItem.title}",
+                    Toast.LENGTH_SHORT
+                ).show()
+                when (ShortCutCardItem.title) {
+                    aiTitle -> navigateController.navigate(Screens.AIDetails.screen)
+                    preferenceTitle -> navigateController.navigate(Screens.Preferences.screen)
+                    logoutTitle -> {
+                        authViewModel.signOut()
+                        navigateController.navigate(Screens.Landing.screen) {
+                            // Clear the back stack so user can't go back after logging out
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+
+                    redeemTitle -> navigateController.navigate(Screens.RedeemGifts.screen)
+                    bookMarkTitle -> navigateController.navigate(Screens.DocumentBookmarkedList.screen)
+                    uploadTitle -> navigateController.navigate(Screens.DocumentUploadedList.screen)
+                    downloadTitle -> navigateController.navigate(Screens.DocumentDownloadedList.screen)
+                    previewTitle -> navigateController.navigate(Screens.ProfilePreview.screen)
+                }
+            },
+            shape = RoundedCornerShape(10.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         ) {
-            Image(
-                modifier = Modifier
-                    .width(45.dp)
-                    .height(45.dp),
-                contentDescription = "shortcut_item",
-                painter = painterResource(id = ShortCutCardItem.icon),
-            )
-            Spacer(modifier = Modifier.height(1.dp))
-            Text(
-                text = ShortCutCardItem.title,
-                fontSize = 10.sp,
-            )
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+                verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+            ) {
+                Image(
+                    modifier = Modifier
+                        .width(45.dp)
+                        .height(45.dp),
+                    contentDescription = "shortcut_item",
+                    painter = painterResource(id = ShortCutCardItem.icon),
+                )
+                Spacer(modifier = Modifier.height(1.dp))
+                Text(
+                    text = ShortCutCardItem.title,
+                    fontSize = 10.sp,
+                )
+            }
         }
     }
 }

@@ -34,15 +34,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.comp4521_ustrade.app.components.CustomTextField
 import com.example.comp4521_ustrade.app.components.DropdownList
+import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DocumentUploadScreen(
     onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navViewModel: NavViewModel
 ) {
     var subject by remember { mutableStateOf("") }
     var subjectCode by remember { mutableStateOf("") }
@@ -89,7 +92,11 @@ fun DocumentUploadScreen(
             TopAppBar(
                 title = { Text("Upload Document") },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = {
+                        navViewModel.setSelectedScreen(Screens.Home)
+                        onNavigateBack()
+                    }
+                    ) {
                         Icon(Icons.Default.ArrowBack, "Back")
                     }
                 },

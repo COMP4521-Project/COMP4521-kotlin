@@ -16,14 +16,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.comp4521_ustrade.app.screens.Screens
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
@@ -33,7 +32,7 @@ import com.example.comp4521_ustrade.ui.theme.USTWhite
 
 
 @Composable
-fun USTBottomBar(navigationController: androidx.navigation.NavHostController = rememberNavController(), navViewModel: NavViewModel) {
+fun USTBottomBar(navigationController: NavController = rememberNavController(), navViewModel: NavViewModel) {
     val context = LocalContext.current
 
     val selectedScreen = navViewModel.selectedScreen.observeAsState(Screens.Home)

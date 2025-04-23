@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.app.components.DocumentCard
 import com.example.comp4521_ustrade.app.models.Document
+import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,7 +43,8 @@ fun DocumentListScreen(
     pageTitle: String,
     onNavigateBack: () -> Unit,
     onDocumentClick: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navViewModel: NavViewModel
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
@@ -64,7 +66,10 @@ fun DocumentListScreen(
                 TopAppBar(
                     title = { Text("Documents") },
                     navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
+                        IconButton(onClick = {
+                            navViewModel.setSelectedScreen(Screens.Home)
+                            onNavigateBack()
+                        }) {
                             Icon(Icons.Default.ArrowBack, "Back")
                         }
                     },

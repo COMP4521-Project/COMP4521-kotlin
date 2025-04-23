@@ -7,6 +7,7 @@ import NotificationSettingsScreen
 import PreferencesScreen
 import ProfilePreviewScreen
 import Settings
+import android.content.Context
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -17,14 +18,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -59,6 +67,16 @@ fun HomePage(
 
     val userViewModel : UserViewModel = viewModel()
     val navViewModel : NavViewModel = viewModel()
+
+    val context = LocalContext.current
+
+    val sharedPreferences = remember {
+        context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    }
+    var isDarkModeEnabled by remember {
+        mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
+    }
+
 
     val onOpenDrawer: () -> Unit = {
         scope.launch {
@@ -99,7 +117,7 @@ fun HomePage(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color.White)
+                            .background(colorScheme.background)
                             .padding(innerPadding)
                     ) {
 
@@ -113,26 +131,16 @@ fun HomePage(
                 DocumentListScreen(
                 pageTitle = "downloaded",
                 onNavigateBack = { navigationController.navigateUp() },
-                onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
+                    navViewModel = navViewModel
             )}
             composable(Screens.Profile.screen) {
-                Scaffold(
-                    bottomBar = { USTBottomBar(navigationController, navViewModel = navViewModel) },
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(USTBlue)
-                            .padding(innerPadding)
-                    ) {
-                        Profile(
-                            navigationController = navigationController,
-                            authViewModel = authViewModel,
-                            userViewModel = userViewModel
-                        )
-
-                    }
-                }
+                  Profile(
+                        navigationController = navigationController,
+                        authViewModel = authViewModel,
+                        userViewModel = userViewModel,
+                        navViewModel = navViewModel
+                  )
             }
 
 
@@ -145,6 +153,7 @@ fun HomePage(
             }
             composable(Screens.Notification.screen) { Notification(
                 onNavigateBack = { navigationController.navigateUp() },
+                navViewModel = navViewModel
             ) }
             composable(Screens.Search.screen) {
                 Scaffold(
@@ -247,7 +256,10 @@ fun HomePage(
             // Document Upload
             composable(Screens.DocumentUpload.screen) {
                 DocumentUploadScreen(
-                    onNavigateBack = { navigationController.navigateUp() }
+                    onNavigateBack = {
+                        navigationController.navigateUp()} ,
+                    navViewModel = navViewModel
+
                 )
             }
 
@@ -256,7 +268,8 @@ fun HomePage(
                 DocumentListScreen(
                     pageTitle = "bookmarked",
                     onNavigateBack = { navigationController.navigateUp() },
-                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
+                    navViewModel = navViewModel
                 )
             }
 
@@ -265,7 +278,8 @@ fun HomePage(
                 DocumentListScreen(
                     pageTitle = "uploaded",
                     onNavigateBack = { navigationController.navigateUp() },
-                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
+                    navViewModel = navViewModel
                 )
             }
 
@@ -274,7 +288,8 @@ fun HomePage(
                 DocumentListScreen(
                     pageTitle = "downloaded",
                     onNavigateBack = { navigationController.navigateUp() },
-                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
+                    navViewModel = navViewModel
                 )
             }
             
@@ -283,7 +298,8 @@ fun HomePage(
                 DocumentListScreen(
                     pageTitle = "favorites",
                     onNavigateBack = { navigationController.navigateUp() },
-                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
+                    navViewModel = navViewModel
                 )
             }
             // Search results document List
@@ -291,7 +307,8 @@ fun HomePage(
                 DocumentListScreen(
                     pageTitle = "search results",
                     onNavigateBack = { navigationController.navigateUp() }, 
-                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
+                    navViewModel = navViewModel
                 )
             }
 
@@ -306,7 +323,8 @@ fun HomePage(
                 DocumentListScreen(
                     pageTitle = subject,
                     onNavigateBack = { navigationController.navigateUp() },
-                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) }
+                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
+                    navViewModel = navViewModel
                 )
             }
         }

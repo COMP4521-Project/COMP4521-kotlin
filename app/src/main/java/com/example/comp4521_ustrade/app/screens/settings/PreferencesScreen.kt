@@ -33,6 +33,7 @@ import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.DropdownList
 import com.example.comp4521_ustrade.app.components.ToggleButton
 import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,10 +49,10 @@ fun PreferencesScreen(
         context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
     }
 
-    var lightModeEnabled by remember { mutableStateOf(false) }
     var selectedLanguage by remember {
         mutableStateOf(sharedPreferences.getString("selected_language", "English") ?: "English")
     }
+
 
     var expanded by remember { mutableStateOf(false) }
     val languages = listOf("English", "Traditional Chinese", "Simplified Chinese")
@@ -66,7 +67,7 @@ fun PreferencesScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = USTBlue,
+                        containerColor = (if (isDarkTheme) USTBlue_dark else USTBlue),
                         titleContentColor = Color.White,
                         navigationIconContentColor = Color.White
                     )
@@ -88,7 +89,10 @@ fun PreferencesScreen(
                     ToggleButton(
                         text = "Light mode",
                         checked = isDarkTheme,
-                        onCheckedChange = onThemeChange
+                        onCheckedChange = {
+                            onThemeChange(it)
+                            sharedPreferences.edit().putBoolean("is_dark_theme", it).apply()
+                        }
                     )
                 }
             }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -40,7 +41,7 @@ fun DisplayShortCutCards(
         ShortCutCardItem(R.drawable.preference, stringResource(R.string.Preference)),
         ShortCutCardItem(R.drawable.logout, stringResource(R.string.Logout))
     )
-
+    
     Box(modifier = Modifier
         .fillMaxWidth()
         .height(200.dp)
