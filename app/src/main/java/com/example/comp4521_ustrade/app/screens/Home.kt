@@ -163,7 +163,7 @@ fun HomePage(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color.White)
+                            .background(colorScheme.background)
                             .padding(innerPadding)
                     ) {
                         // Add content here if needed

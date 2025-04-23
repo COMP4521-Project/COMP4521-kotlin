@@ -1,12 +1,17 @@
 package com.example.comp4521_ustrade.app.screens
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.History
@@ -38,6 +43,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 import com.example.comp4521_ustrade.ui.theme.USTgray
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,41 +55,52 @@ fun Search(modifier: Modifier = Modifier) {
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(true) }
 
-    var searchHistory = listOf("COMP", "Kotlin", "Compose","Java")
+    val searchHistory = listOf("COMP", "Kotlin", "Compose", "Java")
 
     val focusRequester = remember { FocusRequester() }
-
-    //handle keyboard focus
     val focusManager = LocalFocusManager.current
 
 
+    val sharedPreferences = remember {
+        context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    }
+
+    var isDarkModeEnabled by remember {
+        mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
+    }
+
     LaunchedEffect(active) {
         if (active) {
-            focusRequester.requestFocus() // Request focus when active
+            focusRequester.requestFocus()
         }
     }
 
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxSize()
             .pointerInput(Unit) {
                 detectTapGestures(onTap = {
-                    focusManager.clearFocus() // Clear focus to hide the keyboard
+                    focusManager.clearFocus()
                 })
             },
         contentAlignment = Alignment.TopCenter
-
     ) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .height(24.dp)
+            .background(if(isDarkModeEnabled) USTBlue_dark else USTBlue)){
+
+        }
         SearchBar(
             modifier = modifier
-                .focusRequester(focusRequester) // Attach the focus requester
+                .fillMaxWidth()
+                .padding(top = 24.dp)
+                .focusRequester(focusRequester)
                 .onFocusChanged { if (it.isFocused) active = true },
-
             query = query,
             onQueryChange = { query = it },
             onSearch = {
-                //trigger a toast here
                 Toast.makeText(context, "Search for $query", Toast.LENGTH_SHORT).show()
-
             },
             active = active,
             onActiveChange = { active = it },
@@ -90,55 +108,59 @@ fun Search(modifier: Modifier = Modifier) {
                 Text(text = "Search Resources")
             },
             shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
-            colors = SearchBarDefaults.colors(containerColor = if (active) Color.White else USTgray),
+            colors = SearchBarDefaults.colors(
+                containerColor = colorScheme.background
+            ),
             leadingIcon = {
                 Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon")
             },
             trailingIcon = {
                 if (active) {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {
+                        query = ""
+                        active = false
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Clear",
-                            modifier = Modifier.clickable {
-                                query = ""
-                                active = false
-                            }
+                            contentDescription = "Clear"
                         )
-
                     }
                 }
             },
+
         ) {
-            Text(
-                text = "Recent Searches",
+            Column(
                 modifier = Modifier
-                    .padding(8.dp),
-                fontSize = 18.sp,
-            )
-            searchHistory.takeLast(3).forEach { item ->
-                ListItem(
-                    headlineContent = { Text(text = item) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = Icons.Default.History,
-                            contentDescription = "History",
-                        )
-                    },
-                    colors = ListItemDefaults.colors(
-                        headlineColor = Color.Black,
-                        leadingIconColor = Color.Black,
-                        containerColor = Color.Transparent,
-                    ),
-
-                    modifier = Modifier.clickable {
-                        query = item
-                    }
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = "Recent Searches",
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
-
+                searchHistory.takeLast(3).forEach { item ->
+                    ListItem(
+                        headlineContent = { Text(text = item) },
+                        leadingContent = {
+                            Icon(
+                                imageVector = Icons.Default.History,
+                                contentDescription = "History"
+                            )
+                        },
+                        colors = ListItemDefaults.colors(
+                            headlineColor = colorScheme.onBackground,
+                            leadingIconColor = colorScheme.onBackground,
+                            containerColor = Color.Transparent
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                query = item
+                            }
+                    )
+                }
             }
         }
     }
-
-
 }
