@@ -24,6 +24,8 @@ val Badges3 = Color(0xFF5865F2)
 
 
 // Dark Theme Colors
+val USTBlue_lightdark = Color(0xFF3E5792)
+val USTgray_dark = Color(0xFFC0C0C0) // Darker version of USTgray
 val USTBlue_dark = Color(0xFF364878)  // Darker shade of USTBlue
 val USTDarkBackground = Color(0xFF121212)  // Standard dark theme background
 val USTWhite_dark = Color(0xFFB0B0B0) // Darker shade of USTWhite

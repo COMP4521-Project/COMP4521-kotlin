@@ -1,3 +1,4 @@
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,10 +31,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,6 +48,7 @@ import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.screens.Screens
 import com.example.comp4521_ustrade.auth.AuthViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,6 +57,17 @@ fun Settings(
     navigationController: NavController,
     authViewModel: AuthViewModel
 ) {
+
+    val context = LocalContext.current
+
+    val sharedPreferences = remember {
+        context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    }
+
+    var isDarkModeEnabled by remember {
+        mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -60,7 +78,7 @@ fun Settings(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = USTBlue,
+                        containerColor = if(isDarkModeEnabled) USTBlue_dark else USTBlue,
                         titleContentColor = Color.White,
                         navigationIconContentColor = Color.White
                     )

@@ -163,7 +163,7 @@ fun HomePage(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color.White)
+                            .background(colorScheme.background)
                             .padding(innerPadding)
                     ) {
                         // Add content here if needed
@@ -199,20 +199,13 @@ fun HomePage(
 
             // Setting page: Redeem Gifts
             composable(Screens.RedeemGifts.screen) {
-                Scaffold(
-                    bottomBar = { USTBottomBar(navigationController, navViewModel = navViewModel) },
-                ) { innerPadding ->
-                    Column (modifier
-                        .fillMaxSize()
-                        .background(USTBlue)
-                        .padding(innerPadding)){
                         Redeem(
                             onNavigateBack = { navigationController.navigateUp()},
                             userViewModel = userViewModel,
-                            navigationController = navigationController
+                            navigationController = navigationController,
+                            navViewModel = navViewModel
                         )
-                    }
-                }
+
             }
 
 

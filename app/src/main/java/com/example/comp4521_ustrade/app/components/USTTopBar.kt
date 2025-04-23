@@ -1,5 +1,6 @@
 package com.example.comp4521_ustrade.app.components
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -32,9 +33,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.app.screens.Screens
 import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 import com.example.comp4521_ustrade.ui.theme.USTBlue_light
+import com.example.comp4521_ustrade.ui.theme.USTBlue_lightdark
 import com.example.comp4521_ustrade.ui.theme.USTWhite
 import com.example.comp4521_ustrade.ui.theme.USTgray
+import com.example.comp4521_ustrade.ui.theme.USTgray_dark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,6 +51,12 @@ fun USTTopBar(onOpenDrawer: () -> Unit ,navigationController: androidx.navigatio
 
     val interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
 
+    val sharedPreferences = remember {
+        context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    }
+    var isDarkModeEnabled by remember {
+        mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
+    }
 
     TopAppBar(
         title = {
@@ -63,7 +73,7 @@ fun USTTopBar(onOpenDrawer: () -> Unit ,navigationController: androidx.navigatio
                     Text(text = "Search Resources", color = Color.Gray)
                 },
                 colors = SearchBarDefaults.colors(
-                    containerColor = USTgray,
+                    containerColor = (if (isDarkModeEnabled) USTgray_dark else USTgray),
                 ),
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
 
@@ -81,9 +91,19 @@ fun USTTopBar(onOpenDrawer: () -> Unit ,navigationController: androidx.navigatio
             navigationIconContentColor = USTWhite
         ),
         modifier = Modifier.background(
-            brush = Brush.verticalGradient(colors = listOf(
-                USTBlue, USTBlue_light
-            ))
+            if (isDarkModeEnabled) {
+                Brush.verticalGradient(
+                    colors = listOf(
+                        USTBlue_dark, USTBlue_lightdark
+                    )
+                )
+            } else {
+                Brush.verticalGradient(
+                    colors = listOf(
+                        USTBlue, USTBlue_light
+                    )
+                )
+            }
         ),
         navigationIcon = {
             IconButton(onClick = { /* doSomething() */ },interactionSource = interactionSource) {

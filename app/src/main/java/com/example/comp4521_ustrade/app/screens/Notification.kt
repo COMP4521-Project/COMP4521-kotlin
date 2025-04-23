@@ -1,5 +1,6 @@
 package com.example.comp4521_ustrade.app.screens
 
+import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
@@ -38,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -46,6 +48,7 @@ import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.models.NotificationData
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +60,18 @@ fun Notification(
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("All", "Read", "Unread")
     val unreadCount = getNotifications(0).count { !it.isRead }  // Count unread notifications
+
+
+    val context = LocalContext.current
+
+    val sharedPreferences = remember {
+        context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    }
+
+    var isDarkModeEnabled by remember {
+        mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
+    }
+
 
     Scaffold(
         topBar = {
@@ -71,7 +86,7 @@ fun Notification(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = USTBlue,
+                        containerColor = if(isDarkModeEnabled) USTBlue_dark else USTBlue,
                         titleContentColor = Color.White,
                         navigationIconContentColor = Color.White
                     )
