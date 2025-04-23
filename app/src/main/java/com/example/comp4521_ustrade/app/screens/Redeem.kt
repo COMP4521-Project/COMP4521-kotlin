@@ -27,8 +27,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -54,8 +56,10 @@ import androidx.navigation.NavController
 import com.example.comp4521_ustrade.app.components.ConfirmRedeemSheet
 import com.example.comp4521_ustrade.app.components.RedeemCard
 import com.example.comp4521_ustrade.app.components.RedeemDialog
+import com.example.comp4521_ustrade.app.components.USTBottomBar
 import com.example.comp4521_ustrade.app.display.DisplayPrize
 import com.example.comp4521_ustrade.app.display.displayProfileCard
+import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
@@ -64,93 +68,123 @@ import com.example.comp4521_ustrade.ui.theme.USTgray
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Redeem(modifier: Modifier = Modifier,    onNavigateBack: () -> Unit, userViewModel : UserViewModel, navigationController: NavController) {
+fun Redeem(modifier: Modifier = Modifier,
+           onNavigateBack: () -> Unit,
+           userViewModel : UserViewModel,
+           navigationController: NavController,
+           navViewModel: NavViewModel) {
     val isButtonEnabled = remember { mutableStateOf(true) }
     val isDialogVisible = remember { mutableStateOf(false) }
     val showBottomSheet = remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
+
+    val sharedPreferences = remember {
+        context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    }
+
+    var isDarkModeEnabled by remember {
+        mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
+    }
 
     val selectedPrize by userViewModel.selectedPrize.observeAsState()
     val confirmPrize by userViewModel.confirmPrize.observeAsState()
-    
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(220.dp)
-                .background(USTBlue)
+    Scaffold(
+        bottomBar = { USTBottomBar(navigationController, navViewModel = navViewModel) },
+    ) { innerPadding ->
+        Column(
+            modifier
+                .fillMaxSize()
+                .background(if (isDarkModeEnabled) USTBlue_dark else USTBlue)
+                .padding(innerPadding)
         ) {
-            Row(modifier = Modifier.fillMaxWidth().padding(start = 8.dp, end = 8.dp, top = 0.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically) {
-                Row() {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back",
-                            tint = USTWhite,
-                            modifier = Modifier.offset(0.dp,-4.dp)
-                        )
-                    }
-                }
-                Row() {
-                    IconButton(onClick = { isDialogVisible.value = true }) {
-                        Icon(
-                            imageVector = Icons.Default.Info,
-                            contentDescription = "Info Icon",
-                            tint = USTWhite
-                        )
-                    }
-                }
-            }
-            Column (modifier = Modifier.padding(top = 43.dp, start = 16.dp)){
-                Text(text = "Upload sources", fontSize = 20.sp, color = USTWhite)
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "Level up and redeem rewards", fontSize = 20.sp, color = USTWhite)
-            }
-        }
-
-        Column (modifier = Modifier.fillMaxWidth()){
             Box(
-                modifier = Modifier
-                    .width(420.dp)
-                    .height(300.dp)
-                    .padding(start = 16.dp, top = 120.dp, end = 16.dp),
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(colorScheme.background)
             ) {
-                RedeemCard(userViewModel = userViewModel)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(220.dp)
+                        .background(if (isDarkModeEnabled) USTBlue_dark else USTBlue)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = 8.dp, end = 8.dp, top = 0.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row() {
+                            IconButton(onClick = onNavigateBack) {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowBack,
+                                    contentDescription = "Back",
+                                    tint = USTWhite,
+                                    modifier = Modifier.offset(0.dp, -4.dp)
+                                )
+                            }
+                        }
+                        Row() {
+                            IconButton(onClick = { isDialogVisible.value = true }) {
+                                Icon(
+                                    imageVector = Icons.Default.Info,
+                                    contentDescription = "Info Icon",
+                                    tint = USTWhite
+                                )
+                            }
+                        }
+                    }
+                    Column(modifier = Modifier.padding(top = 43.dp, start = 16.dp)) {
+                        Text(text = "Upload sources", fontSize = 20.sp, color = USTWhite)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Level up and redeem rewards",
+                            fontSize = 20.sp,
+                            color = USTWhite
+                        )
+                    }
+                }
+
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Box(
+                        modifier = Modifier
+                            .width(420.dp)
+                            .height(300.dp)
+                            .padding(start = 16.dp, top = 120.dp, end = 16.dp),
+                    ) {
+                        RedeemCard(userViewModel = userViewModel)
+                    }
+                    if (confirmPrize != null) {
+                        Text(
+                            text = "You have selected your prize. Please go to the souvenir shop to collect your prize",
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(horizontal = 16.dp),
+                        )
+                    }
+                    DisplayPrize(
+                        userViewModel = userViewModel,
+                        onPrizeClick = {
+                            showBottomSheet.value = true
+                        })
+                }
+
+
+                // Show the info dialog if the state is true
+                if (isDialogVisible.value) {
+                    RedeemDialog(onDismissRequest = {
+                        isDialogVisible.value = false
+                        navigationController.navigate(Screens.RedeemGifts.screen)
+                    })
+                }
+
+
+                //Show bottom sheet if the state is true
+                if (showBottomSheet.value) {
+                    ConfirmRedeemSheet(modifier, selectedPrize, showBottomSheet, userViewModel)
+                }
             }
-            if (confirmPrize != null) {
-                  Text(
-                      text = "You have selected your prize. Please go to the souvenir shop to collect your prize",
-                      modifier = Modifier
-                          .align(Alignment.CenterHorizontally)
-                          .padding(horizontal = 16.dp),
-                  )
-            }
-            DisplayPrize(userViewModel = userViewModel,
-                onPrizeClick = {
-                    showBottomSheet.value = true
-                })
-        }
-
-
-        // Show the dialog if the state is true
-        if (isDialogVisible.value) {
-            RedeemDialog(onDismissRequest = {
-                isDialogVisible.value = false
-                navigationController.navigate(Screens.RedeemGifts.screen)
-            })
-        }
-
-
-
-        //Show bottom sheet if the state is true
-        if (showBottomSheet.value) {
-            ConfirmRedeemSheet(modifier, selectedPrize, showBottomSheet, userViewModel )
         }
     }
 }

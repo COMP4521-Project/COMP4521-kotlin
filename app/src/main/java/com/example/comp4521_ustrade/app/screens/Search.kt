@@ -1,6 +1,7 @@
 package com.example.comp4521_ustrade.app.screens
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -15,8 +16,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -72,7 +75,7 @@ fun Search(modifier: Modifier = Modifier) {
         SearchBar(
             modifier = modifier
                 .focusRequester(focusRequester) // Attach the focus requester
-                .onFocusChanged { if (it.isFocused) active=true },
+                .onFocusChanged { if (it.isFocused) active = true },
 
             query = query,
             onQueryChange = { query = it },
@@ -113,9 +116,9 @@ fun Search(modifier: Modifier = Modifier) {
                     .padding(8.dp),
                 fontSize = 18.sp,
             )
-            searchHistory.takeLast(3).forEach{ item ->
+            searchHistory.takeLast(3).forEach { item ->
                 ListItem(
-                    headlineContent ={ Text(text = item) },
+                    headlineContent = { Text(text = item) },
                     leadingContent = {
                         Icon(
                             imageVector = Icons.Default.History,
@@ -136,5 +139,6 @@ fun Search(modifier: Modifier = Modifier) {
             }
         }
     }
+
 
 }
