@@ -1,5 +1,6 @@
 package com.example.comp4521_ustrade.app.screens
 
+import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,15 +22,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.app.components.DisplayFields
 import com.example.comp4521_ustrade.app.components.FunctionCardsGrid
 import com.example.comp4521_ustrade.app.models.DisplayFieldItem
 import com.example.comp4521_ustrade.app.models.FunctionCardData
 import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,6 +44,17 @@ fun AIDetailsScreen(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
+    val sharedPreferences = remember {
+        context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    }
+
+    var isDarkModeEnabled by remember {
+        mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
+    }
+
+
     val fields = listOf(
         DisplayFieldItem(title = "Powered by", value = "Botpress"),
         DisplayFieldItem(title = "Version", value = "1.0.0")
@@ -66,7 +84,7 @@ fun AIDetailsScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = USTBlue,
+                    containerColor = (if (isDarkModeEnabled) USTBlue_dark else USTBlue),
                     titleContentColor = Color.White,
                     navigationIconContentColor = Color.White
                 )

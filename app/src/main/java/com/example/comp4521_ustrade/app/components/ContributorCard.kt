@@ -1,11 +1,14 @@
 package com.example.comp4521_ustrade.app.components
 
+import android.content.Context
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +27,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,11 +39,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.Badges
+import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 
 @Composable
 fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel) {
@@ -64,7 +71,25 @@ fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel
         )
     )
 
-    Card(        colors = CardDefaults.cardColors(containerColor = Color.White),
+    val context = LocalContext.current
+
+    val sharedPreferences = remember {
+        context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    }
+
+    var isDarkModeEnabled by remember {
+        mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
+    }
+
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = colorScheme.surface,
+            contentColor = colorScheme.onSurface
+        ),
+        border = BorderStroke(
+            width = 1.dp,
+            color = Color.LightGray
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),){
         Column {
@@ -137,24 +162,20 @@ fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel
                         Column {
                             Text(
                                 text = "Congratulations! You have reached the max level.",
-                                color = Color.Black,
                             )
                         }
                     } else {
                         if (uploadCount >= 12){
                             Text(
                                 text = "Upload ${20 - uploadCount} more documents to become Lv.3 contributor",
-                                color = Color.Black,
                             )
                         }else if (uploadCount >= 5){
                             Text(
                                 text = "Upload ${12 - uploadCount} more documents to to become Lv.2 contributor",
-                                color = Color.Black,
                             )
                         } else {
                             Text(
                                 text = "Upload ${5 - uploadCount} more documents to to become Lv.1 contributor",
-                                color = Color.Black,
                             )
                         }
                     }
@@ -169,12 +190,12 @@ fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ){
-                        Text(text = "Learn more", color = Color.Blue)
+                        Text(text = "Learn more", color = (if (isDarkModeEnabled) USTBlue else USTBlue_dark))
                         Icon(
                             modifier = Modifier.padding(start = 5.dp),
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = "forward",
-                            tint = Color.Blue
+                            tint = (if (isDarkModeEnabled) USTBlue else USTBlue_dark)
                         )
                     }
                 }
