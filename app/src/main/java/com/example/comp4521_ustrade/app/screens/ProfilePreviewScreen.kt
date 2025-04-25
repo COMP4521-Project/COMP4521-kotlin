@@ -1,3 +1,4 @@
+
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,11 +26,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.display.DisplayCourseCards
 import com.example.comp4521_ustrade.app.display.displayProfileCard
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
@@ -77,7 +80,7 @@ fun ProfilePreviewScreen(
                     }
                     Text(
                         modifier = Modifier.padding(top = 12.dp),
-                        text = "Profile Preview",
+                        text = stringResource(R.string.ProfilePreview),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = USTWhite
@@ -112,7 +115,7 @@ private fun AboutSection() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "About",
+            text = stringResource(R.string.About),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -143,7 +146,7 @@ private fun UploadsSection(navigateController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Uploads",
+            text = stringResource(R.string.Upload),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
         )

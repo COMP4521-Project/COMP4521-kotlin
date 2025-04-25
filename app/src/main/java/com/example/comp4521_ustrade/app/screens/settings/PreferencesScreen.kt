@@ -60,7 +60,7 @@ fun PreferencesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Preferences") },
+                title = { Text(stringResource(R.string.Preferences)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -87,7 +87,7 @@ fun PreferencesScreen(
             ) {
                 Column {
                     ToggleButton(
-                        text = "Light mode",
+                        text = stringResource(R.string.LightMode),
                         checked = isDarkTheme,
                         onCheckedChange = {
                             onThemeChange(it)

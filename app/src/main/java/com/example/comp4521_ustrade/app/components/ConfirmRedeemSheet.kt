@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +30,7 @@ import com.example.comp4521_ustrade.app.models.Prize
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTWhite
+import com.example.comp4521_ustrade.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +47,7 @@ fun ConfirmRedeemSheet(modifier: Modifier = Modifier,
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Text(text = "Redeem this prize", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text(text = stringResource(R.string.RedeemThisPrize), fontSize = 20.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(16.dp))
             selectedPrize?.let { prize ->
                 Box(
@@ -78,7 +80,7 @@ fun ConfirmRedeemSheet(modifier: Modifier = Modifier,
 
                         ),
                     ) {
-                        Text(text = "Confirm")
+                        Text(text = stringResource(R.string.Confirm))
                     }
                     Button(
                         onClick = {
@@ -89,7 +91,7 @@ fun ConfirmRedeemSheet(modifier: Modifier = Modifier,
                             contentColor = USTWhite
                         ),
                     ) {
-                        Text(text = "Cancel")
+                        Text(text = stringResource(R.string.Cancel))
                     }
                 }
             }

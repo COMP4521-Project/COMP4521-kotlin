@@ -8,7 +8,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
@@ -161,21 +161,21 @@ fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel
                     if(uploadCount >= 20) {
                         Column {
                             Text(
-                                text = "Congratulations! You have reached the max level.",
+                                text = stringResource(R.string.MaxLevel),
                             )
                         }
                     } else {
                         if (uploadCount >= 12){
                             Text(
-                                text = "Upload ${20 - uploadCount} more documents to become Lv.3 contributor",
+                                text = stringResource(R.string.UploadMore , (20 - uploadCount)),
                             )
                         }else if (uploadCount >= 5){
                             Text(
-                                text = "Upload ${12 - uploadCount} more documents to to become Lv.2 contributor",
+                                text = stringResource(R.string.UploadMore2, (15 - uploadCount)),
                             )
                         } else {
                             Text(
-                                text = "Upload ${5 - uploadCount} more documents to to become Lv.1 contributor",
+                                text = stringResource(R.string.UploadMore3, (5 - uploadCount)),
                             )
                         }
                     }
@@ -190,7 +190,7 @@ fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ){
-                        Text(text = "Learn more", color = (if (isDarkModeEnabled) USTBlue else USTBlue_dark))
+                        Text(text = stringResource(R.string.LearnMore), color = (if (isDarkModeEnabled) USTBlue else USTBlue_dark))
                         Icon(
                             modifier = Modifier.padding(start = 5.dp),
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
@@ -209,7 +209,7 @@ fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel
 
                         }
                     }) {
-                        Text(text = "Upload test")
+                        Text(text = stringResource(R.string.UploadTest))
                     }
                 }
             }
