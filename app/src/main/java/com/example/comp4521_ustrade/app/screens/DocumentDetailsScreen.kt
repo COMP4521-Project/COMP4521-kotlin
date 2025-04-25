@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.DisplayOnlyFields
@@ -89,7 +90,7 @@ fun DocumentDetailsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Document Details") },
+                title = { Text(stringResource(R.string.DocumentDetails)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -204,7 +205,7 @@ fun DocumentDetailsScreen(
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Download Document")
+                    Text(stringResource(R.string.DownloadDocument))
                 }
             }
         }

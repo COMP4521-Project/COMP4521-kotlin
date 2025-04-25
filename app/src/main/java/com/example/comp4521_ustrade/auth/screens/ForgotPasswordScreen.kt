@@ -24,8 +24,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import kotlinx.coroutines.delay
 
@@ -55,14 +57,14 @@ fun ForgotPasswordScreen(
         Spacer(modifier = Modifier.height(64.dp))
         
         Text(
-            text = "Reset Password",
+            text = stringResource(R.string.ResetPassword),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold
         )
         
         Spacer(modifier = Modifier.height(32.dp))
 
-        Text("E-mail", style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.Email), style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(8.dp))
         
         TextField(
@@ -72,7 +74,7 @@ fun ForgotPasswordScreen(
                 hasError = false 
             },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Enter your email") },
+            placeholder = { Text(stringResource(R.string.EnterYourEmail)) },
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
             isError = hasError,
@@ -86,7 +88,7 @@ fun ForgotPasswordScreen(
 
         if (hasError) {
             Text(
-                text = "Please enter your email",
+                text = stringResource(R.string.PleaseEnterYourEmail),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(start = 8.dp, top = 4.dp)
@@ -116,9 +118,9 @@ fun ForgotPasswordScreen(
         ) {
             Text(
                 text = if (countdown > 0) 
-                    "Wait ${countdown}s to resend" 
+                    stringResource(R.string.WaitCountdown, countdown)
                 else 
-                    "Send Reset Link",
+                    stringResource(R.string.SendResetLink),
                 modifier = Modifier.padding(vertical = 8.dp)
             )
         }
@@ -130,7 +132,7 @@ fun ForgotPasswordScreen(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(8.dp)
         ) {
-            Text("Back to Login")
+            Text(stringResource(R.string.BackToLogin))
         }
     }
 }

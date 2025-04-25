@@ -30,7 +30,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.DisplayFields
 import com.example.comp4521_ustrade.app.components.FunctionCardsGrid
 import com.example.comp4521_ustrade.app.models.DisplayFieldItem
@@ -56,28 +58,28 @@ fun AIDetailsScreen(
 
 
     val fields = listOf(
-        DisplayFieldItem(title = "Powered by", value = "Botpress"),
-        DisplayFieldItem(title = "Version", value = "1.0.0")
+        DisplayFieldItem(title = stringResource(R.string.PoweredBy), value = "Botpress"),
+        DisplayFieldItem(title = stringResource(R.string.Version), value = "1.0.0")
     )
     val functionCards = listOf(
         FunctionCardData(
             icon = Icons.Outlined.Navigation,
-            title = "App Navigation Support"
+            title = stringResource(R.string.AppNavigationSupport)
         ),
         FunctionCardData(
             icon = Icons.Outlined.Book,
-            title = "Resource Recommendations"
+            title = stringResource(R.string.ResourceRecommendations)
         ),
         FunctionCardData(
             icon = Icons.Outlined.QuestionAnswer,
-            title = "FAQ and Troubleshooting"
+            title = stringResource(R.string.FAQandTroubleshooting)
         )
     )
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("AI details") },
+                title = { Text(stringResource(R.string.AIDetails)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -123,7 +125,7 @@ fun AIDetailsScreen(
 
             // Functions section
             Text(
-                text = "Functions",
+                text = stringResource(R.string.Functions),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(bottom = 16.dp)
             )

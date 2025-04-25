@@ -21,7 +21,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.ToggleButton
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 
@@ -35,7 +37,7 @@ fun NotificationSettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Notification") },
+                title = { Text(stringResource(R.string.Notifications)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -62,7 +64,7 @@ fun NotificationSettingsScreen(
             ) {
                 Column {
                     ToggleButton(
-                        text = "Messages",
+                        text = stringResource(R.string.Messages),
                         checked = messagesEnabled,
                         onCheckedChange = { messagesEnabled = it }
                     )
