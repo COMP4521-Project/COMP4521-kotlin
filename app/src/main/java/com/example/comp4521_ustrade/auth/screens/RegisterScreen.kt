@@ -36,10 +36,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 
 private fun isPasswordValid(password: String): Boolean {
@@ -71,6 +73,12 @@ fun RegisterScreen(
     var lastNameError by remember { mutableStateOf<String?>(null) }
     var emailError by remember { mutableStateOf<String?>(null) }
 
+    val firstNameErrorMessage = stringResource(R.string.PleaseEnterYourFirstName)
+    val lastNameErrorMessage = stringResource(R.string.PleaseEnterYourLastName)
+    val emailErrorMessage = stringResource(R.string.PleaseEnterAValidEmailAddress)
+    val passwordErrorMessage = stringResource(R.string.PasswordMustContainAtLeast8CharactersWithUppercaseLowercaseNumberAndSymbol)
+    val confirmPasswordErrorMessage = stringResource(R.string.PasswordsDoNotMatch)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -81,14 +89,14 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(64.dp))
 
         Text(
-            text = "Registration",
+            text = stringResource(R.string.Registration),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Text("First Name", style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.FirstName), style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(8.dp))
         
         TextField(
@@ -98,7 +106,7 @@ fun RegisterScreen(
                 firstNameError = null 
             },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Enter your first name") },
+            placeholder = { Text(stringResource(R.string.EnterYourFirstName)) },
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
             isError = firstNameError != null,
@@ -121,7 +129,7 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
         
-        Text("Last Name", style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.LastName), style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(8.dp))
 
         
@@ -132,7 +140,7 @@ fun RegisterScreen(
                 lastNameError = null 
             },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Enter your last name") },
+            placeholder = { Text(stringResource(R.string.EnterYourLastName)) },
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
             isError = lastNameError != null,
@@ -155,7 +163,7 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
         
-        Text("Email", style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.Email), style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(8.dp))
 
         TextField(
@@ -165,7 +173,7 @@ fun RegisterScreen(
                 emailError = null 
             },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Enter your email") },
+            placeholder = { Text(stringResource(R.string.EnterYourEmail)) },
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
             isError = emailError != null,
@@ -192,7 +200,7 @@ fun RegisterScreen(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Password", style = MaterialTheme.typography.bodyMedium)
+            Text(stringResource(R.string.Password), style = MaterialTheme.typography.bodyMedium)
             
             IconButton(
                 onClick = { showPasswordPolicy = !showPasswordPolicy },
@@ -207,7 +215,7 @@ fun RegisterScreen(
                     modifier = Modifier.size(16.dp)
                 ) {
                     Text(
-                        text = "?",
+                        text = stringResource(R.string.QuestionMark),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.wrapContentSize(Alignment.Center)
@@ -218,7 +226,7 @@ fun RegisterScreen(
         
         if (showPasswordPolicy) {
             Text(
-                text = "Password must contain:",
+                text = stringResource(R.string.PasswordMustContain),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
@@ -228,32 +236,32 @@ fun RegisterScreen(
                 modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
             ) {
                 Text(
-                    text = "• At least 8 characters",
+                    text = stringResource(R.string.AtLeast8Characters),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "• At least one uppercase letter (A-Z)",
+                    text = stringResource(R.string.AtLeastOneUppercaseLetter),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "• At least one lowercase letter (a-z)",
+                    text = stringResource(R.string.AtLeastOneLowercaseLetter),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "• At least one number (0-9)",
+                    text = stringResource(R.string.AtLeastOneNumber),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "• At least one special character (!@#$%^&*...)",
+                    text = stringResource(R.string.AtLeastOneSpecialCharacter),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "• Maximum length of 4096 characters",
+                    text = stringResource(R.string.MaximumLengthOf4096Characters),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -266,7 +274,7 @@ fun RegisterScreen(
             value = password,
             onValueChange = { password = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Enter your password") },
+            placeholder = { Text(stringResource(R.string.EnterYourPassword)) },
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
@@ -293,14 +301,14 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
         
-        Text("Confirm Password", style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.ConfirmPassword), style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(8.dp))
 
         TextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Confirm your password") },
+            placeholder = { Text(stringResource(R.string.ConfirmPassword)) },
             visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
@@ -337,22 +345,22 @@ fun RegisterScreen(
 
                 when {
                     firstName.isBlank() -> {
-                        firstNameError = "Please enter your first name"
+                        firstNameError = firstNameErrorMessage
                     }
                     lastName.isBlank() -> {
-                        lastNameError = "Please enter your last name"
+                        lastNameError = lastNameErrorMessage
                     }
                     email.isBlank() -> {
-                        emailError = "Please enter your email"
+                        emailError = emailErrorMessage
                     }
                     !email.matches(Regex("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) -> {
-                        emailError = "Please enter a valid email address"
+                        emailError = emailErrorMessage
                     }
                     !isPasswordValid(password) -> {
-                        passwordError = "Password must contain at least 8 characters with uppercase, lowercase, number and symbol"
+                        passwordError = passwordErrorMessage
                     }
                     password != confirmPassword -> {
-                        passwordError = "Passwords do not match"
+                        passwordError = confirmPasswordErrorMessage
                     }
                     else -> {
                         onSignUp(firstName, lastName, email, password)
@@ -365,7 +373,7 @@ fun RegisterScreen(
             ),
             shape = RoundedCornerShape(8.dp)
         ) {
-            Text("Sign Up", modifier = Modifier.padding(vertical = 8.dp))
+            Text(stringResource(R.string.SignUp), modifier = Modifier.padding(vertical = 8.dp))
         }
 
         passwordError?.let { error ->
@@ -384,7 +392,7 @@ fun RegisterScreen(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(8.dp)
         ) {
-            Text("Already have an account? Sign In")
+            Text(stringResource(R.string.AlreadyHaveAnAccount))
         }
     }
 }

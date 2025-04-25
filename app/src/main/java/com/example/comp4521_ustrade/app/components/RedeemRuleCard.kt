@@ -1,7 +1,6 @@
 package com.example.comp4521_ustrade.app.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -72,7 +72,7 @@ fun DialogContent(
             }
 
             Text(
-                text = "Redeem prize rules",
+                text = stringResource(R.string.RedeemPrizeRules),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -86,18 +86,18 @@ fun DialogContent(
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Upload", fontSize = 10.sp)
-                Text("• 5 documents → Lv.1 contributor", fontSize = 10.sp)
-                Text("• 12 documents → Lv.2 contributor", fontSize = 10.sp)
-                Text("• 20 documents → Lv.3 contributor", fontSize = 10.sp)
-                Text("Each level unlocks 2 prize options to pick", fontSize = 10.sp)
+                Text(stringResource(R.string.Upload), fontSize = 10.sp)
+                Text(stringResource(R.string.Lv1Contributor), fontSize = 10.sp)
+                Text(stringResource(R.string.Lv2Contributor), fontSize = 10.sp)
+                Text(stringResource(R.string.Lv3Contributor), fontSize = 10.sp)
+                Text(stringResource(R.string.PickAPrizeBelow), fontSize = 10.sp)
                 Text(
-                    "Go to the souvenir shop to collect your prize after you press the confirm Button",
+                    stringResource(R.string.YouHaveSelectedYourPrize),
                     fontSize = 10.sp,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Start
                 )
-                Text("* Each account can only redeem one gift at most", fontSize = 10.sp)
+                Text(stringResource(R.string.EachAccountCanOnlyRedeemOneGift), fontSize = 10.sp)
             }
 
             // Action button
@@ -111,7 +111,7 @@ fun DialogContent(
                     contentColor = USTWhite
                 )
             ) {
-                Text("Got it", fontSize = 12.sp)
+                Text(stringResource(R.string.GotIt), fontSize = 12.sp)
             }
         }
     }

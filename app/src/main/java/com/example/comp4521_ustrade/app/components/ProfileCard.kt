@@ -15,7 +15,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -27,12 +26,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.models.ProfileCardData
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
-import com.example.comp4521_ustrade.ui.theme.Badges
 
 @Composable
 fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData, userViewModel : UserViewModel) {
@@ -112,7 +112,7 @@ fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData
                 ) {
                     Text(text = "$uploadCount", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Text(
-                        text = "Uploads",
+                        text = stringResource(R.string.Upload),
                         fontSize = 16.sp,
                         modifier = modifier.padding(top = 8.dp)
                     )
@@ -134,7 +134,7 @@ fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Downloads",
+                        text = stringResource(R.string.Download),
                         fontSize = 16.sp,
                         modifier = modifier.padding(top = 8.dp)
                     )

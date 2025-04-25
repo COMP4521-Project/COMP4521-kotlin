@@ -18,10 +18,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.comp4521_ustrade.app.models.DrawerItem
 import kotlinx.coroutines.launch
+import com.example.comp4521_ustrade.R
 
 //side navigation drawer
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,7 +47,7 @@ fun DrawerContent(
             .padding(vertical = 32.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "Select by Subjects")
+        Text(text = stringResource(R.string.SelectBySubjects))
     }
     items.forEach { item ->
         NavigationDrawerItem(

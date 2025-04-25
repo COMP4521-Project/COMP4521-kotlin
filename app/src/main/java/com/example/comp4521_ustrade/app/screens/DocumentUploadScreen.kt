@@ -34,9 +34,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.CustomTextField
 import com.example.comp4521_ustrade.app.components.DropdownList
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
@@ -72,7 +73,7 @@ fun DocumentUploadScreen(
         "COMP", "CPEG", "CSIT", "IEDA", "MECH", "CIVL", "ELEC"
     )
     val years = listOf("2024", "2023", "2022", "2021")
-    val semesters = listOf("Fall", "Spring", "Summer")
+    val semesters = listOf("Fall", "Spring", "Summer", "Winter")
 
     // Calculate dynamic spacing based on dropdown state
     val subjectSpacing = if (isSubjectExpanded) (subjects.size * 48).dp else 8.dp
@@ -104,7 +105,7 @@ fun DocumentUploadScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Upload Document") },
+                title = { Text(stringResource(R.string.UploadDocument)) },
                 navigationIcon = {
                     IconButton(onClick = {
                         navViewModel.setSelectedScreen(Screens.Home)
@@ -160,7 +161,7 @@ fun DocumentUploadScreen(
                                 textAlign = TextAlign.Center
                             )
                             Text(
-                                text = "Click to change file",
+                                text = stringResource(R.string.ClickToChangeFile),
                                 color = Color.Gray,
                                 style = MaterialTheme.typography.bodySmall
                             )
@@ -171,12 +172,12 @@ fun DocumentUploadScreen(
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Text(
-                                "Click to Upload or Take a photo",
+                                stringResource(R.string.ClickToUploadOrTakePhoto),
                                 color = MaterialTheme.colorScheme.primary,
                                 textAlign = TextAlign.Center
                             )
                             Text(
-                                "(Max File size: 25 MB)",
+                                stringResource(R.string.MaxFileSize),
                                 color = Color.Gray,
                                 style = MaterialTheme.typography.bodySmall
                             )
@@ -188,7 +189,7 @@ fun DocumentUploadScreen(
             item {
                 Column {
                     DropdownList(
-                        title = "Subject",
+                        title = stringResource(R.string.Subject),
                         selectedItem = subject.ifEmpty { "Select subject" },
                         onItemSelected = { 
                             subject = it
@@ -205,7 +206,7 @@ fun DocumentUploadScreen(
             item {
                 Column {
                     DropdownList(
-                        title = "Subject Code",
+                        title = stringResource(R.string.SubjectCode),
                         selectedItem = subjectCode.ifEmpty { "Select subject code" },
                         onItemSelected = { 
                             subjectCode = it
@@ -222,7 +223,7 @@ fun DocumentUploadScreen(
             item {
                 Column {
                     DropdownList(
-                        title = "Year",
+                        title = stringResource(R.string.Year),
                         selectedItem = year.ifEmpty { "Select year" },
                         onItemSelected = { 
                             year = it
@@ -239,7 +240,7 @@ fun DocumentUploadScreen(
             item {
                 Column {
                     DropdownList(
-                        title = "Semester",
+                        title = stringResource(R.string.Semester),
                         selectedItem = semester.ifEmpty { "Select semester" },
                         onItemSelected = { 
                             semester = it
@@ -257,8 +258,8 @@ fun DocumentUploadScreen(
                 CustomTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = "Title",
-                    placeholder = "Enter document title",
+                    label = stringResource(R.string.Title),
+                    placeholder = stringResource(R.string.EnterDocumentTitle),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -267,8 +268,8 @@ fun DocumentUploadScreen(
                 CustomTextField(
                     value = professor,
                     onValueChange = { professor = it },
-                    label = "Professor (optional)",
-                    placeholder = "Enter professor name",
+                    label = stringResource(R.string.Professor),
+                    placeholder = stringResource(R.string.EnterProfessorName),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -277,8 +278,8 @@ fun DocumentUploadScreen(
                 CustomTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = "Description (optional)",
-                    placeholder = "Enter document description",
+                    label = stringResource(R.string.Description),
+                    placeholder = stringResource(R.string.EnterDocumentDescription),
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -293,7 +294,7 @@ fun DocumentUploadScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = isFormValid
                 ) {
-                    Text("Upload")
+                    Text(stringResource(R.string.Upload))
                 }
             }
 
@@ -301,12 +302,12 @@ fun DocumentUploadScreen(
             item {
                 if (!isFormValid) {
                     val errorMessage = buildString {
-                        if (!isFileUploaded) append("• Please upload a file\n")
-                        if (subject.isBlank()) append("• Subject is required\n")
-                        if (subjectCode.isBlank()) append("• Subject code is required\n")
-                        if (year.isBlank()) append("• Year is required\n")
-                        if (semester.isBlank()) append("• Semester is required\n")
-                        if (title.isBlank()) append("• Title is required\n")
+                        if (!isFileUploaded) append(stringResource(R.string.PleaseUploadAFile) + "\n")
+                        if (subject.isBlank()) append(stringResource(R.string.SubjectIsRequired) + "\n")
+                        if (subjectCode.isBlank()) append(stringResource(R.string.SubjectCodeIsRequired) + "\n")
+                        if (year.isBlank()) append(stringResource(R.string.YearIsRequired) + "\n")
+                        if (semester.isBlank()) append(stringResource(R.string.SemesterIsRequired) + "\n")
+                        if (title.isBlank()) append(stringResource(R.string.TitleIsRequired) + "\n")
                     }
                     
                     if (errorMessage.isNotEmpty()) {

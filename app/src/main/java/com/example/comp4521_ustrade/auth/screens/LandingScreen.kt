@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.ui.theme.USTBlue
@@ -57,7 +58,7 @@ fun LandingScreen(
             shape = RoundedCornerShape(8.dp)
         ) {
             Text(
-                text="Register",
+                text= stringResource(R.string.Registration),
                 modifier = Modifier.padding(vertical = 8.dp)
             )
         }
@@ -75,7 +76,7 @@ fun LandingScreen(
             shape = RoundedCornerShape(8.dp)
         ) {
             Text(
-                text="Login",
+                text=stringResource(R.string.Login),
                 modifier = Modifier.padding(vertical = 8.dp)
             )
         }
