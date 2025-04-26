@@ -70,7 +70,7 @@ fun AuthNavigation(
         composable(AuthScreen.Register.route) {
             RegisterScreen(
                 onSignUp = { firstName, lastName,email, password ->
-                    authViewModel.signUp(email, password, firstName, lastName)
+                    authViewModel.signUp(email, password, firstName, lastName, "")
                     print("$firstName $lastName")
                 },
                 onNavigateToLogin = {

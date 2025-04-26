@@ -8,21 +8,36 @@ class UserRepository {
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val usersCollection = firestore.collection("users")
 
-    suspend fun addUser(user: User): Result<Unit> {
-        return try {
+    suspend fun addUser(user: User) {
+        try {
             usersCollection.document(user.uid).set(user).await()
-            Result.success(Unit)
         } catch (e: Exception) {
-            Result.failure(e)
+            // Handle error silently or log it
+            e.printStackTrace()
+            throw e
         }
     }
 
-    suspend fun updateUser(uid: String, updates: Map<String, Any>): Result<Unit> {
-        return try {
+    suspend fun updateUser(uid: String, updates: Map<String, Any>) {
+        try {
             usersCollection.document(uid).update(updates).await()
-            Result.success(Unit)
         } catch (e: Exception) {
-            Result.failure(e)
+            // Handle error silently or log it
+            e.printStackTrace()
+            throw e
+        }
+    }
+
+    suspend fun getUser(uid: String): User? {
+        return try {
+            val document = usersCollection.document(uid).get().await()
+            if (document.exists()) {
+                document.toObject(User::class.java)
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 }
