@@ -14,9 +14,9 @@ import kotlinx.coroutines.tasks.await
 import androidx.core.net.toUri
 import com.google.firebase.messaging.FirebaseMessaging
 
-class AuthViewModel(val userRepository: UserRepository) : ViewModel() {
+class AuthViewModel() : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
-    
+    val userRepository = UserRepository()
     private val _authState = MutableStateFlow<AuthState>(AuthState.Initial)
     val authState: StateFlow<AuthState> = _authState
     
@@ -53,14 +53,15 @@ class AuthViewModel(val userRepository: UserRepository) : ViewModel() {
         }
     }
     
-    fun signUp(email: String, password: String, firstName: String, lastName: String, profilePic: String) {
+    fun signUp(email: String, password: String, firstName: String, lastName: String, profilePic: String?) {
         viewModelScope.launch {
             try {
                 _authState.value = AuthState.Loading
                 auth.createUserWithEmailAndPassword(email, password).await()
                 _user.value = auth.currentUser
-                createUser(firstName, lastName, profilePic)
                 updateUserAuthProfile(firstName, lastName, profilePic)
+                val token = FirebaseMessaging.getInstance().token.await() // Get token synchronously
+                createUser(firstName, lastName, profilePic, token)
                 _authState.value = AuthState.Success
             } catch (e: Exception) {
                 _authState.value = AuthState.Error(e.message ?: "Sign up failed")
@@ -68,23 +69,22 @@ class AuthViewModel(val userRepository: UserRepository) : ViewModel() {
         }
     }
 
-    private fun createUser(firstName: String, lastName: String, profilePic: String?) {
-        viewModelScope.launch {
-            try {
-                val currentUser = _user.value
-                if (currentUser != null) {
-                    val newUser = User(
-                        uid = currentUser.uid,
-                        first_name = firstName,
-                        last_name = lastName,
-                        profile_pic = profilePic
-                    )
-                    userRepository.addUser(newUser)
-                    print("User profile created in Firestore")
-                }
-            } catch (e: Exception) {
-                print("Error creating user profile: ${e.message}")
+    private suspend fun createUser(firstName: String, lastName: String, profilePic: String?, fcmToken: String) {
+        try {
+            val currentUser = _user.value
+            if (currentUser != null) {
+                val newUser = User(
+                    uid = currentUser.uid,
+                    first_name = firstName,
+                    last_name = lastName,
+                    profile_pic = profilePic,
+                    fcm_token = fcmToken
+                )
+                userRepository.addUser(newUser)
+                print("User profile created in Firestore")
             }
+        } catch (e: Exception) {
+            print("Error creating user profile: ${e.message}")
         }
     }
     
@@ -99,7 +99,6 @@ class AuthViewModel(val userRepository: UserRepository) : ViewModel() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     print("User profile updated.")
-                    createUser(firstName, lastName, profilePic)  // Create/update Firestore profile after Auth update
                 }
             }
     }
