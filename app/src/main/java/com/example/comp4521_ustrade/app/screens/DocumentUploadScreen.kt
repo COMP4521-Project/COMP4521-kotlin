@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -49,7 +50,6 @@ import androidx.core.content.ContextCompat
 import android.util.Log
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
-import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -66,7 +66,6 @@ import android.provider.MediaStore
 import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
-import android.net.Uri
 import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -80,6 +79,16 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.Divider
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import android.content.Intent
+import android.net.Uri
+import androidx.core.content.FileProvider
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -99,6 +108,8 @@ fun DocumentUploadScreen(
     var fileName by remember { mutableStateOf<String?>(null) }
     var capturedPhotos by remember { mutableStateOf<List<ImageBitmap>>(emptyList()) }
     var imageLoadingError by remember { mutableStateOf<String?>(null) }
+    var showUploadOptions by remember { mutableStateOf(false) }
+    var selectedFiles by remember { mutableStateOf<List<Uri>>(emptyList()) }
 
     // Add states for dropdown expansions
     var isSubjectExpanded by remember { mutableStateOf(false) }
@@ -123,11 +134,11 @@ fun DocumentUploadScreen(
     // Check if all required fields are filled and file is uploaded
     val isFormValid = remember(subject, subjectCode, year, semester, title, isFileUploaded) {
         subject.isNotBlank() &&
-        subjectCode.isNotBlank() &&
-        year.isNotBlank() &&
-        semester.isNotBlank() &&
-        title.isNotBlank() &&
-        isFileUploaded
+                subjectCode.isNotBlank() &&
+                year.isNotBlank() &&
+                semester.isNotBlank() &&
+                title.isNotBlank() &&
+                isFileUploaded
     }
 
     val context = LocalContext.current
@@ -151,6 +162,75 @@ fun DocumentUploadScreen(
         rememberPermissionState(Manifest.permission.READ_MEDIA_IMAGES)
     } else {
         rememberPermissionState(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    }
+
+    val sheetState = rememberModalBottomSheetState()
+
+    // Add state for PDF file
+    var pdfFile by remember { mutableStateOf<File?>(null) }
+    var showPdfPreview by remember { mutableStateOf(false) }
+
+    // File picker launcher
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let {
+            try {
+                val mimeType = context.contentResolver.getType(uri)
+                Log.d("FilePicker", "Selected file MIME type: $mimeType")
+
+                when {
+                    mimeType?.startsWith("image/") == true -> {
+                        // Handle image files
+                        context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                            val bitmap = BitmapFactory.decodeStream(inputStream)
+                            capturedPhotos = capturedPhotos + bitmap.asImageBitmap()
+                            isFileUploaded = true
+                            fileName = "Image_${System.currentTimeMillis()}.jpg"
+                        }
+                    }
+                    mimeType == "application/pdf" -> {
+                        // Handle PDF files
+                        selectedFiles = selectedFiles + uri
+                        isFileUploaded = true
+
+                        // Get the original filename
+                        val cursor = context.contentResolver.query(uri, null, null, null, null)
+                        cursor?.use {
+                            if (it.moveToFirst()) {
+                                val displayNameIndex = it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
+                                if (displayNameIndex != -1) {
+                                    fileName = it.getString(displayNameIndex)
+                                }
+                            }
+                        }
+
+                        if (fileName == null) {
+                            fileName = "Document_${System.currentTimeMillis()}.pdf"
+                        }
+
+                        // Create a copy in app's private storage
+                        val newPdfFile = File(context.filesDir, fileName!!)
+
+                        context.contentResolver.openInputStream(uri)?.use { input ->
+                            FileOutputStream(newPdfFile).use { output ->
+                                input.copyTo(output)
+                            }
+                        }
+
+                        pdfFile = newPdfFile
+                        Log.d("FilePicker", "PDF file saved: ${newPdfFile.absolutePath}")
+                    }
+                    else -> {
+                        Log.e("FilePicker", "Unsupported file type: $mimeType")
+                        imageLoadingError = "Unsupported file type: $mimeType"
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("FilePicker", "Error processing file: ${e.message}")
+                imageLoadingError = e.message
+            }
+        }
     }
 
     // Create a function to generate a unique filename
@@ -178,10 +258,10 @@ fun DocumentUploadScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = if(isDarkModeEnabled) USTBlue_dark else USTBlue,
-                        titleContentColor = Color.White,
-                        navigationIconContentColor = Color.White
-                    )
+                    containerColor = if(isDarkModeEnabled) USTBlue_dark else USTBlue,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White
+                )
             )
         }
     ) { padding ->
@@ -200,25 +280,16 @@ fun DocumentUploadScreen(
                         .height(240.dp)
                         .border(
                             width = 1.dp,
-                            color = if (isFileUploaded) MaterialTheme.colorScheme.primary 
-                                   else Color.Gray.copy(alpha = 0.5f),
+                            color = if (isFileUploaded) MaterialTheme.colorScheme.primary
+                            else Color.Gray.copy(alpha = 0.5f),
                             shape = RoundedCornerShape(8.dp)
                         )
-                        .clickable { 
-                            if (cameraPermissionState.status.isGranted && storagePermissionState.status.isGranted) {
-                                showCamera = true
-                            } else {
-                                if (!cameraPermissionState.status.isGranted) {
-                                    cameraPermissionState.launchPermissionRequest()
-                                }
-                                if (!storagePermissionState.status.isGranted) {
-                                    storagePermissionState.launchPermissionRequest()
-                                }
-                            }
+                        .clickable {
+                            showUploadOptions = true
                         },
                     contentAlignment = Alignment.Center
                 ) {
-                    if (capturedPhotos.isNotEmpty()) {
+                    if (capturedPhotos.isNotEmpty() || pdfFile != null) {
                         Row(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -236,7 +307,50 @@ fun DocumentUploadScreen(
                                     contentScale = ContentScale.Crop
                                 )
                             }
-                            // Add button to take more photos
+
+                            pdfFile?.let { file ->
+                                Box(
+                                    modifier = Modifier
+                                        .height(200.dp)
+                                        .width(150.dp)
+                                        .border(
+                                            width = 1.dp,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
+                                        .clickable {
+                                            val uri = FileProvider.getUriForFile(
+                                                context,
+                                                "${context.packageName}.provider",
+                                                file
+                                            )
+                                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                                setDataAndType(uri, "application/pdf")
+                                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                            }
+                                            context.startActivity(intent)
+                                        },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        Icon(
+                                            Icons.Default.Description,
+                                            contentDescription = "PDF Preview",
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                        Text(
+                                            "View PDF",
+                                            color = MaterialTheme.colorScheme.primary,
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                }
+                            }
+
+                            // Add button to take more photos or add more files
                             Box(
                                 modifier = Modifier
                                     .height(200.dp)
@@ -246,9 +360,9 @@ fun DocumentUploadScreen(
                                         color = MaterialTheme.colorScheme.primary,
                                         shape = RoundedCornerShape(8.dp)
                                     )
-                                    .clickable { 
+                                    .clickable {
                                         if (cameraPermissionState.status.isGranted && storagePermissionState.status.isGranted) {
-                                            showCamera = true
+                                            showUploadOptions = true
                                         }
                                     },
                                 contentAlignment = Alignment.Center
@@ -259,11 +373,11 @@ fun DocumentUploadScreen(
                                 ) {
                                     Icon(
                                         Icons.Default.Add,
-                                        contentDescription = "Add Photo",
+                                        contentDescription = "Add More",
                                         tint = MaterialTheme.colorScheme.primary
                                     )
                                     Text(
-                                        "Add Photo",
+                                        "Add More",
                                         color = MaterialTheme.colorScheme.primary,
                                         textAlign = TextAlign.Center
                                     )
@@ -300,7 +414,7 @@ fun DocumentUploadScreen(
                     DropdownList(
                         title = stringResource(R.string.Subject),
                         selectedItem = subject.ifEmpty { "Select subject" },
-                        onItemSelected = { 
+                        onItemSelected = {
                             subject = it
                             isSubjectExpanded = false
                         },
@@ -317,7 +431,7 @@ fun DocumentUploadScreen(
                     DropdownList(
                         title = stringResource(R.string.SubjectCode),
                         selectedItem = subjectCode.ifEmpty { "Select subject code" },
-                        onItemSelected = { 
+                        onItemSelected = {
                             subjectCode = it
                             isSubjectCodeExpanded = false
                         },
@@ -334,7 +448,7 @@ fun DocumentUploadScreen(
                     DropdownList(
                         title = stringResource(R.string.Year),
                         selectedItem = year.ifEmpty { "Select year" },
-                        onItemSelected = { 
+                        onItemSelected = {
                             year = it
                             isYearExpanded = false
                         },
@@ -351,7 +465,7 @@ fun DocumentUploadScreen(
                     DropdownList(
                         title = stringResource(R.string.Semester),
                         selectedItem = semester.ifEmpty { "Select semester" },
-                        onItemSelected = { 
+                        onItemSelected = {
                             semester = it
                             isSemesterExpanded = false
                         },
@@ -418,7 +532,7 @@ fun DocumentUploadScreen(
                         if (semester.isBlank()) append(stringResource(R.string.SemesterIsRequired) + "\n")
                         if (title.isBlank()) append(stringResource(R.string.TitleIsRequired) + "\n")
                     }
-                    
+
                     if (errorMessage.isNotEmpty()) {
                         Text(
                             text = errorMessage,
@@ -435,17 +549,107 @@ fun DocumentUploadScreen(
             }
         }
 
-        // Add permission result handlers
-        LaunchedEffect(cameraPermissionState.status.isGranted, storagePermissionState.status.isGranted) {
-            if (cameraPermissionState.status.isGranted && storagePermissionState.status.isGranted) {
-                showCamera = true
+        // Upload Options Bottom Sheet
+        if (showUploadOptions) {
+            ModalBottomSheet(
+                onDismissRequest = { showUploadOptions = false },
+                sheetState = sheetState
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "Choose Upload Method",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+
+                    TextButton(
+                        onClick = {
+                            showUploadOptions = false
+                            if (cameraPermissionState.status.isGranted && storagePermissionState.status.isGranted) {
+                                showCamera = true
+                            } else {
+                                if (!cameraPermissionState.status.isGranted) {
+                                    cameraPermissionState.launchPermissionRequest()
+                                }
+                                if (!storagePermissionState.status.isGranted) {
+                                    storagePermissionState.launchPermissionRequest()
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = "Take Photo",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text("Take Photo")
+                        }
+                    }
+
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    TextButton(
+                        onClick = {
+                            showUploadOptions = false
+                            filePickerLauncher.launch("application/pdf")
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = "Choose PDF",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text("Choose PDF")
+                        }
+                    }
+
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    TextButton(
+                        onClick = {
+                            showUploadOptions = false
+                            filePickerLauncher.launch("image/*")
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = "Choose Image",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text("Choose Image")
+                        }
+                    }
+                }
             }
         }
+
 
         // Add the camera dialog
         if (showCamera) {
             AlertDialog(
-                onDismissRequest = { 
+                onDismissRequest = {
                     if (!isCapturing) {
                         showCamera = false
                     }
@@ -462,11 +666,11 @@ fun DocumentUploadScreen(
                 },
                 confirmButton = {
                     Button(
-                        onClick = { 
+                        onClick = {
                             if (!isCapturing && imageCapture != null) {
                                 val file = createImageFile()
                                 val outputOptions = ImageCapture.OutputFileOptions.Builder(file).build()
-                                
+
                                 isCapturing = true
                                 imageCapture?.takePicture(
                                     outputOptions,
@@ -476,7 +680,7 @@ fun DocumentUploadScreen(
                                             try {
                                                 // Load the bitmap from the file
                                                 val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-                                                
+
                                                 // Fix image orientation
                                                 val exif = ExifInterface(file.absolutePath)
                                                 val orientation = exif.getAttributeInt(
@@ -490,7 +694,7 @@ fun DocumentUploadScreen(
                                                     ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
                                                     ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
                                                 }
-                                                
+
                                                 val rotatedBitmap = Bitmap.createBitmap(
                                                     bitmap,
                                                     0,
@@ -500,18 +704,18 @@ fun DocumentUploadScreen(
                                                     matrix,
                                                     true
                                                 )
-                                                
+
                                                 // Add the new photo to the list
                                                 capturedPhotos = capturedPhotos + rotatedBitmap.asImageBitmap()
                                                 isFileUploaded = true
                                                 imageLoadingError = null
-                                                
+
                                                 Log.d("ImageCapture", "Image loaded and rotated successfully from file: ${file.absolutePath}")
-                                                
+
                                                 // Save to device gallery
                                                 val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
                                                 val galleryFileName = "USTrade_${timeStamp}.jpg"
-                                                
+
                                                 val galleryValues = ContentValues().apply {
                                                     put(Media.DISPLAY_NAME, galleryFileName)
                                                     put(Media.MIME_TYPE, "image/jpeg")
@@ -520,23 +724,23 @@ fun DocumentUploadScreen(
                                                         put(Media.IS_PENDING, 1)
                                                     }
                                                 }
-                                                
+
                                                 val galleryUri = context.contentResolver.insert(
                                                     Media.EXTERNAL_CONTENT_URI,
                                                     galleryValues
                                                 ) ?: throw IllegalStateException("Failed to create new MediaStore record.")
-                                                
+
                                                 // Write the bitmap to the gallery file
                                                 context.contentResolver.openOutputStream(galleryUri)?.use { outputStream ->
                                                     rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                                                 }
-                                                
+
                                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                                     galleryValues.clear()
                                                     galleryValues.put(Media.IS_PENDING, 0)
                                                     context.contentResolver.update(galleryUri, galleryValues, null, null)
                                                 }
-                                                
+
                                                 // Notify the media scanner
                                                 MediaScannerConnection.scanFile(
                                                     context,
@@ -544,7 +748,7 @@ fun DocumentUploadScreen(
                                                     arrayOf("image/jpeg"),
                                                     null
                                                 )
-                                                
+
                                             } catch (e: Exception) {
                                                 Log.e("ImageCapture", "Error processing image: ${e.message}")
                                                 imageLoadingError = e.message
@@ -570,7 +774,7 @@ fun DocumentUploadScreen(
                 },
                 dismissButton = {
                     Button(
-                        onClick = { 
+                        onClick = {
                             if (!isCapturing) {
                                 showCamera = false
                             }
