@@ -464,6 +464,7 @@ fun DocumentUploadScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
+
                             Icon(
                                 Icons.Default.Add,
                                 contentDescription = "Upload",

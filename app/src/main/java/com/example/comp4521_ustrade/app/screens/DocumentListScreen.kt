@@ -120,7 +120,9 @@ fun DocumentListScreen(
                     onActiveChange = { },
                     modifier = Modifier
                         .weight(1f),
+
                     placeholder = { Text(text= stringResource(R.string.FilesFound, documents.size))}
+
                 ) { }
                 
                 IconButton(
