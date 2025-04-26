@@ -105,7 +105,7 @@
 		Recent Searches
 	</string>
 	<string name="SearchFiles">
-		Search %1$d files
+		Search %1$s files
 	</string>
 	<!-- About -->
 	<string name="PoweredBy">
@@ -458,9 +458,7 @@
 	<string name="ChineseSimplified">
 		Chinese (Simplified)
 	</string>
-	<string name="FilesFound">
-		%d files found
-	</string>
+	<string name="FilesFound">%d files found</string>
 	<string name="WaitCountdown">
 		Wait for %1$d seconds to resend
 	</string>
