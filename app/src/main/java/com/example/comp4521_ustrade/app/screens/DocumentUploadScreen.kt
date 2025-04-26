@@ -89,6 +89,12 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.content.FileProvider
 import java.io.File
+import android.graphics.pdf.PdfRenderer
+import android.os.ParcelFileDescriptor
+import android.graphics.RectF
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -170,70 +176,123 @@ fun DocumentUploadScreen(
     var pdfFile by remember { mutableStateOf<File?>(null) }
     var showPdfPreview by remember { mutableStateOf(false) }
 
+    // Add state for PDF preview
+    var pdfPreviewBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+
+    // Add state for confirmation dialog
+    var showConfirmationDialog by remember { mutableStateOf(false) }
+
+    // Add state for file locations
+    var imageFiles by remember { mutableStateOf<List<File>>(emptyList()) }
+
     // File picker launcher
     val filePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri ->
-        uri?.let {
-            try {
-                val mimeType = context.contentResolver.getType(uri)
-                Log.d("FilePicker", "Selected file MIME type: $mimeType")
-
-                when {
-                    mimeType?.startsWith("image/") == true -> {
-                        // Handle image files
-                        context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                            val bitmap = BitmapFactory.decodeStream(inputStream)
-                            capturedPhotos = capturedPhotos + bitmap.asImageBitmap()
-                            isFileUploaded = true
-                            fileName = "Image_${System.currentTimeMillis()}.jpg"
-                        }
-                    }
-                    mimeType == "application/pdf" -> {
-                        // Handle PDF files
-                        selectedFiles = selectedFiles + uri
-                        isFileUploaded = true
-
-                        // Get the original filename
-                        val cursor = context.contentResolver.query(uri, null, null, null, null)
-                        cursor?.use {
-                            if (it.moveToFirst()) {
-                                val displayNameIndex = it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
-                                if (displayNameIndex != -1) {
-                                    fileName = it.getString(displayNameIndex)
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            uri?.let {
+                try {
+                    val mimeType = context.contentResolver.getType(uri)
+                    Log.d("FilePicker", "Selected file MIME type: $mimeType")
+                    
+                    when {
+                        mimeType?.startsWith("image/") == true -> {
+                            // Handle image files
+                            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                            val imageFileName = "IMG_${timeStamp}.jpg"
+                            val imageFile = File(context.filesDir, "images/$imageFileName")
+                            
+                            // Create images directory if it doesn't exist
+                            imageFile.parentFile?.mkdirs()
+                            
+                            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                                FileOutputStream(imageFile).use { output ->
+                                    inputStream.copyTo(output)
                                 }
                             }
+                            
+                            val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
+                            capturedPhotos = capturedPhotos + bitmap.asImageBitmap()
+                            imageFiles = imageFiles + imageFile
+                            isFileUploaded = true
+                            fileName = imageFileName
+                            
+                            Log.d("FilePicker", "Image saved to: ${imageFile.absolutePath}")
                         }
-
-                        if (fileName == null) {
-                            fileName = "Document_${System.currentTimeMillis()}.pdf"
-                        }
-
-                        // Create a copy in app's private storage
-                        val newPdfFile = File(context.filesDir, fileName!!)
-
-                        context.contentResolver.openInputStream(uri)?.use { input ->
-                            FileOutputStream(newPdfFile).use { output ->
-                                input.copyTo(output)
+                        mimeType == "application/pdf" -> {
+                            // Handle PDF files
+                            selectedFiles = selectedFiles + uri
+                            isFileUploaded = true
+                            
+                            // Get the original filename
+                            val cursor = context.contentResolver.query(uri, null, null, null, null)
+                            cursor?.use {
+                                if (it.moveToFirst()) {
+                                    val displayNameIndex = it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
+                                    if (displayNameIndex != -1) {
+                                        fileName = it.getString(displayNameIndex)
+                                    }
+                                }
+                            }
+                            
+                            if (fileName == null) {
+                                val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                                fileName = "Document_${timeStamp}.pdf"
+                            }
+                            
+                            // Create a copy in app's private storage
+                            val newPdfFile = File(context.filesDir, "documents/$fileName")
+                            
+                            // Create documents directory if it doesn't exist
+                            newPdfFile.parentFile?.mkdirs()
+                            
+                            context.contentResolver.openInputStream(uri)?.use { input ->
+                                FileOutputStream(newPdfFile).use { output ->
+                                    input.copyTo(output)
+                                }
+                            }
+                            
+                            pdfFile = newPdfFile
+                            Log.d("FilePicker", "PDF saved to: ${newPdfFile.absolutePath}")
+                            
+                            // Generate PDF preview
+                            val pfd = ParcelFileDescriptor.open(newPdfFile, ParcelFileDescriptor.MODE_READ_ONLY)
+                            val pdfRenderer = PdfRenderer(pfd)
+                            
+                            try {
+                                val page = pdfRenderer.openPage(0)
+                                val scale = minOf(
+                                    150.dp.value * context.resources.displayMetrics.density / page.width,
+                                    200.dp.value * context.resources.displayMetrics.density / page.height
+                                )
+                                
+                                val bitmap = Bitmap.createBitmap(
+                                    (page.width * scale).toInt(),
+                                    (page.height * scale).toInt(),
+                                    Bitmap.Config.ARGB_8888
+                                )
+                                
+                                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                                pdfPreviewBitmap = bitmap.asImageBitmap()
+                                page.close()
+                            } finally {
+                                pdfRenderer.close()
+                                pfd.close()
                             }
                         }
-
-                        pdfFile = newPdfFile
-                        Log.d("FilePicker", "PDF file saved: ${newPdfFile.absolutePath}")
+                        else -> {
+                            Log.e("FilePicker", "Unsupported file type: $mimeType")
+                            imageLoadingError = "Unsupported file type: $mimeType"
+                        }
                     }
-                    else -> {
-                        Log.e("FilePicker", "Unsupported file type: $mimeType")
-                        imageLoadingError = "Unsupported file type: $mimeType"
-                    }
+                } catch (e: Exception) {
+                    Log.e("FilePicker", "Error processing file: ${e.message}")
+                    imageLoadingError = e.message
                 }
-            } catch (e: Exception) {
-                Log.e("FilePicker", "Error processing file: ${e.message}")
-                imageLoadingError = e.message
             }
         }
-    }
+    )
 
-    // Create a function to generate a unique filename
+    // A function that generates a unique filename
     fun createImageFile(): File {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
@@ -319,33 +378,49 @@ fun DocumentUploadScreen(
                                             shape = RoundedCornerShape(8.dp)
                                         )
                                         .clickable {
-                                            val uri = FileProvider.getUriForFile(
-                                                context,
-                                                "${context.packageName}.provider",
-                                                file
-                                            )
-                                            val intent = Intent(Intent.ACTION_VIEW).apply {
-                                                setDataAndType(uri, "application/pdf")
-                                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                            try {
+                                                val uri = FileProvider.getUriForFile(
+                                                    context,
+                                                    "${context.packageName}.provider",
+                                                    file
+                                                )
+                                                val intent = Intent(Intent.ACTION_VIEW).apply {
+                                                    setDataAndType(uri, "application/pdf")
+                                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                                    addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                }
+                                                context.startActivity(intent)
+                                            } catch (e: Exception) {
+                                                Log.e("PDFViewer", "Error opening PDF: ${e.message}")
+                                                imageLoadingError = "Error opening PDF: ${e.message}"
                                             }
-                                            context.startActivity(intent)
                                         },
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center
-                                    ) {
-                                        Icon(
-                                            Icons.Default.Description,
+                                    if (pdfPreviewBitmap != null) {
+                                        Image(
+                                            bitmap = pdfPreviewBitmap!!,
                                             contentDescription = "PDF Preview",
-                                            tint = MaterialTheme.colorScheme.primary
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentScale = ContentScale.Fit
                                         )
-                                        Text(
-                                            "View PDF",
-                                            color = MaterialTheme.colorScheme.primary,
-                                            textAlign = TextAlign.Center
-                                        )
+                                    } else {
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Icon(
+                                                Icons.Default.Description,
+                                                contentDescription = "PDF Preview",
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                            Text(
+                                                "View PDF",
+                                                color = MaterialTheme.colorScheme.primary,
+                                                textAlign = TextAlign.Center
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -362,7 +437,7 @@ fun DocumentUploadScreen(
                                     )
                                     .clickable {
                                         if (cameraPermissionState.status.isGranted && storagePermissionState.status.isGranted) {
-                                            showUploadOptions = true
+                                            showCamera = true
                                         }
                                     },
                                 contentAlignment = Alignment.Center
@@ -513,7 +588,11 @@ fun DocumentUploadScreen(
 
             item {
                 Button(
-                    onClick = { /* Handle upload */ },
+                    onClick = { 
+                        if (isFormValid) {
+                            showConfirmationDialog = true
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = isFormValid
                 ) {
@@ -646,7 +725,7 @@ fun DocumentUploadScreen(
         }
 
 
-        // Add the camera dialog
+        // Add the camera dialog that handle photo taking
         if (showCamera) {
             AlertDialog(
                 onDismissRequest = {
@@ -818,6 +897,112 @@ fun DocumentUploadScreen(
                 },
                 dismissButton = {
                     Button(onClick = { /* Handle denial */ }) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+
+        // Add confirmation dialog
+        if (showConfirmationDialog) {
+            AlertDialog(
+                onDismissRequest = { showConfirmationDialog = false },
+                title = { Text("Confirm Upload", fontWeight = FontWeight.Bold) },
+                text = {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState())
+                            .padding(vertical = 8.dp)
+                    ) {
+                        // Subject Information
+                        Text("Subject Information", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Row {
+                            Text("Subject: ", fontWeight = FontWeight.Bold)
+                            Text(subject)
+                        }
+                        Row {
+                            Text("Subject Code: ", fontWeight = FontWeight.Bold)
+                            Text(subjectCode)
+                        }
+                        Row {
+                            Text("Year: ", fontWeight = FontWeight.Bold)
+                            Text(year)
+                        }
+                        Row {
+                            Text("Semester: ", fontWeight = FontWeight.Bold)
+                            Text(semester)
+                        }
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        // Document Information
+                        Text("Document Information", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Row {
+                            Text("Title: ", fontWeight = FontWeight.Bold)
+                            Text(title)
+                        }
+                        Row {
+                            Text("Professor: ", fontWeight = FontWeight.Bold)
+                            Text(professor)
+                        }
+                        if (description.isNotBlank()) {
+                            Row {
+                                Text("Description: ", fontWeight = FontWeight.Bold)
+                                Text(description)
+                            }
+                        }
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        // Uploaded Files
+                        Text("Uploaded Files", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        
+                        if (imageFiles.isNotEmpty()) {
+                            Text("Images:", fontWeight = FontWeight.Bold)
+                            imageFiles.forEachIndexed { index, file ->
+                                Column {
+                                    Text("Image ${index + 1}: ${file.name}")
+                                    Text(
+                                        "Location: ${file.absolutePath}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = Color.Gray
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(4.dp))
+                            }
+                        }
+                        
+                        if (pdfFile != null) {
+                            Text("PDF:", fontWeight = FontWeight.Bold)
+                            Column {
+                                Text(pdfFile?.name ?: "Untitled PDF")
+                                Text(
+                                    "Location: ${pdfFile?.absolutePath}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color.Gray
+                                )
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            // TODO: Implement actual upload logic here
+                            showConfirmationDialog = false
+                        }
+                    ) {
+                        Text("Confirm")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showConfirmationDialog = false }
+                    ) {
                         Text("Cancel")
                     }
                 }
