@@ -59,7 +59,7 @@ class AuthViewModel() : ViewModel() {
                 _authState.value = AuthState.Loading
                 auth.createUserWithEmailAndPassword(email, password).await()
                 _user.value = auth.currentUser
-                updateUserAuthProfile(firstName, lastName, profilePic)
+//                updateUserAuthProfile(firstName, lastName, profilePic)
                 val token = FirebaseMessaging.getInstance().token.await() // Get token synchronously
                 createUser(firstName, lastName, profilePic, token)
                 _authState.value = AuthState.Success
@@ -89,7 +89,7 @@ class AuthViewModel() : ViewModel() {
     }
     
     fun updateUserAuthProfile(firstName: String, lastName: String, profilePic: String?) {
-        // update firebase user
+        // update firebase auth user
         val profileUpdates = userProfileChangeRequest {
             displayName = "$firstName $lastName"
             photoUri = profilePic?.toUri()
