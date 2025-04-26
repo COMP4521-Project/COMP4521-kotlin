@@ -42,7 +42,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
@@ -115,9 +114,9 @@ fun RedeemCard(modifier: Modifier = Modifier, userViewModel : UserViewModel) {
                 )
 
                 Column(modifier = modifier.weight(3f), verticalArrangement = Arrangement.SpaceAround) {
-                    Text(text = stringResource(R.string.ContributorLv, level), fontSize = 26.sp, fontWeight = Bold)
+                    Text(text = "Contributor Lv.$level", fontSize = 26.sp, fontWeight = Bold)
                     Spacer(modifier.padding(4.dp))
-                    Text(text = stringResource(R.string.UploadedDocuments, uploadCount!!), fontSize = 14.sp)
+                    Text(text = "You have uploaded $uploadCount documents", fontSize = 14.sp)
                 }
             }
             Spacer(modifier.padding(2.dp))
@@ -155,9 +154,9 @@ fun RedeemCard(modifier: Modifier = Modifier, userViewModel : UserViewModel) {
                 )
 
                 if (level == 0) {
-                    Text(text = stringResource(R.string.LevelUpAndRedeemRewards), fontSize = 12.sp, modifier = modifier.padding(start = 8.dp).weight(6f))
+                    Text(text = "Level up to redeem your first prize", fontSize = 12.sp, modifier = modifier.padding(start = 8.dp).weight(6f))
                 } else {
-                    Text(text = stringResource(R.string.PickAPrizeBelow), fontSize = 12.sp, modifier = modifier.padding(start = 8.dp).weight(6f))
+                    Text(text = "Pick a prize below", fontSize = 12.sp, modifier = modifier.padding(start = 8.dp).weight(6f))
                 }
             }
         Spacer(modifier.padding(2.dp))

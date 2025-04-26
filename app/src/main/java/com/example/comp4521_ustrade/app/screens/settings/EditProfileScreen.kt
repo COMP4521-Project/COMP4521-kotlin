@@ -34,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.CustomTextField
@@ -59,7 +58,7 @@ fun EditProfileScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.EditProfile)) },
+                title = { Text("Edit Profile") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -93,8 +92,8 @@ fun EditProfileScreen(
             CustomTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = stringResource(R.string.Name),
-                placeholder=stringResource(R.string.EnterYourUsername)
+                label = "Name",
+                placeholder="Enter Your username"
             )
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -102,8 +101,8 @@ fun EditProfileScreen(
             CustomTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = stringResource(R.string.Email),
-                placeholder = stringResource(R.string.EnterYourEmail)
+                label = "Email",
+                placeholder = "Enter Your Email"
             )
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -111,8 +110,8 @@ fun EditProfileScreen(
             CustomTextField(
                 value = dateOfBirth,
                 onValueChange = { },  // Read-only
-                label = stringResource(R.string.DateOfBirth),
-                placeholder = stringResource(R.string.SelectYourDateOfBirth),
+                label = "Date of Birth",
+                placeholder = "Select your date of birth",
                 onClick = { showDatePicker = true },
                 trailingIcon = {
                     IconButton(onClick = { showDatePicker = true }) {
@@ -134,12 +133,12 @@ fun EditProfileScreen(
                             }
                             showDatePicker = false
                         }) {
-                            Text(stringResource(R.string.OK))
+                            Text("OK")
                         }
                     },
                     dismissButton = {
                         TextButton(onClick = { showDatePicker = false }) {
-                            Text(stringResource(R.string.Cancel))
+                            Text("Cancel")
                         }
                     }
                 ) {
@@ -152,10 +151,10 @@ fun EditProfileScreen(
             CustomTextField(
                 value = description,
                 onValueChange = { description = it },
-                label = stringResource(R.string.Description),
+                label = "Description (Optional)",
                 singleLine = true,
                 minLines = 1,
-                placeholder = stringResource(R.string.EnterYourDescription)
+                placeholder = "Enter Your Description"
             )
             
             Spacer(modifier = Modifier.height(32.dp))
@@ -164,7 +163,7 @@ fun EditProfileScreen(
                 onClick = { /* Handle save */ },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(R.string.SaveChanges))
+                Text("Save changes")
             }
         }
     }

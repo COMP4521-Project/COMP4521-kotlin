@@ -1,4 +1,3 @@
-
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,9 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.CustomPasswordTextField
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 
@@ -41,7 +38,7 @@ fun EditPasswordScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.EditPassword)) },
+                title = { Text("Edit Password") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -64,9 +61,9 @@ fun EditPasswordScreen(
             CustomPasswordTextField(
                 value = currentPassword,
                 onValueChange = { currentPassword = it },
-                label = stringResource(R.string.ExistingPassword),
+                label = "Existing password",
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = stringResource(R.string.EnterYourExistingPassword),
+                placeholder = "Enter your existing password",
                 isError = false,
                 passwordVisible = currentPasswordVisible,
                 onPasswordVisibilityChange = { currentPasswordVisible = !currentPasswordVisible }
@@ -77,9 +74,9 @@ fun EditPasswordScreen(
             CustomPasswordTextField(
                 value = newPassword,
                 onValueChange = { newPassword = it },
-                label = stringResource(R.string.NewPassword),
+                label = "New password",
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = stringResource(R.string.EnterYourNewPassword),
+                placeholder = "Enter your new password",
                 isError = false,
                 passwordVisible = newPasswordVisible,
                 onPasswordVisibilityChange = { newPasswordVisible = !newPasswordVisible }
@@ -91,7 +88,7 @@ fun EditPasswordScreen(
                 onClick = { /* Handle save */ },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(R.string.SaveChanges))
+                Text("Save changes")
             }
         }
     }

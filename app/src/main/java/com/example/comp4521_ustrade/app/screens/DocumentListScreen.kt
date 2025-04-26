@@ -33,9 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.DocumentCard
 import com.example.comp4521_ustrade.app.models.Document
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
@@ -80,7 +78,7 @@ fun DocumentListScreen(
         topBar = {
             Column {
                 TopAppBar(
-                    title = { Text(text = pageTitle) },
+                    title = { Text("Documents") },
                     navigationIcon = {
                         IconButton(onClick = {
                             navViewModel.setSelectedScreen(Screens.Home)
@@ -120,7 +118,7 @@ fun DocumentListScreen(
                     onActiveChange = { },
                     modifier = Modifier
                         .weight(1f),
-                    placeholder = { Text(stringResource(R.string.SearchFiles, pageTitle)) }
+                    placeholder = { Text("Search $pageTitle files") }
                 ) { }
                 
                 IconButton(
@@ -135,7 +133,7 @@ fun DocumentListScreen(
             }
             
             Text(
-                text = stringResource(R.string.FilesFound, documents.size),
+                text = "${documents.size} files found",
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 style = MaterialTheme.typography.bodyMedium
             )
