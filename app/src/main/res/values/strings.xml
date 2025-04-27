@@ -1,13 +1,549 @@
 <resources>
-    <string name="app_name">USTrade</string>
-    <string name="Language">Language</string>
-    <string name="Account">Account</string>
-    <string name="Bookmark">Bookmark</string>
-    <string name="Upload">Upload</string>
-    <string name="Redeem">Redeem</string>
-    <string name="Download">Download</string>
-    <string name="AI">AI</string>
-    <string name="Preview">Preview</string>
-    <string name="Preference">Preference</string>
-    <string name="Logout">Logout</string>
+	<!-- Common -->
+	<string name="app_name">
+		USTrade
+	</string>
+	<string name="Language">
+		Language
+	</string>
+	<string name="Account">
+		Account
+	</string>
+	<string name="Bookmark">
+		Bookmark
+	</string>
+	<string name="Upload">
+		Upload
+	</string>
+	<string name="Redeem">
+		Redeem
+	</string>
+	<string name="Download">
+		Download
+	</string>
+	<string name="AI">
+		AI
+	</string>
+	<string name="Preview">
+		Preview
+	</string>
+	<string name="Preference">
+		Preference
+	</string>
+	<string name="Logout">
+		Logout
+	</string>
+	<string name="Confirm">
+		Confirm
+	</string>
+	<string name="UploadedDocument">
+		Uploaded Document
+	</string>
+	<string name="About">
+		About
+	</string>
+	<string name="LearnMore">
+		Learn more
+	</string>
+	<string name="Downloaded">
+		Downloaded
+	</string>
+	<string name="Favorites">
+		Favorites
+	</string>
+	<string name="SearchResults">
+		Search Results
+	</string>
+	<string name="Uploaded">
+		Uploaded
+	</string>
+	<string name="Bookmarked">
+		Bookmarked
+	</string>
+	<string name="Back">
+		Back
+	</string>
+	<string name="Cancel">
+		Cancel
+	</string>
+	<string name="OK">
+		OK
+	</string>
+	<string name="Login">
+		Login
+	</string>
+	<string name="Registration">
+		Registration
+	</string>
+	<string name="Documents">
+		Documents
+	</string>
+	<string name="Resources">
+		Resources
+	</string>
+	<string name="Bookmarks">
+		Bookmarks
+	</string>
+	<!-- Profile -->
+	<string name="ProfilePicture">
+		Profile Picture
+	</string>
+	<string name="Share">
+		Share
+	</string>
+	<string name="ProfilePreview">
+		Profile Preview
+	</string>
+	<string name="EnterYourDescription">
+		Enter your description
+	</string>
+	<!-- Search -->
+	<string name="SearchResources">
+		Search Resources
+	</string>
+	<string name="RecentSearches">
+		Recent Searches
+	</string>
+	<string name="SearchFiles">
+		Search %1$s files
+	</string>
+	<!-- About -->
+	<string name="PoweredBy">
+		Powered by
+	</string>
+	<string name="Version">
+		Version
+	</string>
+	<string name="TermsOfService">
+		Terms of Service
+	</string>
+	<string name="PrivacyPolicy">
+		Privacy Policy
+	</string>
+	<string name="AppNavigationSupport">
+		App Navigation Support
+	</string>
+	<string name="ResourceRecommendations">
+		Resource Recommendations
+	</string>
+	<string name="FAQandTroubleshooting">
+		FAQ and Troubleshooting
+	</string>
+	<string name="AIDetails">
+		AI details
+	</string>
+	<string name="Functions">
+		Functions
+	</string>
+	<!-- Document Details -->
+	<string name="UploadDate">
+		Upload Date
+	</string>
+	<string name="DocumentDetails">
+		Document Details
+	</string>
+	<string name="DownloadDocument">
+		Download Document
+	</string>
+	<!-- Document Upload -->
+	<string name="UploadDocument">
+		Upload Document
+	</string>
+	<string name="ClickToChangeFile">
+		Click to change file
+	</string>
+	<string name="ClickToUploadOrTakePhoto">
+		Click to Upload or Take a photo
+	</string>
+	<string name="MaxFileSize">
+		(Max File size: 25 MB)
+	</string>
+	<string name="Subject">
+		Subject
+	</string>
+	<string name="SubjectCode">
+		Subject Code
+	</string>
+	<string name="Year">
+		Year
+	</string>
+	<string name="Semester">
+		Semester
+	</string>
+	<string name="Title">
+		Title
+	</string>
+	<string name="EnterDocumentTitle">
+		Enter document title
+	</string>
+	<string name="Professor">
+		Professor
+	</string>
+	<string name="EnterProfessorName">
+		Enter professor name
+	</string>
+	<string name="Description">
+		Description (optional)
+	</string>
+	<string name="EnterDocumentDescription">
+		Enter document description
+	</string>
+	<!-- Contributor & Redeem -->
+	<string name="Congratulations">
+		Congratulations!
+	</string>
+	<string name="MaxLevel">
+		Congratulations! You have reached the max level.
+	</string>
+	<string name="UploadMore">
+		Upload %1$d more documents to become Lv.3 contributor
+	</string>
+	<string name="UploadMore2">
+		Upload %1$d more documents to become Lv.2 contributor
+	</string>
+	<string name="UploadMore3">
+		Upload %1$d more documents to become Lv.1 contributor
+	</string>
+	<string name="ContributorLv">
+		Contributor Lv.%1$d
+	</string>
+	<string name="UploadedDocuments">
+		You have uploaded %1$d documents
+	</string>
+	<string name="LevelUp">
+		Level up to redeem your first prize
+	</string>
+	<string name="PickAPrizeBelow">
+		Pick a prize below
+	</string>
+	<string name="RedeemPrizeRules">
+		Redeem prize rules
+	</string>
+	<string name="RedeemThisPrize">
+		Redeem this prize
+	</string>
+	<string name="Lv1Contributor">
+		• 5 documents → Lv.1 contributor
+	</string>
+	<string name="Lv2Contributor">
+		• 12 documents → Lv.2 contributor
+	</string>
+	<string name="Lv3Contributor">
+		• 20 documents → Lv.3 contributor
+	</string>
+	<string name="EachLevelUnlocks">
+		Each level unlocks 2 prize options to pick
+	</string>
+	<string name="GoToSouvenirShop">
+		Go to the souvenir shop to collect your prize after you press the confirm Button
+	</string>
+	<string name="EachAccountCanOnlyRedeemOneGift">
+		* Each account can only redeem one gift at most
+	</string>
+	<string name="GotIt">
+		Got it
+	</string>
+	<string name="UploadSources">
+		Upload sources
+	</string>
+	<string name="LevelUpAndRedeemRewards">
+		Level up and redeem rewards
+	</string>
+	<string name="YouHaveSelectedYourPrize">
+		You have selected your prize. Please go to the souvenir shop to collect your prize
+	</string>
+	<!-- Upload -->
+	<!-- Drawer -->
+	<string name="SelectBySubjects">
+		Select by Subjects
+	</string>
+	<!-- Test -->
+	<string name="UploadTest">
+		Upload test
+	</string>
+	<!-- Notification -->
+	<string name="Notifications">
+		Notifications
+	</string>
+	<string name="NoNotifications">
+		No notifications
+	</string>
+	<string name="Messages">
+		Messages
+	</string>
+	<!-- Settings -->
+	<string name="Settings">
+		Settings
+	</string>
+	<string name="EditProfile">
+		Edit Profile
+	</string>
+	<string name="ChangePassword">
+		Change Password
+	</string>
+	<string name="RedeemGifts">
+		Redeem gifts
+	</string>
+	<string name="UploadedFiles">
+		Uploaded Files
+	</string>
+	<string name="DownloadedFiles">
+		Downloaded Files
+	</string>
+	<string name="SupportAbout">
+		Support &amp; About
+	</string>
+	<string name="Preferences">
+		Preferences
+	</string>
+	<string name="AboutApp">
+		About this app
+	</string>
+	<string name="LogOut">
+		Log out
+	</string>
+	<string name="LightMode">
+		Light mode
+	</string>
+	<!-- Forgot Password -->
+	<string name="ResetPassword">
+		Reset Password
+	</string>
+	<string name="SendResetLink">
+		Send Reset Link
+	</string>
+	<string name="BackToLogin">
+		Back to Login
+	</string>
+	<!-- Edit Password -->
+	<string name="EditPassword">
+		Edit Password
+	</string>
+	<string name="ExistingPassword">
+		Existing password
+	</string>
+	<string name="EnterYourExistingPassword">
+		Enter your existing password
+	</string>
+	<string name="NewPassword">
+		New password
+	</string>
+	<string name="EnterYourNewPassword">
+		Enter your new password
+	</string>
+	<string name="SaveChanges">
+		Save changes
+	</string>
+	<!-- Edit Profile -->
+	<string name="Name">
+		Name
+	</string>
+	<string name="EnterYourUsername">
+		Enter Your username
+	</string>
+	<string name="Email">
+		Email
+	</string>
+	<string name="DateOfBirth">
+		Date of Birth
+	</string>
+	<string name="SelectYourDateOfBirth">
+		Select your date of birth
+	</string>
+	<!-- Login -->
+	<string name="InvalidEmailOrPassword">
+		Invalid email or password
+	</string>
+	<string name="Password">
+		Password
+	</string>
+	<string name="EnterYourPassword">
+		Enter your password
+	</string>
+	<string name="ForgotPassword">
+		Forgot Password?
+	</string>
+	<!-- Register -->
+	<string name="AlreadyHaveAnAccount">
+		Already have an account? Sign In
+	</string>
+	<string name="SignUp">
+		Sign Up
+	</string>
+	<string name="ConfirmPassword">
+		Confirm Password
+	</string>
+	<string name="EnterYourConfirmPassword">
+		Confirm your password
+	</string>
+	<string name="FirstName">
+		First Name
+	</string>
+	<string name="EnterYourFirstName">
+		Enter your first name
+	</string>
+	<string name="LastName">
+		Last Name
+	</string>
+	<string name="EnterYourLastName">
+		Enter your last name
+	</string>
+	<string name="QuestionMark">
+		&amp;
+	</string>
+	<string name="PasswordMustContain">
+		Password must contain:
+	</string>
+	<string name="AtLeast8Characters">
+		• At least 8 characters
+	</string>
+	<string name="AtLeastOneUppercaseLetter">
+		• At least one uppercase letter (A-Z)
+	</string>
+	<string name="AtLeastOneNumber">
+		• At least one number (0-9)
+	</string>
+	<string name="AtLeastOneLowercaseLetter">
+		• At least one lowercase letter (a-z)
+	</string>
+	<string name="AtLeastOneSpecialCharacter">
+		• At least one special character (!@#$%^&amp;*…)
+	</string>
+	<string name="MaximumLengthOf4096Characters">
+		• Maximum length of 4096 characters
+	</string>
+	<string name="PleaseEnterYourFirstName">
+		Please enter your first name
+	</string>
+	<string name="PleaseEnterYourLastName">
+		Please enter your last name
+	</string>
+	<string name="PleaseEnterYourEmail">
+		Please enter your email
+	</string>
+	<string name="EnterYourEmail">
+		Enter your email
+	</string>
+	<string name="PleaseEnterAValidEmailAddress">
+		Please enter a valid email address
+	</string>
+	<string name="PasswordMustContainAtLeast8CharactersWithUppercaseLowercaseNumberAndSymbol">
+		Password must contain at least 8 characters with uppercase, lowercase, number and symbol
+	</string>
+	<string name="PasswordsDoNotMatch">
+		Passwords do not match
+	</string>
+	<string name="DontHaveAnAccount">
+		Don\'t have an account? Sign Up
+	</string>
+	<!-- Notification -->
+	<string name="All">
+		All
+	</string>
+	<string name="Read">
+		Read
+	</string>
+	<string name="Unread">
+		Unread
+	</string>
+	<!-- English -->
+	<string name="English">
+		English
+	</string>
+	<!-- Chinese (Traditional) -->
+	<string name="ChineseTraditional">
+		Chinese (Traditional)
+	</string>
+	<!-- Chinese (Simplified) -->
+	<string name="ChineseSimplified">
+		Chinese (Simplified)
+	</string>
+	<string name="FilesFound">%d files found</string>
+	<string name="WaitCountdown">
+		Wait for %1$d seconds to resend
+	</string>
+	<string name="PleaseUploadAFile">
+		• Please upload a file
+	</string>
+	<string name="SubjectIsRequired">
+		• Subject is required
+	</string>
+	<string name="SubjectCodeIsRequired">
+		• Subject code is required
+	</string>
+	<string name="YearIsRequired">
+		• Year is required
+	</string>
+	<string name="SemesterIsRequired">
+		• Semester is required
+	</string>
+	<string name="TitleIsRequired">
+		• Title is required
+	</string>
+	<string name="Science">
+		Science
+	</string>
+	<string name="Engineering">
+		Engineering
+	</string>
+	<string name="Business">
+		Business
+	</string>
+	<string name="COMP">
+		COMP
+	</string>
+	<string name="CPEG">
+		CPEG
+	</string>
+	<string name="CSIT">
+		CSIT
+	</string>
+	<string name="IEDA">
+		IEDA
+	</string>
+	<string name="MECH">
+		MECH
+	</string>
+	<string name="CIVL">
+		CIVL
+	</string>
+	<string name="ELEC">
+		ELEC
+	</string>
+	<string name="Year2024">
+		2024
+	</string>
+	<string name="Year2023">
+		2023
+	</string>
+	<string name="Year2022">
+		2022
+	</string>
+	<string name="Year2021">
+		2021
+	</string>
+	<string name="Fall">
+		Fall
+	</string>
+	<string name="Winter">
+		Winter
+	</string>
+	<string name="Summer">
+		Summer
+	</string>
+	<string name="Spring">
+		Spring
+	</string>
+	<string name="SelectSubject">
+		Select subject
+	</string>
+	<string name="SelectSubjectCode">
+		Select subject code
+	</string>
+	<string name="SelectYear">
+		Select year
+	</string>
+	<string name="SelectSemester">
+		Select semester
+	</string>
 </resources>
