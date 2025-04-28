@@ -1,4 +1,3 @@
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +25,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,32 +34,56 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.CustomTextField
+import com.example.comp4521_ustrade.app.data.repository.UserRepository
+import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
+import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
-    onNavigateBack: () -> Unit = {}
+    onNavigateBack: () -> Unit = {},
+    userViewModel: UserViewModel
 ) {
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var dateOfBirth by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
+    val userId = userViewModel.userid.observeAsState().value
+    var username = userViewModel.username.observeAsState().value
+
+    val firstNameLiveData = userViewModel.firstName.observeAsState()
+    var firstName by remember { mutableStateOf(firstNameLiveData.value ?: "") }
+
+    val lastNameLiveData = userViewModel.lastName.observeAsState()
+    var lastName by remember { mutableStateOf(lastNameLiveData.value ?: "") }
+
+    val dateOfBirthLiveData = userViewModel.dateOfBirth.observeAsState()
+    var dateOfBirth by remember { mutableStateOf(dateOfBirthLiveData.value ?: "") }
+
+    val descriptionLiveData = userViewModel.description.observeAsState()
+    var description by remember { mutableStateOf(descriptionLiveData.value ?: "") }
+
+
+    //deprecated
+//    var name by remember { mutableStateOf("") }
+//    var lastname by remember { mutableStateOf("") }
+//    var dateOfBirth by remember { mutableStateOf("") }
+//    var description by remember { mutableStateOf("") }
+
     var showDatePicker by remember { mutableStateOf(false) }
     
     val datePickerState = rememberDatePickerState(
         initialDisplayMode = DisplayMode.Input
     )
 
+
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.EditProfile)) },
+                title = { Text("Edit Profile") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -90,29 +114,31 @@ fun EditProfileScreen(
             )
             // ... existing code ...
 
-            CustomTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = stringResource(R.string.Name),
-                placeholder=stringResource(R.string.EnterYourUsername)
-            )
+            if (username != null) {
+                CustomTextField(
+                    value = firstName,
+                    onValueChange = { firstName = it },
+                    label = "Name",
+                    placeholder="Enter Your first name"
+                )
+            }
             
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             CustomTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = stringResource(R.string.Email),
-                placeholder = stringResource(R.string.EnterYourEmail)
+                value = lastName,
+                onValueChange = { lastName = it },
+                label = "last name",
+                placeholder = "Enter Your last name"
             )
             
             Spacer(modifier = Modifier.height(16.dp))
             
             CustomTextField(
                 value = dateOfBirth,
-                onValueChange = { },  // Read-only
-                label = stringResource(R.string.DateOfBirth),
-                placeholder = stringResource(R.string.SelectYourDateOfBirth),
+                onValueChange = { dateOfBirth = it },  // Read-only
+                label = "Date of Birth",
+                placeholder = "Select your date of birth",
                 onClick = { showDatePicker = true },
                 trailingIcon = {
                     IconButton(onClick = { showDatePicker = true }) {
@@ -134,12 +160,12 @@ fun EditProfileScreen(
                             }
                             showDatePicker = false
                         }) {
-                            Text(stringResource(R.string.OK))
+                            Text("OK")
                         }
                     },
                     dismissButton = {
                         TextButton(onClick = { showDatePicker = false }) {
-                            Text(stringResource(R.string.Cancel))
+                            Text("Cancel")
                         }
                     }
                 ) {
@@ -152,19 +178,42 @@ fun EditProfileScreen(
             CustomTextField(
                 value = description,
                 onValueChange = { description = it },
-                label = stringResource(R.string.Description),
+                label = "Description (Optional)",
                 singleLine = true,
                 minLines = 1,
-                placeholder = stringResource(R.string.EnterYourDescription)
+                placeholder = "Enter Your Description"
             )
             
             Spacer(modifier = Modifier.height(32.dp))
             
             Button(
-                onClick = { /* Handle save */ },
+                onClick = {
+                    val userProfileUpdates = hashMapOf(
+                        "first_name" to firstName,
+                        "last_name" to lastName,
+                        "date_of_birth" to dateOfBirth,
+                        "description" to description
+                    )
+
+                    val userRepository = UserRepository()
+
+                    if (userId != null) {
+                        userViewModel.viewModelScope.launch {
+                            try {
+                                userRepository.updateUser(userId, userProfileUpdates)
+                                // Refresh user data after successful update
+                                userViewModel.refreshUserData()
+                               onNavigateBack() // Navigate back after successful update
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                // Handle error if needed
+                            }
+                        }
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(R.string.SaveChanges))
+                Text("Save changes")
             }
         }
     }

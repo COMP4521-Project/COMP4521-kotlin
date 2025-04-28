@@ -7,13 +7,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.ui.theme.Badges
 import com.example.comp4521_ustrade.ui.theme.Badges2
 import com.example.comp4521_ustrade.ui.theme.Badges3
 import com.example.comp4521_ustrade.ui.theme.USTWhite
-import com.example.comp4521_ustrade.R
 
 @Composable
 fun ContributorTag(modifier: Modifier = Modifier, level : Int) {
@@ -24,7 +22,7 @@ fun ContributorTag(modifier: Modifier = Modifier, level : Int) {
                 shape = MaterialTheme.shapes.small
             ) {
                 Text(
-                    text = stringResource(R.string.Lv1Contributor),
+                    text = "Lv.1 Contributor",
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                     color = Color.Black
                 )
@@ -36,7 +34,7 @@ fun ContributorTag(modifier: Modifier = Modifier, level : Int) {
                 shape = MaterialTheme.shapes.small
             ) {
                 Text(
-                    text = stringResource(R.string.Lv2Contributor),
+                    text = "Lv.2 Contributor",
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                     color = Color.Black
                 )
@@ -48,7 +46,7 @@ fun ContributorTag(modifier: Modifier = Modifier, level : Int) {
                 shape = MaterialTheme.shapes.small
             ) {
                 Text(
-                    text = stringResource(R.string.Lv3Contributor),
+                    text = "Lv.3 Contributor",
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                     color = USTWhite
                 )

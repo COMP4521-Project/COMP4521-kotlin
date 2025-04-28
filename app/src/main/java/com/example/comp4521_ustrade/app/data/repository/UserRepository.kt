@@ -50,7 +50,9 @@ class UserRepository {
                         last_name = data["last_name"] as String,
                         fcm_token = data["fcm_token"] as String?,
                         profile_pic = data["profile_pic"] as String?,
-                        documents = data["documents"] as UserDocument?
+                        documents = data["documents"] as UserDocument?,
+                        date_of_birth = data["date_of_birth"] as String?,
+                        description = data["description"] as String?
                     )
                 } else null
             } else null

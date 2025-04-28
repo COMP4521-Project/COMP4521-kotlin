@@ -41,12 +41,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.comp4521_ustrade.R
-import com.example.comp4521_ustrade.app.helper.mapValueToString
 import com.example.comp4521_ustrade.app.models.NotificationData
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
@@ -78,7 +76,7 @@ fun Notification(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.Notifications)) },
+                title = { Text("Notifications") },
                 navigationIcon = {
                     IconButton(onClick = {
                         navViewModel.setSelectedScreen(Screens.Home)
@@ -118,7 +116,7 @@ fun Notification(
                                 horizontalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = mapValueToString(title),
+                                    text = title,
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal,
                                     color = if (selectedTab == index) MaterialTheme.colorScheme.primary else Color.Gray
@@ -171,7 +169,7 @@ fun Notification(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = stringResource(R.string.NoNotifications),
+                                    text = "No notifications",
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )

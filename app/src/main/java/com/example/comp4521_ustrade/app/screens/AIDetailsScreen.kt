@@ -30,9 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.DisplayFields
 import com.example.comp4521_ustrade.app.components.FunctionCardsGrid
 import com.example.comp4521_ustrade.app.models.DisplayFieldItem
@@ -58,28 +56,28 @@ fun AIDetailsScreen(
 
 
     val fields = listOf(
-        DisplayFieldItem(title = stringResource(R.string.PoweredBy), value = "Botpress"),
-        DisplayFieldItem(title = stringResource(R.string.Version), value = "1.0.0")
+        DisplayFieldItem(title = "Powered by", value = "Botpress"),
+        DisplayFieldItem(title = "Version", value = "1.0.0")
     )
     val functionCards = listOf(
         FunctionCardData(
             icon = Icons.Outlined.Navigation,
-            title = stringResource(R.string.AppNavigationSupport)
+            title = "App Navigation Support"
         ),
         FunctionCardData(
             icon = Icons.Outlined.Book,
-            title = stringResource(R.string.ResourceRecommendations)
+            title = "Resource Recommendations"
         ),
         FunctionCardData(
             icon = Icons.Outlined.QuestionAnswer,
-            title = stringResource(R.string.FAQandTroubleshooting)
+            title = "FAQ and Troubleshooting"
         )
     )
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.AIDetails)) },
+                title = { Text("AI details") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -125,7 +123,7 @@ fun AIDetailsScreen(
 
             // Functions section
             Text(
-                text = stringResource(R.string.Functions),
+                text = "Functions",
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(bottom = 16.dp)
             )

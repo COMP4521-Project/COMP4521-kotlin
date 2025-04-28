@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.app.screens.Screens
 import com.example.comp4521_ustrade.ui.theme.USTBlue
@@ -40,7 +39,6 @@ import com.example.comp4521_ustrade.ui.theme.USTBlue_lightdark
 import com.example.comp4521_ustrade.ui.theme.USTWhite
 import com.example.comp4521_ustrade.ui.theme.USTgray
 import com.example.comp4521_ustrade.ui.theme.USTgray_dark
-import com.example.comp4521_ustrade.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +70,7 @@ fun USTTopBar(onOpenDrawer: () -> Unit ,navigationController: androidx.navigatio
                     Icon(imageVector = Icons.Default.Search, contentDescription = "Search", tint = Color.Gray)
                 },
                 placeholder = {
-                    Text(text = stringResource(R.string.SearchResources), color = Color.Gray)
+                    Text(text = "Search Resources", color = Color.Gray)
                 },
                 colors = SearchBarDefaults.colors(
                     containerColor = (if (isDarkModeEnabled) USTgray_dark else USTgray),

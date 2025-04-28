@@ -71,7 +71,7 @@ fun Settings(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.Settings)) },
+                title = { Text("Settings") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -103,17 +103,17 @@ fun Settings(
                     Column {
                         SettingsItem(
                             icon = Icons.Default.Person,
-                            text = stringResource(R.string.EditProfile),
+                            text = "Edit profile",
                             onClick = { navigationController.navigate(Screens.EditProfile.screen) }
                         )
                         SettingsItem(
                             icon = Icons.Default.Lock,
-                            text = stringResource(R.string.ChangePassword),
+                            text = "Change Password",
                             onClick = { navigationController.navigate(Screens.EditPassword.screen) }
                         )
                         SettingsItem(
                             icon = Icons.Default.Notifications,
-                            text = stringResource(R.string.Notifications),
+                            text = "Notifications",
                             onClick = { navigationController.navigate(Screens.NotificationSettings.screen) }
                         )
                     }
@@ -123,7 +123,7 @@ fun Settings(
             // Resources Section
             item { 
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(stringResource(R.string.Resources), fontWeight = FontWeight.Bold) 
+                Text("Resources", fontWeight = FontWeight.Bold) 
             }
             item {
                 Surface(
@@ -134,22 +134,22 @@ fun Settings(
                     Column {
                         SettingsItem(
                             icon = Icons.Default.CardGiftcard,
-                            text = stringResource(R.string.RedeemGifts),
+                            text = "Redeem gifts",
                             onClick = { navigationController.navigate(Screens.RedeemGifts.screen) }
                         )
                         SettingsItem(
                             icon = Icons.Default.Bookmark,
-                            text = stringResource(R.string.Bookmarks),
+                            text = "Bookmarks",
                             onClick = { navigationController.navigate(Screens.DocumentBookmarkedList.screen) }
                         )
                         SettingsItem(
                             icon = Icons.Default.Upload,
-                            text = stringResource(R.string.UploadedFiles),
+                            text = "Uploaded files",
                             onClick = { navigationController.navigate(Screens.DocumentUploadedList.screen) }
                         )
                         SettingsItem(
                             icon = Icons.Default.Download,
-                            text = stringResource(R.string.DownloadedFiles),
+                            text = "Downloaded files",
                             onClick = { navigationController.navigate(Screens.DocumentDownloadedList.screen) }
                         )
                     }
@@ -159,7 +159,7 @@ fun Settings(
             // Support & About Section
             item { 
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(stringResource(R.string.SupportAbout), fontWeight = FontWeight.Bold) 
+                Text("Support & About", fontWeight = FontWeight.Bold) 
             }
             item {
                 Surface(
@@ -170,17 +170,17 @@ fun Settings(
                     Column {
                         SettingsItem(
                             icon = Icons.Default.Settings,
-                            text = stringResource(R.string.Preferences),
+                            text = "Preferences",
                             onClick = { navigationController.navigate(Screens.Preferences.screen) }
                         )
                         SettingsItem(
                             icon = Icons.Default.Info,
-                            text = stringResource(R.string.AboutApp),
+                            text = "About this app",
                             onClick = { navigationController.navigate(Screens.AboutApp.screen) }
                         )
                         SettingsItem(
                             icon = Icons.Default.ExitToApp,
-                            text = stringResource(R.string.LogOut),
+                            text = "Log out",
                             onClick = {
                                 authViewModel.signOut()
                                 navigationController.navigate(Screens.Landing.screen) {

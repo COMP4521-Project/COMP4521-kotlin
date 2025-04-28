@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,8 +31,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -39,7 +40,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.CourseMenu
 import com.example.comp4521_ustrade.app.components.DrawerContent
 import com.example.comp4521_ustrade.app.components.USTBottomBar
@@ -50,6 +50,7 @@ import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.auth.AuthViewModel
 import com.example.comp4521_ustrade.auth.screens.LandingScreen
+import com.example.comp4521_ustrade.ui.theme.USTBlue
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,7 +65,7 @@ fun HomePage(
     val navigationController = rememberNavController()
     val authViewModel: AuthViewModel = viewModel()
 
-    val userViewModel : UserViewModel = viewModel()
+    val userViewModel: UserViewModel = viewModel { UserViewModel(authViewModel) }
     val navViewModel : NavViewModel = viewModel()
 
     val context = LocalContext.current
@@ -128,7 +129,7 @@ fun HomePage(
             }
             composable(Screens.Download.screen) {
                 DocumentListScreen(
-                pageTitle = stringResource(R.string.Downloaded),
+                pageTitle = "downloaded",
                 onNavigateBack = { navigationController.navigateUp() },
                 onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
                     navViewModel = navViewModel
@@ -181,7 +182,8 @@ fun HomePage(
             // Setting page
             composable(Screens.EditProfile.screen) {
                 EditProfileScreen(
-                    onNavigateBack = { navigationController.navigateUp() }
+                    onNavigateBack = { navigationController.navigateUp() },
+                    userViewModel = userViewModel
                 )
             }
             composable(Screens.EditPassword.screen) {
@@ -258,7 +260,7 @@ fun HomePage(
             // Bookmarked document List
             composable(Screens.DocumentBookmarkedList.screen) {
                 DocumentListScreen(
-                    pageTitle = stringResource(R.string.Bookmarked),
+                    pageTitle = "bookmarked",
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
                     navViewModel = navViewModel
@@ -268,7 +270,7 @@ fun HomePage(
             // Uploaded document List
             composable(Screens.DocumentUploadedList.screen) {
                 DocumentListScreen(
-                    pageTitle = stringResource(R.string.Uploaded),
+                    pageTitle = "uploaded",
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
                     navViewModel = navViewModel
@@ -278,7 +280,7 @@ fun HomePage(
             // Downloaded document List
             composable(Screens.DocumentDownloadedList.screen) {
                 DocumentListScreen(
-                    pageTitle = stringResource(R.string.Downloaded),
+                    pageTitle = "downloaded",
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
                     navViewModel = navViewModel
@@ -288,7 +290,7 @@ fun HomePage(
             // Favorites document List
             composable(Screens.DocumentFavoritesList.screen) {
                 DocumentListScreen(
-                    pageTitle = stringResource(R.string.Favorites),
+                    pageTitle = "favorites",
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
                     navViewModel = navViewModel
@@ -297,7 +299,7 @@ fun HomePage(
             // Search results document List
             composable(Screens.DocumentSearchResults.screen) {
                 DocumentListScreen(
-                    pageTitle = stringResource(R.string.SearchResults),
+                    pageTitle = "search results",
                     onNavigateBack = { navigationController.navigateUp() }, 
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
                     navViewModel = navViewModel

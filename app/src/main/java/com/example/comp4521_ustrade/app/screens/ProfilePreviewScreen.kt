@@ -1,4 +1,3 @@
-
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,19 +19,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.display.DisplayCourseCards
 import com.example.comp4521_ustrade.app.display.displayProfileCard
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
@@ -80,7 +78,7 @@ fun ProfilePreviewScreen(
                     }
                     Text(
                         modifier = Modifier.padding(top = 12.dp),
-                        text = stringResource(R.string.ProfilePreview),
+                        text = "Profile Preview",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = USTWhite
@@ -99,7 +97,7 @@ fun ProfilePreviewScreen(
             
             // Add these sections below the profile card
             Spacer(modifier = Modifier.height(16.dp))
-            AboutSection()
+            AboutSection(userViewModel = userViewModel)
             Spacer(modifier = Modifier.height(16.dp))
             UploadsSection(navigationController)
         }
@@ -107,7 +105,9 @@ fun ProfilePreviewScreen(
 }
 
 @Composable
-private fun AboutSection() {
+private fun AboutSection(userViewModel : UserViewModel) {
+    val descriptionLiveData = userViewModel.description.observeAsState()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -115,7 +115,7 @@ private fun AboutSection() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(R.string.About),
+            text = "About",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -127,11 +127,13 @@ private fun AboutSection() {
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,",
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
+        descriptionLiveData.value?.let {
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
 
     }
@@ -146,7 +148,7 @@ private fun UploadsSection(navigateController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(R.string.Upload),
+            text = "Uploads",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
         )

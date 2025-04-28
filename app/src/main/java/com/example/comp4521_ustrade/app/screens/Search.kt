@@ -41,12 +41,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
-import com.example.comp4521_ustrade.R
+import com.example.comp4521_ustrade.ui.theme.USTgray
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,7 +105,7 @@ fun Search(modifier: Modifier = Modifier) {
             active = active,
             onActiveChange = { active = it },
             placeholder = {
-                Text(text = stringResource(R.string.SearchResources))
+                Text(text = "Search Resources")
             },
             shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
             colors = SearchBarDefaults.colors(
@@ -136,7 +135,7 @@ fun Search(modifier: Modifier = Modifier) {
                     .padding(8.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.RecentSearches),
+                    text = "Recent Searches",
                     fontSize = 18.sp,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
