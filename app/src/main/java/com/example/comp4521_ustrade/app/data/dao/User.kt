@@ -7,7 +7,9 @@ data class User (
     val first_name: String,
     val last_name: String,
     val profile_pic: String? = null,
-    val documents: UserDocument? = null
+    val documents: UserDocument? = null,
+    val date_of_birth: String? = null,
+    val description: String? = null
 )
 
 class UserDocument (

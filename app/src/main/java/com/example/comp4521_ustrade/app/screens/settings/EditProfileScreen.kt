@@ -1,4 +1,3 @@
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -36,10 +35,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.CustomTextField
+import com.example.comp4521_ustrade.app.data.repository.UserRepository
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
+import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,14 +50,28 @@ fun EditProfileScreen(
     onNavigateBack: () -> Unit = {},
     userViewModel: UserViewModel
 ) {
+    val userId = userViewModel.userid.observeAsState().value
     var username = userViewModel.username.observeAsState().value
-    var firstName = userViewModel.firstName.observeAsState().value
-    var lastName = userViewModel.lastName.observeAsState().value
 
+    val firstNameLiveData = userViewModel.firstName.observeAsState()
+    var firstName by remember { mutableStateOf(firstNameLiveData.value ?: "") }
+
+    val lastNameLiveData = userViewModel.lastName.observeAsState()
+    var lastName by remember { mutableStateOf(lastNameLiveData.value ?: "") }
+
+    val dateOfBirthLiveData = userViewModel.dateOfBirth.observeAsState()
+    var dateOfBirth by remember { mutableStateOf(dateOfBirthLiveData.value ?: "") }
+
+    val descriptionLiveData = userViewModel.description.observeAsState()
+    var description by remember { mutableStateOf(descriptionLiveData.value ?: "") }
+
+
+    //deprecated
 //    var name by remember { mutableStateOf("") }
-    var lastname by remember { mutableStateOf("") }
-    var dateOfBirth by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
+//    var lastname by remember { mutableStateOf("") }
+//    var dateOfBirth by remember { mutableStateOf("") }
+//    var description by remember { mutableStateOf("") }
+
     var showDatePicker by remember { mutableStateOf(false) }
     
     val datePickerState = rememberDatePickerState(
@@ -100,7 +116,7 @@ fun EditProfileScreen(
 
             if (username != null) {
                 CustomTextField(
-                    value = firstName!!,
+                    value = firstName,
                     onValueChange = { firstName = it },
                     label = "Name",
                     placeholder="Enter Your first name"
@@ -109,20 +125,18 @@ fun EditProfileScreen(
             
             Spacer(modifier = Modifier.height(16.dp))
 
-            lastName?.let {
-                CustomTextField(
-                    value = it,
-                    onValueChange = { lastName = it },
-                    label = "last name",
-                    placeholder = "Enter Your last name"
-                )
-            }
+            CustomTextField(
+                value = lastName,
+                onValueChange = { lastName = it },
+                label = "last name",
+                placeholder = "Enter Your last name"
+            )
             
             Spacer(modifier = Modifier.height(16.dp))
             
             CustomTextField(
                 value = dateOfBirth,
-                onValueChange = { },  // Read-only
+                onValueChange = { dateOfBirth = it },  // Read-only
                 label = "Date of Birth",
                 placeholder = "Select your date of birth",
                 onClick = { showDatePicker = true },
@@ -173,7 +187,30 @@ fun EditProfileScreen(
             Spacer(modifier = Modifier.height(32.dp))
             
             Button(
-                onClick = { /* Handle save */ },
+                onClick = {
+                    val userProfileUpdates = hashMapOf(
+                        "first_name" to firstName,
+                        "last_name" to lastName,
+                        "date_of_birth" to dateOfBirth,
+                        "description" to description
+                    )
+
+                    val userRepository = UserRepository()
+
+                    if (userId != null) {
+                        userViewModel.viewModelScope.launch {
+                            try {
+                                userRepository.updateUser(userId, userProfileUpdates)
+                                // Refresh user data after successful update
+                                userViewModel.refreshUserData()
+                               onNavigateBack() // Navigate back after successful update
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                // Handle error if needed
+                            }
+                        }
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Save changes")

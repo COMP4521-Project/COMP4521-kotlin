@@ -23,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -64,6 +65,8 @@ fun Profile(
         mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
     }
 
+    val userId = userViewModel.userid.observeAsState().value
+
     Scaffold(
         bottomBar = { USTBottomBar(navigationController, navViewModel = navViewModel) },
     ) { innerPadding ->
@@ -91,12 +94,14 @@ fun Profile(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row() {
-                            Text(
-                                text = "@hachiware103",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = USTWhite
-                            )
+                            if (userId != null) {
+                                Text(
+                                    text = "@" + (userId.take(12)),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = USTWhite
+                                )
+                            }
                         }
                         Row() {
                             IconButton(

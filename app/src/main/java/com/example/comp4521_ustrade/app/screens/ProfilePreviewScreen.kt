@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -96,7 +97,7 @@ fun ProfilePreviewScreen(
             
             // Add these sections below the profile card
             Spacer(modifier = Modifier.height(16.dp))
-            AboutSection()
+            AboutSection(userViewModel = userViewModel)
             Spacer(modifier = Modifier.height(16.dp))
             UploadsSection(navigationController)
         }
@@ -104,7 +105,9 @@ fun ProfilePreviewScreen(
 }
 
 @Composable
-private fun AboutSection() {
+private fun AboutSection(userViewModel : UserViewModel) {
+    val descriptionLiveData = userViewModel.description.observeAsState()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -124,11 +127,13 @@ private fun AboutSection() {
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,",
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
+        descriptionLiveData.value?.let {
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
 
     }
