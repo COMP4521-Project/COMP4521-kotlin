@@ -81,3 +81,9 @@ data class FunctionCardData(
 data class Prize(
     @DrawableRes val icon: Int,
 )
+
+enum class Course {
+    COMP4521,
+    COMP2011,
+    COMP2012
+}
