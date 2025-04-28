@@ -182,7 +182,8 @@ fun HomePage(
             // Setting page
             composable(Screens.EditProfile.screen) {
                 EditProfileScreen(
-                    onNavigateBack = { navigationController.navigateUp() }
+                    onNavigateBack = { navigationController.navigateUp() },
+                    userViewModel = userViewModel
                 )
             }
             composable(Screens.EditPassword.screen) {

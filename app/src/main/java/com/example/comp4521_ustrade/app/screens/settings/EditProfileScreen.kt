@@ -26,6 +26,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,16 +38,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.CustomTextField
+import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
-    onNavigateBack: () -> Unit = {}
+    onNavigateBack: () -> Unit = {},
+    userViewModel: UserViewModel
 ) {
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
+    var username = userViewModel.username.observeAsState().value
+    var firstName = userViewModel.firstName.observeAsState().value
+    var lastName = userViewModel.lastName.observeAsState().value
+
+//    var name by remember { mutableStateOf("") }
+    var lastname by remember { mutableStateOf("") }
     var dateOfBirth by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -54,6 +61,8 @@ fun EditProfileScreen(
     val datePickerState = rememberDatePickerState(
         initialDisplayMode = DisplayMode.Input
     )
+
+
 
     Scaffold(
         topBar = {
@@ -89,21 +98,25 @@ fun EditProfileScreen(
             )
             // ... existing code ...
 
-            CustomTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = "Name",
-                placeholder="Enter Your username"
-            )
+            if (username != null) {
+                CustomTextField(
+                    value = firstName!!,
+                    onValueChange = { firstName = it },
+                    label = "Name",
+                    placeholder="Enter Your first name"
+                )
+            }
             
             Spacer(modifier = Modifier.height(16.dp))
-            
-            CustomTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = "Email",
-                placeholder = "Enter Your Email"
-            )
+
+            lastName?.let {
+                CustomTextField(
+                    value = it,
+                    onValueChange = { lastName = it },
+                    label = "last name",
+                    placeholder = "Enter Your last name"
+                )
+            }
             
             Spacer(modifier = Modifier.height(16.dp))
             

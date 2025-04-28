@@ -23,6 +23,12 @@ class UserViewModel(private val authViewModel: AuthViewModel) : ViewModel() {
     private val _username = MutableLiveData<String?>()
     val username: LiveData<String?> = _username
 
+    private val _firstName = MutableLiveData<String?>()
+    val firstName: LiveData<String?> = _firstName
+
+    private val _lastName = MutableLiveData<String?>()
+    val lastName: LiveData<String?> = _lastName
+
     init {
         // Observe auth state changes
         viewModelScope.launch {
@@ -41,6 +47,8 @@ class UserViewModel(private val authViewModel: AuthViewModel) : ViewModel() {
             val user = userRepository.getUser(uid)
             _user.value = user
             _username.value = user?.let { "${it.first_name} ${it.last_name}" }
+            _firstName.value = user?.first_name
+            _lastName.value = user?.last_name
         } catch (e: Exception) {
             // Handle error appropriately
             e.printStackTrace()
