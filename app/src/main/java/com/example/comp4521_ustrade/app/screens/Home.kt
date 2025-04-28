@@ -65,7 +65,7 @@ fun HomePage(
     val navigationController = rememberNavController()
     val authViewModel: AuthViewModel = viewModel()
 
-    val userViewModel : UserViewModel = viewModel()
+    val userViewModel: UserViewModel = viewModel { UserViewModel(authViewModel) }
     val navViewModel : NavViewModel = viewModel()
 
     val context = LocalContext.current
