@@ -194,7 +194,8 @@ fun HomePage(
             }
             composable(Screens.EditPassword.screen) {
                 EditPasswordScreen(
-                    onNavigateBack = { navigationController.navigateUp() }
+                    onNavigateBack = { navigationController.navigateUp() },
+                    authViewModel = authViewModel
                 )
             }
             composable(Screens.NotificationSettings.screen) {

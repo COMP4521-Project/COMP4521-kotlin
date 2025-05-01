@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import androidx.core.net.toUri
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.messaging.FirebaseMessaging
 
 class AuthViewModel() : ViewModel() {
@@ -119,6 +120,33 @@ class AuthViewModel() : ViewModel() {
             } catch (e: Exception) {
                 _authState.value = AuthState.Error(e.message ?: "Password reset failed")
             }
+        }
+    }
+
+    fun changePassword(currentPassword: String, newPassword: String, onResult: (Boolean, String?) -> Unit) {
+        val user = FirebaseAuth.getInstance().currentUser
+        val email = user?.email
+        if (user != null && email != null) {
+            // Re-authenticate
+            val credential = EmailAuthProvider.getCredential(email, currentPassword)
+            user.reauthenticate(credential)
+                .addOnCompleteListener { authTask ->
+                    if (authTask.isSuccessful) {
+                        // Update password
+                        user.updatePassword(newPassword)
+                            .addOnCompleteListener { updateTask ->
+                                if (updateTask.isSuccessful) {
+                                    onResult(true, null)
+                                } else {
+                                    onResult(false, updateTask.exception?.localizedMessage)
+                                }
+                            }
+                    } else {
+                        onResult(false, authTask.exception?.localizedMessage)
+                    }
+                }
+        } else {
+            onResult(false, "User not logged in")
         }
     }
 }
