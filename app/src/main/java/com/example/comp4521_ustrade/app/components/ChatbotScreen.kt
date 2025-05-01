@@ -10,6 +10,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -25,14 +26,17 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.navigation.NavController
 import com.example.comp4521_ustrade.R
+import com.example.comp4521_ustrade.app.screens.Screens
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTgray
 
 @Composable
 fun ChatbotScreen(
     modifier: Modifier = Modifier,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    navigationController: NavController,
 ) {
     val context = LocalContext.current
     val URL by remember { mutableStateOf("https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/03/29/04/20250329044208-VD4UWHI0.json") }
@@ -94,6 +98,7 @@ fun ChatbotScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(USTBlue)
+                        .clickable { navigationController.navigate(Screens.AIDetails.screen) }
                         .padding(horizontal = 16.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -121,7 +126,7 @@ fun ChatbotScreen(
 
                         )
                         Text(
-                            text = "Free free to anything about USTrade",
+                            text = "Feel free to anything about USTrade",
                             color = Color.Gray,
                             style = MaterialTheme.typography.bodySmall
                         )

@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.DropdownList
 import com.example.comp4521_ustrade.app.components.ToggleButton
+import com.example.comp4521_ustrade.app.viewmodel.AppSettingsViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 import java.util.Locale
@@ -41,7 +43,8 @@ import java.util.Locale
 fun PreferencesScreen(
     onNavigateBack: () -> Unit = {},
     isDarkTheme: Boolean,
-    onThemeChange: (Boolean) -> Unit
+    onThemeChange: (Boolean) -> Unit,
+    appSettingsViewModel: AppSettingsViewModel
 ) {
     val context = LocalContext.current
 
@@ -52,6 +55,8 @@ fun PreferencesScreen(
     var selectedLanguage by remember {
         mutableStateOf(sharedPreferences.getString("selected_language", "English") ?: "English")
     }
+
+    val isChatbotEnabled by appSettingsViewModel.isChatbotEnabled.collectAsState()
 
 
     var expanded by remember { mutableStateOf(false) }
@@ -98,6 +103,23 @@ fun PreferencesScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = USTBlue.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Column {
+                    ToggleButton(
+                        text = "Chatbot",
+                        checked = isChatbotEnabled,
+                        onCheckedChange = { appSettingsViewModel.setChatbotEnabled(it) }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
 
             Surface(
                 modifier = Modifier.fillMaxWidth(),

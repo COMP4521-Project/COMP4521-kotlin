@@ -40,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,6 +70,7 @@ import com.example.comp4521_ustrade.app.components.USTBottomBar
 import com.example.comp4521_ustrade.app.components.USTPager
 import com.example.comp4521_ustrade.app.components.USTTopBar
 import com.example.comp4521_ustrade.app.display.DisplayCourseCards
+import com.example.comp4521_ustrade.app.viewmodel.AppSettingsViewModel
 import com.example.comp4521_ustrade.app.viewmodel.CourseViewModel
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
@@ -100,9 +102,9 @@ fun HomePage(
     val sharedPreferences = remember {
         context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
     }
-    var isDarkModeEnabled by remember {
-        mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
-    }
+
+    val appSettingsViewModel :AppSettingsViewModel = viewModel()
+    val isChatbotEnabled by appSettingsViewModel.isChatbotEnabled.collectAsState()
 
     var showChatbot by remember { mutableStateOf(false) }
 
@@ -144,25 +146,34 @@ fun HomePage(
                     topBar = { USTTopBar(onOpenDrawer = onOpenDrawer, navigationController) },
                     bottomBar = { USTBottomBar(navigationController,  navViewModel = navViewModel) },
                     floatingActionButton = {
-                        FloatingActionButton(
-                            onClick = { showChatbot = true },
-                            containerColor = Color.Transparent,
-                            elevation = FloatingActionButtonDefaults.elevation(
-                                defaultElevation = 0.dp,
-                                pressedElevation = 0.dp,
-                                focusedElevation = 0.dp,
-                                hoveredElevation = 0.dp,
-                            ),
-                            interactionSource = remember { MutableInteractionSource() },)
-                        {
-                            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(
-                                R.raw.bot))
-                            val progress by animateLottieCompositionAsState(composition, iterations = LottieConstants.IterateForever)
-                            LottieAnimation(
-                                composition = composition,
-                                progress = { progress },
-                                modifier = Modifier.size(80.dp) // Adjust size as needed
+                        if(isChatbotEnabled) {
+                            FloatingActionButton(
+                                onClick = { showChatbot = true },
+                                containerColor = Color.Transparent,
+                                elevation = FloatingActionButtonDefaults.elevation(
+                                    defaultElevation = 0.dp,
+                                    pressedElevation = 0.dp,
+                                    focusedElevation = 0.dp,
+                                    hoveredElevation = 0.dp,
+                                ),
+                                interactionSource = remember { MutableInteractionSource() },
                             )
+                            {
+                                val composition by rememberLottieComposition(
+                                    LottieCompositionSpec.RawRes(
+                                        R.raw.bot
+                                    )
+                                )
+                                val progress by animateLottieCompositionAsState(
+                                    composition,
+                                    iterations = LottieConstants.IterateForever
+                                )
+                                LottieAnimation(
+                                    composition = composition,
+                                    progress = { progress },
+                                    modifier = Modifier.size(80.dp) // Adjust size as needed
+                                )
+                            }
                         }
                     }
                 ) { innerPadding ->
@@ -186,7 +197,7 @@ fun HomePage(
                         enter = fadeIn() + scaleIn(initialScale = 0.2f),
                         exit = fadeOut() + scaleOut(targetScale = 0.2f)
                     ) {
-                        ChatbotScreen(onClose = { showChatbot = false })
+                        ChatbotScreen(onClose = { showChatbot = false }, navigationController = navigationController)
                     }
                 }
             }
@@ -279,7 +290,8 @@ fun HomePage(
                 PreferencesScreen(
                     onNavigateBack = { navigationController.navigateUp() },
                     isDarkTheme = isDarkTheme,
-                    onThemeChange = onThemeChange
+                    onThemeChange = onThemeChange,
+                    appSettingsViewModel = appSettingsViewModel,
                 )
             }
             composable(Screens.AboutApp.screen) {

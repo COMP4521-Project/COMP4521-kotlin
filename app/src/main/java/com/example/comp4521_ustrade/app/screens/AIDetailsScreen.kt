@@ -1,6 +1,7 @@
 package com.example.comp4521_ustrade.app.screens
 
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,7 +31,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.DisplayFields
 import com.example.comp4521_ustrade.app.components.FunctionCardsGrid
 import com.example.comp4521_ustrade.app.models.DisplayFieldItem
@@ -104,8 +107,8 @@ fun AIDetailsScreen(
                     .padding(vertical = 32.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.SmartToy,
+                Image(
+                    painter = painterResource(id = R.drawable.botpress),
                     contentDescription = "AI Bot",
                     modifier = Modifier.size(120.dp)
                 )
