@@ -46,11 +46,14 @@ import com.example.comp4521_ustrade.app.components.USTBottomBar
 import com.example.comp4521_ustrade.app.components.USTPager
 import com.example.comp4521_ustrade.app.components.USTTopBar
 import com.example.comp4521_ustrade.app.display.DisplayCourseCards
+import com.example.comp4521_ustrade.app.viewmodel.CourseViewModel
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.auth.AuthViewModel
 import com.example.comp4521_ustrade.auth.screens.LandingScreen
 import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
+import com.example.comp4521_ustrade.ui.theme.USTBlue_light
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,6 +71,7 @@ fun HomePage(
     val userViewModel: UserViewModel = viewModel { UserViewModel(authViewModel) }
     val navViewModel : NavViewModel = viewModel()
 
+    val courseViewModel :CourseViewModel = viewModel()
     val context = LocalContext.current
 
     val sharedPreferences = remember {
@@ -92,11 +96,13 @@ fun HomePage(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(
-                modifier = Modifier.width(200.dp)
+                modifier = Modifier.width(200.dp),
+                drawerContainerColor = USTBlue_light,
             ) {
                 DrawerContent(
                     navController = navigationController,
-                    drawerState = drawerState
+                    drawerState = drawerState,
+                    courseViewModel = courseViewModel,
                 )
             }
         }
@@ -122,7 +128,7 @@ fun HomePage(
                     ) {
 
                         USTPager()
-                        CourseMenu({ DisplayCourseCards(navigateController=navigationController) })
+                        CourseMenu(courseViewModel, { DisplayCourseCards(navigateController=navigationController) })
 
                     }
                 }

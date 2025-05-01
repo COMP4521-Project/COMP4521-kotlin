@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.comp4521_ustrade.app.viewmodel.CourseViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTWhite
 import com.example.comp4521_ustrade.ui.theme.USTWhite_dark
@@ -35,7 +36,7 @@ import com.example.comp4521_ustrade.ui.theme.USTgray
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CourseMenu( content: @Composable () -> Unit) {
+fun CourseMenu( courseViewModel:CourseViewModel , content: @Composable () -> Unit) {
 //    val courseCodes = listOf(
 //        "ACCT", "AESF", "AIAA", "AISC", "AMAT", "BEHI", "BIBU", "BIEN",
 //        "BSBE", "BTEC", "CENG", "CHEM", "CHMS", "CIEM", "CIVL", "CMAA",
@@ -62,11 +63,8 @@ fun CourseMenu( content: @Composable () -> Unit) {
         mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
     }
 
-    val courseTitles = listOf(
-        "ACCT",  "BIEN", "BTEC", "CENG", "CHEM", "CIVL", "COMP", "CPEG",
-        "ECON", "ELEC", "ENGG", "ENVR", "FINA", "LANG", "HUMA", "IEDA",
-        "MATH", "MGMT", "PHYS", "SOSC"
-    )
+
+    val courseTitles = courseViewModel.courseTitles
 
     val pagerState = rememberPagerState {  courseTitles.size }
 
