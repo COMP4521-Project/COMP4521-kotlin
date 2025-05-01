@@ -8,20 +8,35 @@ import PreferencesScreen
 import ProfilePreviewScreen
 import Settings
 import android.content.Context
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ModelTraining
+import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -30,6 +45,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -40,6 +56,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.example.comp4521_ustrade.R
+import com.example.comp4521_ustrade.app.components.ChatbotScreen
 import com.example.comp4521_ustrade.app.components.CourseMenu
 import com.example.comp4521_ustrade.app.components.DrawerContent
 import com.example.comp4521_ustrade.app.components.USTBottomBar
@@ -81,6 +104,7 @@ fun HomePage(
         mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
     }
 
+    var showChatbot by remember { mutableStateOf(false) }
 
     val onOpenDrawer: () -> Unit = {
         scope.launch {
@@ -119,6 +143,28 @@ fun HomePage(
                 Scaffold(
                     topBar = { USTTopBar(onOpenDrawer = onOpenDrawer, navigationController) },
                     bottomBar = { USTBottomBar(navigationController,  navViewModel = navViewModel) },
+                    floatingActionButton = {
+                        FloatingActionButton(
+                            onClick = { showChatbot = true },
+                            containerColor = Color.Transparent,
+                            elevation = FloatingActionButtonDefaults.elevation(
+                                defaultElevation = 0.dp,
+                                pressedElevation = 0.dp,
+                                focusedElevation = 0.dp,
+                                hoveredElevation = 0.dp,
+                            ),
+                            interactionSource = remember { MutableInteractionSource() },)
+                        {
+                            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(
+                                R.raw.bot))
+                            val progress by animateLottieCompositionAsState(composition, iterations = LottieConstants.IterateForever)
+                            LottieAnimation(
+                                composition = composition,
+                                progress = { progress },
+                                modifier = Modifier.size(80.dp) // Adjust size as needed
+                            )
+                        }
+                    }
                 ) { innerPadding ->
                     Column(
                         modifier = Modifier
@@ -127,9 +173,20 @@ fun HomePage(
                             .padding(innerPadding)
                     ) {
 
+
                         USTPager()
                         CourseMenu(courseViewModel, { DisplayCourseCards(navigateController=navigationController) })
 
+                    }
+                }
+
+                if (showChatbot) {
+                    AnimatedVisibility(
+                        visible = showChatbot,
+                        enter = fadeIn() + scaleIn(initialScale = 0.2f),
+                        exit = fadeOut() + scaleOut(targetScale = 0.2f)
+                    ) {
+                        ChatbotScreen(onClose = { showChatbot = false })
                     }
                 }
             }
