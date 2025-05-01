@@ -23,17 +23,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.app.components.CustomPasswordTextField
+import com.example.comp4521_ustrade.auth.AuthViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditPasswordScreen(
-    onNavigateBack: () -> Unit = {}
+    onNavigateBack: () -> Unit = {},
+    authViewModel: AuthViewModel
 ) {
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
     var currentPasswordVisible by remember { mutableStateOf(false) }
     var newPasswordVisible by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var successMessage by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
         topBar = {
@@ -83,12 +87,30 @@ fun EditPasswordScreen(
             )
             
             Spacer(modifier = Modifier.height(32.dp))
-            
+
             Button(
-                onClick = { /* Handle save */ },
+                onClick = {
+                    errorMessage = null
+                    successMessage = null
+                    authViewModel.changePassword(currentPassword, newPassword) { success, error ->
+                        if (success) {
+                            successMessage = "Password updated successfully!"
+                            // Optionally navigate back or clear fields
+                        } else {
+                            errorMessage = error ?: "Failed to update password"
+                        }
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Save changes")
+            }
+
+            errorMessage?.let {
+                Text(it, color = Color.Red, modifier = Modifier.padding(top = 8.dp))
+            }
+            successMessage?.let {
+                Text(it, color = Color.Green, modifier = Modifier.padding(top = 8.dp))
             }
         }
     }

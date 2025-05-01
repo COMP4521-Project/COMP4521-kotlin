@@ -20,9 +20,9 @@ data class NavItem(
 )
 
 
-//navigation drawer
+//navigation drawer (depreciated)
 data class DrawerItem(
-    val icon: ImageVector,
+//    val icon: ImageVector,
     val label: String,
     val secondary_label: String
 )

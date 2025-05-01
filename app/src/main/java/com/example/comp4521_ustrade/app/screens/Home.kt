@@ -8,28 +8,45 @@ import PreferencesScreen
 import ProfilePreviewScreen
 import Settings
 import android.content.Context
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ModelTraining
+import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -40,17 +57,28 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.example.comp4521_ustrade.R
+import com.example.comp4521_ustrade.app.components.ChatbotScreen
 import com.example.comp4521_ustrade.app.components.CourseMenu
 import com.example.comp4521_ustrade.app.components.DrawerContent
 import com.example.comp4521_ustrade.app.components.USTBottomBar
 import com.example.comp4521_ustrade.app.components.USTPager
 import com.example.comp4521_ustrade.app.components.USTTopBar
 import com.example.comp4521_ustrade.app.display.DisplayCourseCards
+import com.example.comp4521_ustrade.app.viewmodel.AppSettingsViewModel
+import com.example.comp4521_ustrade.app.viewmodel.CourseViewModel
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.auth.AuthViewModel
 import com.example.comp4521_ustrade.auth.screens.LandingScreen
 import com.example.comp4521_ustrade.ui.theme.USTBlue
+import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
+import com.example.comp4521_ustrade.ui.theme.USTBlue_light
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,15 +96,17 @@ fun HomePage(
     val userViewModel: UserViewModel = viewModel { UserViewModel(authViewModel) }
     val navViewModel : NavViewModel = viewModel()
 
+    val courseViewModel :CourseViewModel = viewModel()
     val context = LocalContext.current
 
     val sharedPreferences = remember {
         context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
     }
-    var isDarkModeEnabled by remember {
-        mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
-    }
 
+    val appSettingsViewModel :AppSettingsViewModel = viewModel()
+    val isChatbotEnabled by appSettingsViewModel.isChatbotEnabled.collectAsState()
+
+    var showChatbot by remember { mutableStateOf(false) }
 
     val onOpenDrawer: () -> Unit = {
         scope.launch {
@@ -92,11 +122,13 @@ fun HomePage(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(
-                modifier = Modifier.width(200.dp)
+                modifier = Modifier.width(200.dp),
+                drawerContainerColor = USTBlue_light,
             ) {
                 DrawerContent(
                     navController = navigationController,
-                    drawerState = drawerState
+                    drawerState = drawerState,
+                    courseViewModel = courseViewModel,
                 )
             }
         }
@@ -113,6 +145,37 @@ fun HomePage(
                 Scaffold(
                     topBar = { USTTopBar(onOpenDrawer = onOpenDrawer, navigationController) },
                     bottomBar = { USTBottomBar(navigationController,  navViewModel = navViewModel) },
+                    floatingActionButton = {
+                        if(isChatbotEnabled) {
+                            FloatingActionButton(
+                                onClick = { showChatbot = true },
+                                containerColor = Color.Transparent,
+                                elevation = FloatingActionButtonDefaults.elevation(
+                                    defaultElevation = 0.dp,
+                                    pressedElevation = 0.dp,
+                                    focusedElevation = 0.dp,
+                                    hoveredElevation = 0.dp,
+                                ),
+                                interactionSource = remember { MutableInteractionSource() },
+                            )
+                            {
+                                val composition by rememberLottieComposition(
+                                    LottieCompositionSpec.RawRes(
+                                        R.raw.bot
+                                    )
+                                )
+                                val progress by animateLottieCompositionAsState(
+                                    composition,
+                                    iterations = LottieConstants.IterateForever
+                                )
+                                LottieAnimation(
+                                    composition = composition,
+                                    progress = { progress },
+                                    modifier = Modifier.size(80.dp) // Adjust size as needed
+                                )
+                            }
+                        }
+                    }
                 ) { innerPadding ->
                     Column(
                         modifier = Modifier
@@ -121,9 +184,20 @@ fun HomePage(
                             .padding(innerPadding)
                     ) {
 
-                        USTPager()
-                        CourseMenu({ DisplayCourseCards(navigateController=navigationController) })
 
+                        USTPager()
+                        CourseMenu(courseViewModel, { DisplayCourseCards(navigateController=navigationController) })
+
+                    }
+                }
+
+                if (showChatbot) {
+                    AnimatedVisibility(
+                        visible = showChatbot,
+                        enter = fadeIn() + scaleIn(initialScale = 0.2f),
+                        exit = fadeOut() + scaleOut(targetScale = 0.2f)
+                    ) {
+                        ChatbotScreen(onClose = { showChatbot = false }, navigationController = navigationController)
                     }
                 }
             }
@@ -188,7 +262,8 @@ fun HomePage(
             }
             composable(Screens.EditPassword.screen) {
                 EditPasswordScreen(
-                    onNavigateBack = { navigationController.navigateUp() }
+                    onNavigateBack = { navigationController.navigateUp() },
+                    authViewModel = authViewModel
                 )
             }
             composable(Screens.NotificationSettings.screen) {
@@ -215,7 +290,8 @@ fun HomePage(
                 PreferencesScreen(
                     onNavigateBack = { navigationController.navigateUp() },
                     isDarkTheme = isDarkTheme,
-                    onThemeChange = onThemeChange
+                    onThemeChange = onThemeChange,
+                    appSettingsViewModel = appSettingsViewModel,
                 )
             }
             composable(Screens.AboutApp.screen) {
