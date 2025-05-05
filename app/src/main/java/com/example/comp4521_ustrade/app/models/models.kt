@@ -10,6 +10,7 @@ data class CourseCardItem(
     val courseTitle: String,
     val courseYear: String,
     val courseSemester: String,
+    val documentId: String
 
 )
 

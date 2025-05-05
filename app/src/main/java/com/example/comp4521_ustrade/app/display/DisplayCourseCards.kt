@@ -52,7 +52,8 @@ fun DisplayCourseCards(modifier: Modifier = Modifier, navigateController: NavCon
             course = document.course,
             courseTitle = document.title,
             courseYear = document.year, // Example: use year from upload_date
-            courseSemester = document.semester // Replace with actual semester if available in Document
+            courseSemester = document.semester,
+            documentId = document.id,
         )
     }
 
@@ -80,7 +81,7 @@ fun DisplayCourseCards(modifier: Modifier = Modifier, navigateController: NavCon
             items(courseList.size) { index ->
                 CourseCard(
                     CourseCardItem = courseList[index],
-                    navigateController = navigateController
+                    navigateController = navigateController,
                 )
             }
         }

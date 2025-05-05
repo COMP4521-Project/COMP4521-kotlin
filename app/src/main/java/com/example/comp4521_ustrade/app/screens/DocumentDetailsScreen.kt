@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +48,10 @@ import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.DisplayOnlyFields
 import com.example.comp4521_ustrade.app.components.DocumentPreviewSlider
+import com.example.comp4521_ustrade.app.data.dao.Document
+import com.example.comp4521_ustrade.app.data.dao.User
+import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
+import com.example.comp4521_ustrade.app.data.repository.UserRepository
 import com.example.comp4521_ustrade.app.models.DisplayOnlyFieldItem
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
@@ -55,16 +60,31 @@ import com.example.comp4521_ustrade.ui.theme.USTWhite
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun DocumentDetailsScreen(
-    title: String,
     onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    documentId: String,
 ) {
+
+    val documentRepository = remember { DocumentRepository() }
+    var document by remember { mutableStateOf<Document?>(null) }
+    var uploader by remember { mutableStateOf<User?>(null) }
+
+    val userRepository = remember { UserRepository() }
+
+    LaunchedEffect(documentId) {
+        document = documentRepository.getDocument(documentId)
+        uploader = document?.let { userRepository.getUser(it.uploaded_by) }
+    }
+
     val documentFields = listOf(
-        DisplayOnlyFieldItem(title = "Year", value= "2025 Spring"),
-        DisplayOnlyFieldItem(title="Subject code", value="COMP 4521"),
-        DisplayOnlyFieldItem(title = "Upload Date", value = "2024-03-20"),
-        DisplayOnlyFieldItem(title = "Description", value = "Latest lecture note!!!")
+        DisplayOnlyFieldItem(title = "Year", value= (document?.year ?: "") + " " + (document?.semester ?: "")),
+        document?.let { DisplayOnlyFieldItem(title="Course", value= it.course) },
+        document?.let { DisplayOnlyFieldItem(title = "Upload Date", value = it.upload_date) },
+        document?.let { DisplayOnlyFieldItem(title = "Description", value = it.description) }
     )
+
+
+
 
     var isLiked by remember { mutableStateOf(false) }
     var isDisliked by remember { mutableStateOf(false) }
@@ -126,10 +146,12 @@ fun DocumentDetailsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
             // Document title
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge
-            )
+            document?.let {
+                Text(
+                    text = it.title,
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
             Spacer(modifier = Modifier.height(24.dp))
 
             // User info row
@@ -146,11 +168,13 @@ fun DocumentDetailsScreen(
                 )
                 
                 Spacer(modifier = Modifier.width(12.dp))
-                
-                Text(
-                    text = "John Doe",
-                    style = MaterialTheme.typography.bodyLarge
-                )
+
+                if (uploader != null) {
+                    Text(
+                        text = uploader!!.first_name + " " + uploader!!.last_name,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
