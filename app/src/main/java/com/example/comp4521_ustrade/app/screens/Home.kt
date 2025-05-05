@@ -376,12 +376,13 @@ fun HomePage(
             
             // Favorites document List
             composable(Screens.DocumentFavoritesList.screen) {
-                DocumentListScreen(
+                SpecialDocumentListScreen(
                     pageTitle = "favorites",
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
                     navViewModel = navViewModel,
                     navigationController = navigationController,
+                    userViewModel = userViewModel
                 )
             }
             // Search results document List
