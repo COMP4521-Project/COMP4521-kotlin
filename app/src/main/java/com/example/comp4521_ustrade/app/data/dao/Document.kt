@@ -5,7 +5,8 @@ data class Document (
     val title: String,
     val description: String,
     val subject: String,
-    val course: DocuCourse,
+    val subjectCode: String,
+    val course: String,
     val uploaded_by: String,
     val upload_date: String,
     val document_name: String
@@ -13,7 +14,7 @@ data class Document (
 
 
 data class DocuCourse (
-    val subject: String,
-    val code: String,
-    val name: String,
+    val id: String,
+    val code: String, //e.g 4521
+    val subject: String, //e.g. COMP
 )

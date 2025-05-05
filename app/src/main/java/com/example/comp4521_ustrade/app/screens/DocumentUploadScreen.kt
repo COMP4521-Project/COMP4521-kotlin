@@ -996,21 +996,16 @@ fun DocumentUploadScreen(
                     TextButton(
                         onClick = {
                             // TODO: Implement actual upload logic here
+
                             //upload to firestore
-                            val course = DocuCourse(
-                                subject = subject,
-                                code = subjectCode,
-                                name = title
-                                )
-
-
                             val document = userId?.let {
                                 Document(
                                     id = java.util.UUID.randomUUID().toString(),
                                     title = title,
                                     description = description,
                                     subject = subject,
-                                    course = course,
+                                    subjectCode = subjectCode,
+                                    course = subject + subjectCode,
                                     uploaded_by = it, // Replace with actual user ID if available
                                     upload_date = SimpleDateFormat(
                                         "yyyy-MM-dd",
@@ -1018,7 +1013,7 @@ fun DocumentUploadScreen(
                                     ).format(
                                         Date()
                                     ),
-                                    document_name = fileName ?: "Untitled"
+                                    document_name = fileName ?: "No file"
                                 )
                             }
 
