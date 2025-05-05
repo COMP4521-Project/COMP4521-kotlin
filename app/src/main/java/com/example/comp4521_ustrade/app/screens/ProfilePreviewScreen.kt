@@ -99,7 +99,7 @@ fun ProfilePreviewScreen(
             Spacer(modifier = Modifier.height(16.dp))
             AboutSection(userViewModel = userViewModel)
             Spacer(modifier = Modifier.height(16.dp))
-            UploadsSection(navigationController)
+            UploadsSection(navigationController, userViewModel = userViewModel)
         }
     }
 }
@@ -140,7 +140,8 @@ private fun AboutSection(userViewModel : UserViewModel) {
 }
 
 @Composable
-private fun UploadsSection(navigateController: NavController) {
+private fun UploadsSection(navigateController: NavController, userViewModel:UserViewModel) {
+    val userId = userViewModel.userid.observeAsState().value
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -159,10 +160,12 @@ private fun UploadsSection(navigateController: NavController) {
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        DisplayCourseCards(
-            modifier = Modifier.fillMaxWidth(),
-            navigateController = navigateController,
-            subject = ""
-        )
+        if (userId != null) {
+            DisplayCourseCards(
+                modifier = Modifier.fillMaxWidth(),
+                navigateController = navigateController,
+                userID = userId
+            )
+        }
     }
 } 

@@ -92,6 +92,33 @@ class DocumentRepository {
         }
     }
 
+    suspend fun getUserSpecificDocuments(userID: String): List<Document> {
+        return try {
+            val snapshot = documentsCollection.whereEqualTo("uploaded_by", userID).get().await()
+            snapshot.documents.mapNotNull { doc ->
+                val data = doc.data
+                if (data != null) {
+                    Document(
+                        id = data["id"] as String,
+                        title = data["title"] as String,
+                        description = data["description"] as String,
+                        uploaded_by = data["uploaded_by"] as String,
+                        upload_date = data["upload_date"] as String,
+                        subject = data["subject"] as String,
+                        subjectCode = data["subjectCode"] as String,
+                        course = data["course"] as String,
+                        year = data["year"] as String,
+                        semester = data["semester"] as String,
+                        document_name = data["document_name"] as String
+                    )
+                } else null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
     suspend fun getAllDocuments(): List<Document> {
         return try {
             val snapshot = documentsCollection.get().await()

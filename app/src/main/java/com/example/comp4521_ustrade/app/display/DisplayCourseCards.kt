@@ -24,7 +24,7 @@ import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
 import com.example.comp4521_ustrade.app.models.CourseCardItem
 
 @Composable
-fun DisplayCourseCards(modifier: Modifier = Modifier, navigateController: NavController, subject: String) {
+fun DisplayCourseCards(modifier: Modifier = Modifier, navigateController: NavController, subject: String="", userID: String="") {
     // Sample data for course cards
 
 //    val courseList = listOf(
@@ -41,8 +41,16 @@ fun DisplayCourseCards(modifier: Modifier = Modifier, navigateController: NavCon
     val documentRepository = DocumentRepository()
     var documentList by remember { mutableStateOf<List<Document>>(emptyList()) }
 
-    LaunchedEffect(Unit) {
-        documentList = documentRepository.getSubjectSpecificDocuments(subject)
+//    LaunchedEffect(Unit) {
+//        documentList = documentRepository.getSubjectSpecificDocuments(subject)
+//    }
+
+    LaunchedEffect(subject, userID) {
+        documentList = when {
+            userID != "" && subject == "" -> documentRepository.getUserSpecificDocuments(userID)
+            subject != "" && userID == "" -> documentRepository.getSubjectSpecificDocuments(subject)
+            else -> emptyList() // or documentRepository.getAllDocuments()
+        }
     }
 
     // Map Document to CourseCardItem

@@ -317,12 +317,6 @@ fun HomePage(
             }
 
             // Document Details
-//            composable(Screens.DocumentDetails.screen) {
-//                DocumentDetailsScreen(
-//                    title = "COMP4521 Lecture 7",
-//                    onNavigateBack = { navigationController.navigateUp() }
-//                )
-//            }
             composable(
                 route = Screens.DocumentDetails.screen + "/{documentId}",
                 arguments = listOf(navArgument("documentId") { type = NavType.StringType })
