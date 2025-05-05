@@ -343,12 +343,13 @@ fun HomePage(
 
             // Bookmarked document List
             composable(Screens.DocumentBookmarkedList.screen) {
-                DocumentListScreen(
+                SpecialDocumentListScreen(
                     pageTitle = "bookmarked",
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
                     navViewModel = navViewModel,
                     navigationController = navigationController,
+                    userViewModel = userViewModel
                 )
             }
 

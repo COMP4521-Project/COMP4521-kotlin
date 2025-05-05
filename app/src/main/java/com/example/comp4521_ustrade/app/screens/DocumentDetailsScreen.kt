@@ -83,6 +83,9 @@ fun DocumentDetailsScreen(
 
     var isLiked by remember { mutableStateOf(false) }
     var isDisliked by remember { mutableStateOf(false) }
+    var isBookmarked by remember { mutableStateOf(false) }
+
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(documentId) {
         document = documentRepository.getDocument(documentId)
@@ -91,7 +94,11 @@ fun DocumentDetailsScreen(
     }
     LaunchedEffect(user, documentId) {
         val likedList = user?.documents?.liked ?: emptyList()
+        val dislikedList = user?.documents?.disliked ?: emptyList()
+        val bookmarkedList = user?.documents?.bookmarked ?: emptyList()
         isLiked = likedList.any { it.trim() == documentId.trim() }
+        isDisliked = dislikedList.any { it.trim() == documentId.trim() }
+        isBookmarked = bookmarkedList.any { it.trim() == documentId.trim() }
     }
 
 
@@ -103,7 +110,6 @@ fun DocumentDetailsScreen(
     )
 
 
-    val coroutineScope = rememberCoroutineScope()
 
     val context = LocalContext.current
 
@@ -136,8 +142,35 @@ fun DocumentDetailsScreen(
             titleContentColor = USTWhite,
             navigationIconContentColor = USTWhite),
                 actions = {
-                    IconButton(onClick = { /* Handle bookmark */ }) {
-                        Icon(Icons.Outlined.BookmarkBorder, "Bookmark",tint = USTWhite)
+                    IconButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                val bookmarkedList = user?.documents?.bookmarked ?: emptyList()
+                                if (!bookmarkedList.contains(documentId)) {
+                                    if (userid != null) {
+                                        userRepository.addBookmarkedDocumentToUser(
+                                            userid,
+                                            documentId
+                                        )
+                                    }
+                                    isBookmarked = true
+                                } else {
+                                    if (userid != null) {
+                                        userRepository.removeBookmarkedDocumentFromUser(
+                                            userid,
+                                            documentId
+                                        )
+                                    }
+                                    isBookmarked = false
+                                }
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (isBookmarked) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
+                            contentDescription = "Bookmark",
+                            tint = if (isBookmarked) Color.Black else USTWhite
+                        )
                     }
                     IconButton(onClick = { /* Handle share */ }) {
                         Icon(Icons.Default.Share, "Share", tint = USTWhite)
@@ -211,36 +244,24 @@ fun DocumentDetailsScreen(
                 Row (verticalAlignment = Alignment.CenterVertically ){
                     IconButton(
                         onClick = {
-                            isLiked = !isLiked
-                            if (isLiked) {
-                                coroutineScope.launch {
-                                    val likedList = user?.documents?.liked ?: emptyList()
-                                    if (isLiked && !likedList.contains(documentId)) {
-                                        documentRepository.addLikeToDocument(documentId)
-
-                                        if (userid != null) {
-                                            userRepository.addLikedDocumentToUser(
-                                                userid,
-                                                documentId
-                                            )
-                                        }
-                                        //re-fetch from Firestore for real-time sync
-                                        document = documentRepository.getDocument(documentId)
+                            coroutineScope.launch {
+                                val likedList = user?.documents?.liked ?: emptyList()
+                                val dislikedList = user?.documents?.disliked ?: emptyList()
+                                if (!likedList.contains(documentId)) {
+                                    documentRepository.addLikeToDocument(documentId)
+                                    if (userid != null) userRepository.addLikedDocumentToUser(userid, documentId)
+                                    // If previously disliked, remove dislike
+                                    if (dislikedList.contains(documentId)) {
+                                        documentRepository.removeDislikeFromDocument(documentId)
+                                        if (userid != null) userRepository.removeDislikedDocumentFromUser(userid, documentId)
                                     }
-                                }
-                                isDisliked = false
-                            } else {
-                                coroutineScope.launch {
+                                } else {
                                     documentRepository.removeLikeFromDocument(documentId)
-                                    if (userid != null) {
-                                        userRepository.removeLikedDocumentFromUser(
-                                            userid,
-                                            documentId
-                                        )
-                                    }
-                                    //re-fetch from Firestore for real-time sync
-                                    document = documentRepository.getDocument(documentId)
+                                    if (userid != null) userRepository.removeLikedDocumentFromUser(userid, documentId)
                                 }
+                                // Refresh user and document state
+                                user = userid?.let { userRepository.getUser(it) }
+                                document = documentRepository.getDocument(documentId)
                             }
                         }
                     ) {
@@ -258,41 +279,35 @@ fun DocumentDetailsScreen(
                 }
 
                 Row (verticalAlignment = Alignment.CenterVertically ){
-                IconButton(
-                    onClick = {
-                        isDisliked = !isDisliked
-                        if (isDisliked) {
+                    IconButton(
+                        onClick = {
                             coroutineScope.launch {
-                                documentRepository.addDislikeToDocument(documentId)
-
-                                if (userid != null) {
-                                    userRepository.addDislikedDocumentToUser(userid, documentId)
+                                val likedList = user?.documents?.liked ?: emptyList()
+                                val dislikedList = user?.documents?.disliked ?: emptyList()
+                                if (!dislikedList.contains(documentId)) {
+                                    documentRepository.addDislikeToDocument(documentId)
+                                    if (userid != null) userRepository.addDislikedDocumentToUser(userid, documentId)
+                                    // If previously liked, remove like
+                                    if (likedList.contains(documentId)) {
+                                        documentRepository.removeLikeFromDocument(documentId)
+                                        if (userid != null) userRepository.removeLikedDocumentFromUser(userid, documentId)
+                                    }
+                                } else {
+                                    documentRepository.removeDislikeFromDocument(documentId)
+                                    if (userid != null) userRepository.removeDislikedDocumentFromUser(userid, documentId)
                                 }
-                                //re-fetch from Firestore for real-time sync
-                                document = documentRepository.getDocument(documentId)
-                            }
-                            isLiked = false
-                        }  else {
-                            coroutineScope.launch {
-                                documentRepository.removeDislikeFromDocument(documentId)
-                                if (userid != null) {
-                                    userRepository.removeDislikedDocumentFromUser(
-                                        userid,
-                                        documentId
-                                    )
-                                }
-                                //re-fetch from Firestore for real-time sync
+                                // Refresh user and document state
+                                user = userid?.let { userRepository.getUser(it) }
                                 document = documentRepository.getDocument(documentId)
                             }
                         }
+                    ) {
+                        Icon(
+                            imageVector = if (isDisliked) Icons.Filled.ThumbDown else Icons.Outlined.ThumbDown,
+                            contentDescription = "Dislike",
+                            tint = if (isDisliked) MaterialTheme.colorScheme.primary else Color.Gray
+                        )
                     }
-                ) {
-                    Icon(
-                        imageVector = if (isDisliked) Icons.Filled.ThumbDown else Icons.Outlined.ThumbDown,
-                        contentDescription = "Dislike",
-                        tint = if (isDisliked) MaterialTheme.colorScheme.primary else Color.Gray
-                    )
-                }
                     Text(modifier = Modifier.offset((-4).dp),
                         text = (document?.dislike_count ?: 0).toString(),
                         color = Color.Gray)

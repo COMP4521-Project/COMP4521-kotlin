@@ -87,8 +87,14 @@ fun SpecialDocumentListScreen(
     }
 
     LaunchedEffect(user) {
-        val likedList = user?.documents?.liked ?: emptyList()
-        likedDocuments = documentRepository.getDocumentsByIds(likedList)
+        if (pageTitle == "favorites") {
+            val likedList = user?.documents?.liked ?: emptyList()
+            likedDocuments = documentRepository.getDocumentsByIds(likedList)
+        }
+        else if (pageTitle == "bookmarked") {
+            val bookmarkedList = user?.documents?.bookmarked ?: emptyList()
+            likedDocuments = documentRepository.getDocumentsByIds(bookmarkedList)
+        }
     }
 
 

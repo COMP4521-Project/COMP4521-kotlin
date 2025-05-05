@@ -110,4 +110,22 @@ class UserRepository {
             e.printStackTrace()
         }
     }
+
+    suspend fun addBookmarkedDocumentToUser(userId: String, documentId: String) {
+        try {
+            val userDocRef = usersCollection.document(userId)
+            userDocRef.update("documents.bookmarked", FieldValue.arrayUnion(documentId)).await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun removeBookmarkedDocumentFromUser(userId: String, documentId: String) {
+        try {
+            val userDocRef = usersCollection.document(userId)
+            userDocRef.update("documents.bookmarked", FieldValue.arrayRemove(documentId)).await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }
