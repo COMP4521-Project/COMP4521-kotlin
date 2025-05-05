@@ -120,6 +120,7 @@ fun HomePage(
 
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = drawerState.isOpen,
         drawerContent = {
             ModalDrawerSheet(
                 modifier = Modifier.width(200.dp),
@@ -328,8 +329,8 @@ fun HomePage(
                 DocumentUploadScreen(
                     onNavigateBack = {
                         navigationController.navigateUp()} ,
-                    navViewModel = navViewModel
-
+                    navViewModel = navViewModel,
+                    userViewModel = userViewModel
                 )
             }
 

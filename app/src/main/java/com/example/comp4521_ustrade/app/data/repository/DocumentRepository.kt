@@ -1,5 +1,6 @@
 package com.example.comp4521_ustrade.app.data.repository
 
+import com.example.comp4521_ustrade.app.data.dao.DocuCourse
 import com.example.comp4521_ustrade.app.data.dao.Document
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -48,7 +49,7 @@ class DocumentRepository {
                         uploaded_by = data["uploaded_by"] as String,
                         upload_date = data["upload_date"] as String,
                         subject = data["subject"] as String,
-                        course = data["course"] as String,
+                        course = data["course"] as DocuCourse,
                         document_name = data["document_name"] as String
                     )
                 } else null
@@ -72,7 +73,7 @@ class DocumentRepository {
                         uploaded_by = data["uploaded_by"] as String,
                         upload_date = data["upload_date"] as String,
                         subject = data["subject"] as String,
-                        course = data["course"] as String,
+                        course = data["course"] as DocuCourse,
                         document_name = data["document_name"] as String
                     )
                 } else null

@@ -38,7 +38,7 @@ fun CustomTextField(
     Column (
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 16.dp)
+          //  .padding(vertical = 12.dp, horizontal = 16.dp)
     ) {
         Text(label, style = MaterialTheme.typography.bodyMedium)
 
