@@ -1,6 +1,5 @@
 package com.example.comp4521_ustrade.app.data.repository
 
-import com.example.comp4521_ustrade.app.data.dao.DocuCourse
 import com.example.comp4521_ustrade.app.data.dao.Document
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -20,6 +19,8 @@ class DocumentRepository {
                 "subject" to document.subject,
                 "subjectCode" to document.subjectCode,
                 "course" to document.course,
+                "year" to document.year,
+                "semester" to document.semester,
                 "document_name" to document.document_name
 
             )
@@ -52,6 +53,8 @@ class DocumentRepository {
                         subject = data["subject"] as String,
                         subjectCode = data["subjectCode"] as String,
                         course = data["course"] as String,
+                        year = data["year"] as String,
+                        semester = data["semester"] as String,
                         document_name = data["document_name"] as String
                     )
                 } else null
@@ -59,6 +62,33 @@ class DocumentRepository {
         } catch (e: Exception) {
             e.printStackTrace()
             null
+        }
+    }
+
+    suspend fun getSubjectSpecificDocuments(subject: String): List<Document> {
+        return try {
+            val snapshot = documentsCollection.whereEqualTo("subject", subject).get().await()
+            snapshot.documents.mapNotNull { doc ->
+                val data = doc.data
+                if (data != null) {
+                    Document(
+                        id = data["id"] as String,
+                        title = data["title"] as String,
+                        description = data["description"] as String,
+                        uploaded_by = data["uploaded_by"] as String,
+                        upload_date = data["upload_date"] as String,
+                        subject = data["subject"] as String,
+                        subjectCode = data["subjectCode"] as String,
+                        course = data["course"] as String,
+                        year = data["year"] as String,
+                        semester = data["semester"] as String,
+                        document_name = data["document_name"] as String
+                    )
+                } else null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
         }
     }
 
@@ -77,6 +107,8 @@ class DocumentRepository {
                         subject = data["subject"] as String,
                         subjectCode = data["subjectCode"] as String,
                         course = data["course"] as String,
+                        year = data["year"] as String,
+                        semester = data["semester"] as String,
                         document_name = data["document_name"] as String
                     )
                 } else null

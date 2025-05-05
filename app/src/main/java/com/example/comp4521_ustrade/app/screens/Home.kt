@@ -187,7 +187,7 @@ fun HomePage(
 
 
                         USTPager()
-                        CourseMenu(courseViewModel, { DisplayCourseCards(navigateController=navigationController) })
+                        CourseMenu(courseViewModel, navigateController=navigationController)
 
                     }
                 }

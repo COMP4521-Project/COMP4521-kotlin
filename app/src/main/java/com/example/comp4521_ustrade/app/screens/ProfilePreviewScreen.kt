@@ -161,7 +161,8 @@ private fun UploadsSection(navigateController: NavController) {
         Spacer(modifier = Modifier.height(8.dp))
         DisplayCourseCards(
             modifier = Modifier.fillMaxWidth(),
-            navigateController = navigateController
+            navigateController = navigateController,
+            subject = ""
         )
     }
 } 

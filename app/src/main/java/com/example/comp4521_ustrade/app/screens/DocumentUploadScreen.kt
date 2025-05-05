@@ -98,7 +98,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 import com.example.comp4521_ustrade.app.data.dao.Document
-import com.example.comp4521_ustrade.app.data.dao.DocuCourse
 import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
 import com.example.comp4521_ustrade.app.models.Course
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
@@ -1006,6 +1005,8 @@ fun DocumentUploadScreen(
                                     subject = subject,
                                     subjectCode = subjectCode,
                                     course = subject + subjectCode,
+                                    year = year,
+                                    semester = semester,
                                     uploaded_by = it, // Replace with actual user ID if available
                                     upload_date = SimpleDateFormat(
                                         "yyyy-MM-dd",

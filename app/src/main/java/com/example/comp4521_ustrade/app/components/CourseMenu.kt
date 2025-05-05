@@ -4,11 +4,13 @@ import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
@@ -26,6 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.comp4521_ustrade.app.display.DisplayCourseCards
 import com.example.comp4521_ustrade.app.viewmodel.CourseViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTWhite
@@ -36,7 +40,7 @@ import com.example.comp4521_ustrade.ui.theme.USTgray
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CourseMenu( courseViewModel:CourseViewModel , content: @Composable () -> Unit) {
+fun CourseMenu(courseViewModel:CourseViewModel, navigateController: NavController) {
 //    val courseCodes = listOf(
 //        "ACCT", "AESF", "AIAA", "AISC", "AMAT", "BEHI", "BIBU", "BIEN",
 //        "BSBE", "BTEC", "CENG", "CHEM", "CHMS", "CIEM", "CIVL", "CMAA",
@@ -82,7 +86,6 @@ fun CourseMenu( courseViewModel:CourseViewModel , content: @Composable () -> Uni
         ScrollableTabRow(
             selectedTabIndex = selectedTabIndex,
             modifier = modifier.padding(8.dp),
-//            contentColor = Color.Green,
             containerColor = Color.Transparent,
             edgePadding = 8.dp,
             indicator =  { tabPositions ->
@@ -95,13 +98,9 @@ fun CourseMenu( courseViewModel:CourseViewModel , content: @Composable () -> Uni
             divider = {
                 Divider(
                     color = Color.LightGray,
-//                    thickness = 2.dp
                 )
             },
-
-
             ) {
-
             courseTitles.forEachIndexed { index, title ->
                 Tab(
                     text = { Text(title) },
@@ -119,10 +118,18 @@ fun CourseMenu( courseViewModel:CourseViewModel , content: @Composable () -> Uni
 
         HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth()) { page ->
             Box(contentAlignment = Alignment.Center) {
-
-                content()
-
+                DisplayCourseCards(navigateController=navigateController, subject = courseTitles[page])
             }
+
+//            Box(
+//                contentAlignment = Alignment.Center,
+//                modifier = Modifier.fillMaxSize()
+//            ) {
+//                Text(
+//                    text = courseTitles[page], // Display the tab title
+//                    style = MaterialTheme.typography.bodyLarge
+//                )
+//            }
         }
     }
 }
