@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ThumbDown
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.ThumbDown
 import androidx.compose.material3.Button
@@ -121,7 +122,7 @@ fun DocumentDetailsScreen(
             navigationIconContentColor = USTWhite),
                 actions = {
                     IconButton(onClick = { /* Handle bookmark */ }) {
-                        Icon(Icons.Default.Bookmark, "Bookmark",tint = USTWhite)
+                        Icon(Icons.Outlined.BookmarkBorder, "Bookmark",tint = USTWhite)
                     }
                     IconButton(onClick = { /* Handle share */ }) {
                         Icon(Icons.Default.Share, "Share", tint = USTWhite)

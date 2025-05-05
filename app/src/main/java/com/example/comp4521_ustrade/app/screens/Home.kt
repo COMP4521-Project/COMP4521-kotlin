@@ -207,7 +207,9 @@ fun HomePage(
                 pageTitle = "downloaded",
                 onNavigateBack = { navigationController.navigateUp() },
                 onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
-                    navViewModel = navViewModel
+                navViewModel = navViewModel,
+                navigationController = navigationController,
+
             )}
             composable(Screens.Profile.screen) {
                   Profile(
@@ -344,7 +346,8 @@ fun HomePage(
                     pageTitle = "bookmarked",
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
-                    navViewModel = navViewModel
+                    navViewModel = navViewModel,
+                    navigationController = navigationController,
                 )
             }
 
@@ -354,7 +357,8 @@ fun HomePage(
                     pageTitle = "uploaded",
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
-                    navViewModel = navViewModel
+                    navViewModel = navViewModel,
+                    navigationController = navigationController,
                 )
             }
 
@@ -364,7 +368,8 @@ fun HomePage(
                     pageTitle = "downloaded",
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
-                    navViewModel = navViewModel
+                    navViewModel = navViewModel,
+                    navigationController = navigationController,
                 )
             }
             
@@ -374,7 +379,8 @@ fun HomePage(
                     pageTitle = "favorites",
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
-                    navViewModel = navViewModel
+                    navViewModel = navViewModel,
+                    navigationController = navigationController,
                 )
             }
             // Search results document List
@@ -383,7 +389,8 @@ fun HomePage(
                     pageTitle = "search results",
                     onNavigateBack = { navigationController.navigateUp() }, 
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
-                    navViewModel = navViewModel
+                    navViewModel = navViewModel,
+                    navigationController = navigationController,
                 )
             }
 
@@ -398,8 +405,9 @@ fun HomePage(
                 DocumentListScreen(
                     pageTitle = subject,
                     onNavigateBack = { navigationController.navigateUp() },
-                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
-                    navViewModel = navViewModel
+                    navigationController = navigationController,
+                    navViewModel = navViewModel,
+                    onDocumentClick={}
                 )
             }
         }

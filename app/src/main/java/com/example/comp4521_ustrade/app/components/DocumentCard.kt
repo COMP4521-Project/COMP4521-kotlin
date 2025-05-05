@@ -22,13 +22,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.R
-import com.example.comp4521_ustrade.app.models.Document
 import com.example.comp4521_ustrade.ui.theme.USTgray
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DocumentCard(
-    document: Document,
+    document: com.example.comp4521_ustrade.app.data.dao.Document,
     onClick: () -> Unit
 ) {
     Card(
@@ -67,19 +66,19 @@ fun DocumentCard(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = document.title,
+                    text = document.course,
                     style = MaterialTheme.typography.titleMedium
                 )
+//                Text(
+//                    text = document.subtitle,
+//                    style = MaterialTheme.typography.bodyMedium
+//                )
                 Text(
-                    text = document.subtitle,
+                    text = document.year + " " + document.semester,
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    text = document.term,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
-                    text = document.type,
+                    text = document.title,
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

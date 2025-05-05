@@ -59,7 +59,7 @@ fun DisplayCourseCards(modifier: Modifier = Modifier, navigateController: NavCon
             thumbnail = R.drawable.unavailable,
             course = document.course,
             courseTitle = document.title,
-            courseYear = document.year, // Example: use year from upload_date
+            courseYear = document.year,
             courseSemester = document.semester,
             documentId = document.id,
         )

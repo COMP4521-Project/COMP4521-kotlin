@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,9 +36,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.DocumentCard
-import com.example.comp4521_ustrade.app.models.Document
+import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
+import com.example.comp4521_ustrade.app.models.CourseCardItem
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
@@ -48,6 +51,7 @@ fun DocumentListScreen(
     pageTitle: String,
     onNavigateBack: () -> Unit,
     onDocumentClick: (String) -> Unit,
+    navigationController: NavController,
     modifier: Modifier = Modifier,
     navViewModel: NavViewModel
 ) {
@@ -64,17 +68,24 @@ fun DocumentListScreen(
         mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
     }
 
-    // Sample data - replace with actual data from your backend
-    val documents = List(5) { index ->
-        Document(
-            id = "doc$index",
-            title = "COMP4521",
-            subtitle = "Mobile App development",
-            term = "Spring, 2025",
-            type = "Lecture 7 Lecture note",
-            imageUrl = ""
-        )
+    var documentRepository = remember { DocumentRepository() }
+    var documentList by remember { mutableStateOf<List<com.example.comp4521_ustrade.app.data.dao.Document>>(emptyList()) }
+
+    LaunchedEffect(Unit) {
+        documentList = documentRepository.getSubjectSpecificDocuments(pageTitle)
     }
+
+    // Sample data - replace with actual data from your backend
+//    val documents = List(5) { index ->
+//        Document(
+//            id = "doc$index",
+//            title = "COMP4521",
+//            subtitle = "Mobile App development",
+//            term = "Spring, 2025",
+//            type = "Lecture 7 Lecture note",
+//            imageUrl = ""
+//        )
+//    }
 
     Scaffold(
         topBar = {
@@ -121,7 +132,7 @@ fun DocumentListScreen(
                     modifier = Modifier
                         .weight(1f),
 
-                    placeholder = { Text(text= stringResource(R.string.FilesFound, documents.size))}
+                    placeholder = { Text(text= stringResource(R.string.FilesFound, documentList.size))}
 
                 ) { }
                 
@@ -137,21 +148,38 @@ fun DocumentListScreen(
             }
             
             Text(
-                text = stringResource(R.string.FilesFound, documents.size),
+                text = stringResource(R.string.FilesFound, documentList.size),
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 style = MaterialTheme.typography.bodyMedium
             )
-
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(documents) { document ->
-                    DocumentCard(
-                        document = document,
-                        onClick = { onDocumentClick(document.id) }
+            if (documentList.isEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "No document in this subject uploaded yet",
+                        color = Color.Gray,
+                        style = MaterialTheme.typography.bodyLarge
                     )
+                }
+
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(documentList) { document ->
+                        DocumentCard(
+                            document = document,
+                            onClick = {
+                                navigationController.navigate(Screens.DocumentDetails.screen + "/${document.id}")
+                            }
+                        )
+                    }
                 }
             }
         }

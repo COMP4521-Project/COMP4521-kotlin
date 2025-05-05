@@ -36,7 +36,6 @@ fun CourseCard(CourseCardItem: CourseCardItem,  navigateController: NavControlle
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         // TODO: navigate to course details screen
         onClick = {
-            // Navigate to CourseDetailsScreen
 //            navigateController.navigate(Screens.DocumentDetails.screen)
             navigateController.navigate(Screens.DocumentDetails.screen + "/${CourseCardItem.documentId}")
         }
