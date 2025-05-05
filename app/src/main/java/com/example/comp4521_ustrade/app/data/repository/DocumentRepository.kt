@@ -1,6 +1,7 @@
 package com.example.comp4521_ustrade.app.data.repository
 
 import com.example.comp4521_ustrade.app.data.dao.Document
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -21,7 +22,9 @@ class DocumentRepository {
                 "course" to document.course,
                 "year" to document.year,
                 "semester" to document.semester,
-                "document_name" to document.document_name
+                "document_name" to document.document_name,
+                "like_count" to document.like_count,
+                "dislike_count" to document.dislike_count
 
             )
             documentsCollection.document(document.id).set(documentMap).await()
@@ -55,7 +58,9 @@ class DocumentRepository {
                         course = data["course"] as String,
                         year = data["year"] as String,
                         semester = data["semester"] as String,
-                        document_name = data["document_name"] as String
+                        document_name = data["document_name"] as String,
+                        like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
+                        dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
                     )
                 } else null
             } else null
@@ -82,7 +87,7 @@ class DocumentRepository {
                         course = data["course"] as String,
                         year = data["year"] as String,
                         semester = data["semester"] as String,
-                        document_name = data["document_name"] as String
+                        document_name = data["document_name"] as String,
                     )
                 } else null
             }
@@ -109,7 +114,7 @@ class DocumentRepository {
                         course = data["course"] as String,
                         year = data["year"] as String,
                         semester = data["semester"] as String,
-                        document_name = data["document_name"] as String
+                        document_name = data["document_name"] as String,
                     )
                 } else null
             }
@@ -149,6 +154,47 @@ class DocumentRepository {
     suspend fun deleteDocument(id: String) {
         try {
             documentsCollection.document(id).delete().await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    //extra features
+    suspend fun addLikeToDocument(id: String) {
+        try {
+            documentsCollection.document(id)
+                .update("like_count", FieldValue.increment(1))
+                .await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun removeLikeFromDocument(id: String) {
+        try {
+            documentsCollection.document(id)
+                .update("like_count", FieldValue.increment(-1))
+                .await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun addDislikeToDocument(id: String) {
+        try {
+            documentsCollection.document(id)
+                .update("dislike_count", FieldValue.increment(1))
+                .await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun removeDislikeFromDocument(id: String) {
+        try {
+            documentsCollection.document(id)
+                .update("dislike_count", FieldValue.increment(-1))
+                .await()
         } catch (e: Exception) {
             e.printStackTrace()
         }

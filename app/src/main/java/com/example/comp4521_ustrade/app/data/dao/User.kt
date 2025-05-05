@@ -15,5 +15,7 @@ data class User (
 class UserDocument (
     val uploaded: List<String>,
     val downloaded: List<Document>,
-    val bookmarked: List<String>
+    val bookmarked: List<String>,
+    val liked: List<String>,
+    val disliked: List<String>,
 )

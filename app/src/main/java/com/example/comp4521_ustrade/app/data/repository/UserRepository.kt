@@ -3,6 +3,7 @@ package com.example.comp4521_ustrade.app.data.repository
 import androidx.core.net.toUri
 import com.example.comp4521_ustrade.app.data.dao.User
 import com.example.comp4521_ustrade.app.data.dao.UserDocument
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -44,13 +45,25 @@ class UserRepository {
             if (document.exists()) {
                 val data = document.data
                 if (data != null) {
+                    // Parse the documents field
+                    val documentsMap = data["documents"] as? Map<*, *>
+                    val userDocument = documentsMap?.let {
+                        UserDocument(
+                            uploaded = (it["uploaded"] as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
+                            downloaded = emptyList(),
+                            bookmarked = (it["bookmarked"] as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
+                            liked = (it["liked"] as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
+                            disliked = (it["disliked"] as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
+                        )
+                    }
+
                     User(
                         uid = data["uid"] as String,
                         first_name = data["first_name"] as String,
                         last_name = data["last_name"] as String,
                         fcm_token = data["fcm_token"] as String?,
                         profile_pic = data["profile_pic"] as String?,
-                        documents = data["documents"] as UserDocument?,
+                        documents = userDocument,
                         date_of_birth = data["date_of_birth"] as String?,
                         description = data["description"] as String?
                     )
@@ -59,6 +72,42 @@ class UserRepository {
         } catch (e: Exception) {
             e.printStackTrace()
             null
+        }
+    }
+
+    suspend fun addLikedDocumentToUser(userId: String, documentId: String) {
+        try {
+            val userDocRef = usersCollection.document(userId)
+            userDocRef.update("documents.liked", FieldValue.arrayUnion(documentId)).await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun removeLikedDocumentFromUser(userId: String, documentId: String) {
+        try {
+            val userDocRef = usersCollection.document(userId)
+            userDocRef.update("documents.liked", FieldValue.arrayRemove(documentId)).await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun addDislikedDocumentToUser(userId: String, documentId: String) {
+        try {
+            val userDocRef = usersCollection.document(userId)
+            userDocRef.update("documents.disliked", FieldValue.arrayUnion(documentId)).await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun removeDislikedDocumentFromUser(userId: String, documentId: String) {
+        try {
+            val userDocRef = usersCollection.document(userId)
+            userDocRef.update("documents.disliked", FieldValue.arrayRemove(documentId)).await()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }

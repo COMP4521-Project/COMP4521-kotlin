@@ -1014,7 +1014,9 @@ fun DocumentUploadScreen(
                                     ).format(
                                         Date()
                                     ),
-                                    document_name = fileName ?: "No file"
+                                    document_name = fileName ?: "No file",
+                                    like_count = 0,
+                                    dislike_count = 0
                                 )
                             }
 

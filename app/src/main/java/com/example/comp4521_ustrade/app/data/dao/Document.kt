@@ -11,12 +11,8 @@ data class Document (
     val semester: String,
     val uploaded_by: String,
     val upload_date: String,
-    val document_name: String
+    val document_name: String,
+    val like_count: Int = 0,
+    val dislike_count: Int = 0,
 )
 
-
-//data class DocuCourse (
-//    val id: String,
-//    val code: String, //e.g 4521
-//    val subject: String, //e.g. COMP
-//)

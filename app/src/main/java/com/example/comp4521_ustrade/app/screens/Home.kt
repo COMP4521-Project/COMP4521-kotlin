@@ -326,7 +326,8 @@ fun HomePage(
                 val documentId = backStackEntry.arguments?.getString("documentId") ?: ""
                 DocumentDetailsScreen(
                     documentId = documentId,
-                    onNavigateBack = { navigationController.navigateUp() }
+                    onNavigateBack = { navigationController.navigateUp() },
+                    userViewModel = userViewModel,
                 )
             }
 

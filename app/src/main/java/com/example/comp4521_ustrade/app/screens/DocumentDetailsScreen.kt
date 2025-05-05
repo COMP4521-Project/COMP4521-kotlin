@@ -1,6 +1,7 @@
 package com.example.comp4521_ustrade.app.screens
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -36,13 +38,16 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ModifierInfo
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -54,9 +59,11 @@ import com.example.comp4521_ustrade.app.data.dao.User
 import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
 import com.example.comp4521_ustrade.app.data.repository.UserRepository
 import com.example.comp4521_ustrade.app.models.DisplayOnlyFieldItem
+import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 import com.example.comp4521_ustrade.ui.theme.USTWhite
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -64,18 +71,29 @@ fun DocumentDetailsScreen(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     documentId: String,
+    userViewModel: UserViewModel
 ) {
-
+    val userid = userViewModel.userid.observeAsState().value
     val documentRepository = remember { DocumentRepository() }
     var document by remember { mutableStateOf<Document?>(null) }
     var uploader by remember { mutableStateOf<User?>(null) }
 
     val userRepository = remember { UserRepository() }
+    var user by remember { mutableStateOf<User?>(null) }
+
+    var isLiked by remember { mutableStateOf(false) }
+    var isDisliked by remember { mutableStateOf(false) }
 
     LaunchedEffect(documentId) {
         document = documentRepository.getDocument(documentId)
         uploader = document?.let { userRepository.getUser(it.uploaded_by) }
+        user = userid?.let { userRepository.getUser(userid) }
     }
+    LaunchedEffect(user, documentId) {
+        val likedList = user?.documents?.liked ?: emptyList()
+        isLiked = likedList.any { it.trim() == documentId.trim() }
+    }
+
 
     val documentFields = listOf(
         DisplayOnlyFieldItem(title = "Year", value= (document?.year ?: "") + " " + (document?.semester ?: "")),
@@ -85,10 +103,7 @@ fun DocumentDetailsScreen(
     )
 
 
-
-
-    var isLiked by remember { mutableStateOf(false) }
-    var isDisliked by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     val context = LocalContext.current
 
@@ -193,23 +208,83 @@ fun DocumentDetailsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                IconButton(
-                    onClick = {
-                        isLiked = !isLiked
-                        if (isLiked) isDisliked = false
+                Row (verticalAlignment = Alignment.CenterVertically ){
+                    IconButton(
+                        onClick = {
+                            isLiked = !isLiked
+                            if (isLiked) {
+                                coroutineScope.launch {
+                                    val likedList = user?.documents?.liked ?: emptyList()
+                                    if (isLiked && !likedList.contains(documentId)) {
+                                        documentRepository.addLikeToDocument(documentId)
+
+                                        if (userid != null) {
+                                            userRepository.addLikedDocumentToUser(
+                                                userid,
+                                                documentId
+                                            )
+                                        }
+                                        //re-fetch from Firestore for real-time sync
+                                        document = documentRepository.getDocument(documentId)
+                                    }
+                                }
+                                isDisliked = false
+                            } else {
+                                coroutineScope.launch {
+                                    documentRepository.removeLikeFromDocument(documentId)
+                                    if (userid != null) {
+                                        userRepository.removeLikedDocumentFromUser(
+                                            userid,
+                                            documentId
+                                        )
+                                    }
+                                    //re-fetch from Firestore for real-time sync
+                                    document = documentRepository.getDocument(documentId)
+                                }
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                            contentDescription = "Like",
+                            tint = if (isLiked) Color.Red else Color.Gray
+                        )
                     }
-                ) {
-                    Icon(
-                        imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                        contentDescription = "Like",
-                        tint = if (isLiked) Color.Red else Color.Gray
+                    Text(
+                        modifier = Modifier.offset((-4).dp),
+                        text = (document?.like_count ?: 0).toString(),
+                        color = Color.Gray
                     )
                 }
 
+                Row (verticalAlignment = Alignment.CenterVertically ){
                 IconButton(
                     onClick = {
                         isDisliked = !isDisliked
-                        if (isDisliked) isLiked = false
+                        if (isDisliked) {
+                            coroutineScope.launch {
+                                documentRepository.addDislikeToDocument(documentId)
+
+                                if (userid != null) {
+                                    userRepository.addDislikedDocumentToUser(userid, documentId)
+                                }
+                                //re-fetch from Firestore for real-time sync
+                                document = documentRepository.getDocument(documentId)
+                            }
+                            isLiked = false
+                        }  else {
+                            coroutineScope.launch {
+                                documentRepository.removeDislikeFromDocument(documentId)
+                                if (userid != null) {
+                                    userRepository.removeDislikedDocumentFromUser(
+                                        userid,
+                                        documentId
+                                    )
+                                }
+                                //re-fetch from Firestore for real-time sync
+                                document = documentRepository.getDocument(documentId)
+                            }
+                        }
                     }
                 ) {
                     Icon(
@@ -217,6 +292,10 @@ fun DocumentDetailsScreen(
                         contentDescription = "Dislike",
                         tint = if (isDisliked) MaterialTheme.colorScheme.primary else Color.Gray
                     )
+                }
+                    Text(modifier = Modifier.offset((-4).dp),
+                        text = (document?.dislike_count ?: 0).toString(),
+                        color = Color.Gray)
                 }
 
                 Button(
