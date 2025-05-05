@@ -36,19 +36,18 @@ import com.example.comp4521_ustrade.ui.theme.Badges
 
 @Composable
 fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData, userViewModel : UserViewModel) {
-    val uploadCount = userViewModel.uploadCount.observeAsState().value
+    val uploadCountString = userViewModel.upload_count.observeAsState().value
+    val uploadCount = uploadCountString?.toIntOrNull() ?: 0
 
     var level = 0;
 
-    if (uploadCount != null) {
-        if (uploadCount >= 5 && uploadCount < 12) {
-            level = 1
-        } else if (uploadCount >= 12 && uploadCount < 20) {
-            level = 2
-        } else if (uploadCount >= 20) {
-            level = 3
-        }
-}
+    if (uploadCount in 5..11) {
+        level = 1
+    } else if (uploadCount in 12..19) {
+        level = 2
+    } else if (uploadCount >= 20) {
+        level = 3
+    }
 
 
     Surface(

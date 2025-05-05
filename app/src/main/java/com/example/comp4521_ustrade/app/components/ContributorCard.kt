@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,14 +52,15 @@ import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 @Composable
 fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel) {
 
-    val uploadCount = userViewModel.uploadCount.observeAsState().value
+    val uploadCountString = userViewModel.upload_count.observeAsState().value
+    val uploadCount = uploadCountString?.toIntOrNull() ?: 0
 
-    var progress by remember { mutableStateOf(0f) }
+    var progress by remember { mutableFloatStateOf(0f) }
 
-    if (uploadCount != null && uploadCount <= 20) {
+    if (uploadCount <= 20) {
         progress = uploadCount / 20.0f
     }
-    else if (uploadCount != null && uploadCount > 20) {
+    else {
         progress = 1f
     }
 
@@ -201,17 +203,17 @@ fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel
                 }
 
                 //test
-                Box(
-                ) {
-                    Button(onClick = {
-                        if (uploadCount != null) {
-                            userViewModel.addUploadCount()
-
-                        }
-                    }) {
-                        Text(text = "Upload test")
-                    }
-                }
+//                Box(
+//                ) {
+//                    Button(onClick = {
+//                        if (uploadCount != null) {
+//                            userViewModel.addUploadCount()
+//
+//                        }
+//                    }) {
+//                        Text(text = "Upload test")
+//                    }
+//                }
             }
         }
 

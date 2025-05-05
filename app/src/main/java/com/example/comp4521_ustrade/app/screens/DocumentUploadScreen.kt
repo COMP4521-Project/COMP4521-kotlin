@@ -99,6 +99,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 import com.example.comp4521_ustrade.app.data.dao.Document
 import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
+import com.example.comp4521_ustrade.app.data.repository.UserRepository
 import com.example.comp4521_ustrade.app.models.Course
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
@@ -1021,6 +1022,7 @@ fun DocumentUploadScreen(
                             }
 
                             val documentRepository = DocumentRepository()
+                            val userRepository = UserRepository()
 
                             if (userId != null) {
                                 userViewModel.viewModelScope.launch {
@@ -1028,6 +1030,8 @@ fun DocumentUploadScreen(
                                         if (document != null) {
                                             documentRepository.addDocument(document)
                                         }
+                                        userRepository.increaseUserUpload(userId)
+                                        userViewModel.refreshUserData()
                                         onNavigateBack() // Navigate back after successful update
                                     } catch (e: Exception) {
                                         e.printStackTrace()
@@ -1035,8 +1039,6 @@ fun DocumentUploadScreen(
                                     }
                                 }
                             }
-
-
 
 
                             showConfirmationDialog = false

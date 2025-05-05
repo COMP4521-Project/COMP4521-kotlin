@@ -19,7 +19,8 @@ class UserRepository {
                 "last_name" to user.last_name,
                 "fcm_token" to user.fcm_token,
                 "profile_pic" to user.profile_pic?.toString(),
-                "documents" to user.documents
+                "documents" to user.documents,
+                "upload_count" to user.upload_count
             )
             usersCollection.document(user.uid).set(userMap).await()
         } catch (e: Exception) {
@@ -65,7 +66,8 @@ class UserRepository {
                         profile_pic = data["profile_pic"] as String?,
                         documents = userDocument,
                         date_of_birth = data["date_of_birth"] as String?,
-                        description = data["description"] as String?
+                        description = data["description"] as String?,
+                        upload_count = (data["upload_count"] as? Long)?.toInt() ?: 0,
                     )
                 } else null
             } else null
@@ -128,4 +130,16 @@ class UserRepository {
             e.printStackTrace()
         }
     }
+
+
+    suspend fun increaseUserUpload(userId: String){
+        try {
+            usersCollection.document(userId)
+                .update("upload_count", FieldValue.increment(1))
+                .await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
 }
