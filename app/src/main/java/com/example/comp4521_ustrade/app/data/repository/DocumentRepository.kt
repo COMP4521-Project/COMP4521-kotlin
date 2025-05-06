@@ -88,6 +88,8 @@ class DocumentRepository {
                         year = data["year"] as String,
                         semester = data["semester"] as String,
                         document_name = data["document_name"] as String,
+                        like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
+                        dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
                     )
                 } else null
             }
