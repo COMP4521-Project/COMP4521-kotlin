@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +31,7 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,20 +52,41 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.comp4521_ustrade.app.data.dao.Document
 import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
+import com.example.comp4521_ustrade.app.models.CourseCardItem
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 import com.example.comp4521_ustrade.ui.theme.USTgray
 import kotlinx.coroutines.launch
 
+fun getRecentOpenedDocuments(context: Context): List<String> {
+    val prefs = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    return prefs.getStringSet("recent_opened_documents", LinkedHashSet())?.toList() ?: emptyList()
+}
+
+fun saveRecentOpenedDocuments(context: Context, docIds: List<String>) {
+    val prefs = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    prefs.edit().putStringSet("recent_opened_documents", LinkedHashSet(docIds)).apply()
+}
+
+fun clearRecentOpenedDocuments(context: Context) {
+    val prefs = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    prefs.edit().remove("recent_opened_documents").apply()
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Search(modifier: Modifier = Modifier) {
-    val context = LocalContext.current.applicationContext
+fun Search(
+    modifier: Modifier = Modifier,
+    navigationController: androidx.navigation.NavController,
+    ) {
+    val context = LocalContext.current
 
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(true) }
+    var recentOpenedDocIds by remember { mutableStateOf(getRecentOpenedDocuments(context)) }
+    var recentOpenedDocs by remember { mutableStateOf<List<Document>>(emptyList()) }
 
-    var searchHistory = listOf("COMP", "Kotlin", "Compose", "Java")
+//    var searchHistory = listOf("COMP", "Kotlin", "Compose", "Java")
 
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -87,14 +111,13 @@ fun Search(modifier: Modifier = Modifier) {
         }
     }
 
-    fun performSearch(searchText: String) {
-        if (searchText.isBlank()) return
-        isLoading = true
-        // Update history (avoid duplicates)
-        searchHistory = listOf(searchText) + searchHistory.filter { it != searchText }
-        coroutineScope.launch {
-            results = documentRepository.searchDocumentsByCoursePrefix(searchText)
-            isLoading = false
+    LaunchedEffect(recentOpenedDocIds) {
+        if (recentOpenedDocIds.isNotEmpty()) {
+            recentOpenedDocs = documentRepository.getDocumentsByIds(recentOpenedDocIds)
+//            // Optionally, sort to match the order of IDs
+//            recentOpenedDocs = recentOpenedDocIds.mapNotNull { id -> recentOpenedDocs.find { it.id == id } }
+        } else {
+            recentOpenedDocs = emptyList()
         }
     }
 
@@ -123,8 +146,19 @@ fun Search(modifier: Modifier = Modifier) {
                 .focusRequester(focusRequester)
                 .onFocusChanged { if (it.isFocused) active = true },
             query = query,
-            onQueryChange = { query = it
-                results = emptyList()  },
+            onQueryChange = { newQuery ->
+                query = newQuery
+                if (query.isBlank()) {
+                    results = emptyList()
+                    isLoading = false
+                } else {
+                    isLoading = true
+                    coroutineScope.launch {
+                        results = documentRepository.searchDocumentsByCourseContains(query)
+                        isLoading = false
+                    }
+                }
+            },
             onSearch = {
                 isLoading = true
                 coroutineScope.launch {
@@ -166,22 +200,53 @@ fun Search(modifier: Modifier = Modifier) {
                 }
 
                 query.isEmpty() -> {
-                    // Show search history
-                    Column {
-                        Text("Recent Searches")
-                        searchHistory.take(5).forEach { item ->
-                            ListItem(
-                                headlineContent = { Text(item) },
-                                leadingContent = {
-                                    Icon(Icons.Default.History, contentDescription = "History")
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        query = item
-                                        performSearch(item)
-                                    }
+                    Column (modifier = Modifier.padding(horizontal = 8.dp)) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                "Recent Opened Documents",
+                                modifier = Modifier.weight(1f),
+                                fontSize = 18.sp
                             )
+                            TextButton(
+                                onClick = {
+                                    clearRecentOpenedDocuments(context)
+                                    recentOpenedDocIds = emptyList()
+                                    recentOpenedDocs = emptyList()
+                                },
+                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
+                                modifier = Modifier.height(32.dp)
+                            ) {
+                                Text("Clear", fontSize = 14.sp)
+                            }
+                        }
+                        if (recentOpenedDocs.isEmpty()) {
+                            Text("No recently opened documents")
+                        } else {
+                            recentOpenedDocs.forEach { doc ->
+                                ListItem(
+                                    headlineContent = { Text("${doc.course} ${doc.title} (${doc.year} ${doc.semester})") },
+                                    leadingContent = {
+                                        Icon(Icons.Default.History, contentDescription = "Recent")
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            // Update recent opened docs (move to top)
+                                            val newRecent = listOf(doc.id) + recentOpenedDocIds.filter { it != doc.id }
+                                            val limitedRecent = newRecent.take(10)
+                                            recentOpenedDocIds = limitedRecent
+                                            saveRecentOpenedDocuments(context, limitedRecent)
+
+                                            // Navigate to document details
+                                            navigationController.navigate(Screens.DocumentDetails.screen + "/${doc.id}")
+                                        }
+                                )
+                            }
                         }
                     }
                 }
@@ -198,9 +263,9 @@ fun Search(modifier: Modifier = Modifier) {
                                 trailingContent = {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Icon(
-                                            imageVector = Icons.Default.Favorite, // Use a star icon
+                                            imageVector = Icons.Default.Favorite,
                                             contentDescription = "Likes",
-                                            tint = Color.Red // Gold color for the star
+                                            tint = Color.Red
                                         )
                                         Text(
                                             text = document.like_count.toString(),
@@ -211,7 +276,12 @@ fun Search(modifier: Modifier = Modifier) {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
+                                        val newRecent = listOf(document.id) + recentOpenedDocIds.filter { it != document.id }
+                                        val limitedRecent = newRecent.take(10)
+                                        recentOpenedDocIds = limitedRecent
+                                        saveRecentOpenedDocuments(context, limitedRecent)
                                         // Handle document click
+                                        navigationController.navigate(Screens.DocumentDetails.screen + "/${document.id}")
                                     }
                             )
                         }

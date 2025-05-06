@@ -235,7 +235,7 @@ fun HomePage(
             ) }
             composable(Screens.Search.screen) {
                 Scaffold(
-                    topBar = { Search() },
+                    topBar = { Search(navigationController = navigationController,) },
                     bottomBar = { USTBottomBar(navigationController, navViewModel = navViewModel) },
                 ) { innerPadding ->
                     Column(

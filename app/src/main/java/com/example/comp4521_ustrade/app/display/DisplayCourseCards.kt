@@ -44,10 +44,6 @@ fun DisplayCourseCards(modifier: Modifier = Modifier, navigateController: NavCon
     var documentList by remember { mutableStateOf<List<Document>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
 
-//    LaunchedEffect(Unit) {
-//        documentList = documentRepository.getSubjectSpecificDocuments(subject)
-//    }
-
     LaunchedEffect(subject, userID) {
         isLoading = true
         documentList = when {
