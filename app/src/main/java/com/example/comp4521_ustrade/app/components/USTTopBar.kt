@@ -43,7 +43,8 @@ import com.example.comp4521_ustrade.ui.theme.USTgray_dark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun USTTopBar(onOpenDrawer: () -> Unit ,navigationController: androidx.navigation.NavController) {
+fun USTTopBar(onOpenDrawer: () -> Unit ,
+              navigationController: androidx.navigation.NavController, ) {
     val context = LocalContext.current.applicationContext
     val selected = remember {
         mutableStateOf(Icons.Default.Home)

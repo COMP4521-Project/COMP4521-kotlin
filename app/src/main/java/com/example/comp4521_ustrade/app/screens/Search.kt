@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,8 +15,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,6 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,9 +47,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.comp4521_ustrade.app.data.dao.Document
+import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 import com.example.comp4521_ustrade.ui.theme.USTgray
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,7 +62,7 @@ fun Search(modifier: Modifier = Modifier) {
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(true) }
 
-    val searchHistory = listOf("COMP", "Kotlin", "Compose", "Java")
+    var searchHistory = listOf("COMP", "Kotlin", "Compose", "Java")
 
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -69,9 +76,25 @@ fun Search(modifier: Modifier = Modifier) {
         mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
     }
 
+    val documentRepository = remember { DocumentRepository() }
+    var results by remember { mutableStateOf<List<Document>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(active) {
         if (active) {
             focusRequester.requestFocus()
+        }
+    }
+
+    fun performSearch(searchText: String) {
+        if (searchText.isBlank()) return
+        isLoading = true
+        // Update history (avoid duplicates)
+        searchHistory = listOf(searchText) + searchHistory.filter { it != searchText }
+        coroutineScope.launch {
+            results = documentRepository.searchDocumentsByCoursePrefix(searchText)
+            isLoading = false
         }
     }
 
@@ -85,21 +108,29 @@ fun Search(modifier: Modifier = Modifier) {
             },
         contentAlignment = Alignment.TopCenter
     ) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(24.dp)
-            .background(if(isDarkModeEnabled) USTBlue_dark else USTBlue)){
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(0.dp)
+                .background(if (isDarkModeEnabled) USTBlue_dark else USTBlue)
+        ) {
 
         }
         SearchBar(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(top = 24.dp)
+                .padding(top = 0.dp)
                 .focusRequester(focusRequester)
                 .onFocusChanged { if (it.isFocused) active = true },
             query = query,
-            onQueryChange = { query = it },
+            onQueryChange = { query = it
+                results = emptyList()  },
             onSearch = {
+                isLoading = true
+                coroutineScope.launch {
+                    results = documentRepository.searchDocumentsByCourseContains(query)
+                    isLoading = false
+                }
                 Toast.makeText(context, "Search for $query", Toast.LENGTH_SHORT).show()
             },
             active = active,
@@ -128,37 +159,67 @@ fun Search(modifier: Modifier = Modifier) {
                 }
             },
 
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
             ) {
-                Text(
-                    text = "Recent Searches",
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                searchHistory.takeLast(3).forEach { item ->
-                    ListItem(
-                        headlineContent = { Text(text = item) },
-                        leadingContent = {
-                            Icon(
-                                imageVector = Icons.Default.History,
-                                contentDescription = "History"
+            when {
+                isLoading -> {
+                    Text("Loading...")
+                }
+
+                query.isEmpty() -> {
+                    // Show search history
+                    Column {
+                        Text("Recent Searches")
+                        searchHistory.take(5).forEach { item ->
+                            ListItem(
+                                headlineContent = { Text(item) },
+                                leadingContent = {
+                                    Icon(Icons.Default.History, contentDescription = "History")
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        query = item
+                                        performSearch(item)
+                                    }
                             )
-                        },
-                        colors = ListItemDefaults.colors(
-                            headlineColor = colorScheme.onBackground,
-                            leadingIconColor = colorScheme.onBackground,
-                            containerColor = Color.Transparent
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                query = item
-                            }
-                    )
+                        }
+                    }
+                }
+
+                results.isNotEmpty() -> {
+                    // Show search results
+                    Column {
+                        results.forEach { document ->
+                            ListItem(
+                                headlineContent = { Text("${document.course} ${document.title} (${document.year} ${document.semester})") },
+                                leadingContent = {
+                                    Icon(Icons.Default.Search, contentDescription = "Result")
+                                },
+                                trailingContent = {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            imageVector = Icons.Default.Favorite, // Use a star icon
+                                            contentDescription = "Likes",
+                                            tint = Color.Red // Gold color for the star
+                                        )
+                                        Text(
+                                            text = document.like_count.toString(),
+                                            modifier = Modifier.padding(start = 4.dp)
+                                        )
+                                    }
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        // Handle document click
+                                    }
+                            )
+                        }
+                    }
+                }
+
+                else -> {
+                    Text("No results found")
                 }
             }
         }
