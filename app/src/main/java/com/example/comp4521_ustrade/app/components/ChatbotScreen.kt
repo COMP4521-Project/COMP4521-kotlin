@@ -30,7 +30,6 @@ import androidx.navigation.NavController
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.screens.Screens
 import com.example.comp4521_ustrade.ui.theme.USTBlue
-import com.example.comp4521_ustrade.ui.theme.USTgray
 
 @Composable
 fun ChatbotScreen(
@@ -126,7 +125,7 @@ fun ChatbotScreen(
 
                         )
                         Text(
-                            text = "Feel free to anything about USTrade",
+                            text = "Feel free to ask anything about USTrade",
                             color = Color.Gray,
                             style = MaterialTheme.typography.bodySmall
                         )

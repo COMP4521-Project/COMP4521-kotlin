@@ -6,9 +6,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 //Home Page
 data class CourseCardItem(
     @DrawableRes val thumbnail: Int,
+    val course: String,
     val courseTitle: String,
     val courseYear: String,
     val courseSemester: String,
+    val documentId: String
 
 )
 

@@ -35,6 +35,9 @@ class UserViewModel(private val authViewModel: AuthViewModel) : ViewModel() {
     private val _description = MutableLiveData<String?>()
     val description: LiveData<String?> = _description
 
+    private val _upload_count = MutableLiveData<String?>()
+    val upload_count: LiveData<String?> = _upload_count
+
     init {
         // Observe auth state changes
         viewModelScope.launch {
@@ -57,6 +60,7 @@ class UserViewModel(private val authViewModel: AuthViewModel) : ViewModel() {
             _lastName.value = user?.last_name
             _dateOfBirth.value = user?.date_of_birth
             _description.value = user?.description
+            _upload_count.value = user?.upload_count.toString()
 
 
         } catch (e: Exception) {
@@ -73,21 +77,14 @@ class UserViewModel(private val authViewModel: AuthViewModel) : ViewModel() {
         }
     }
 
-    private val _uploadCount = MutableLiveData(0)
+
     private val _selectedPrize = MutableLiveData<Prize?>()
     private val _confirmedPrize = MutableLiveData<Prize?>()
 
-    fun getUploadCount() {
-        // Todo: Add logic to fetch the upload count from the database or other sources.
-    }
 
-    val uploadCount: LiveData<Int> = _uploadCount
     val selectedPrize: LiveData<Prize?> = _selectedPrize
     val confirmPrize: LiveData<Prize?> = _confirmedPrize
 
-    fun addUploadCount() {
-        _uploadCount.value = _uploadCount.value?.plus(1)
-    }
 
     fun setSelectedPrize(prize: Prize) {
         _selectedPrize.value = prize

@@ -7,6 +7,7 @@ import NotificationSettingsScreen
 import PreferencesScreen
 import ProfilePreviewScreen
 import Settings
+import UploaderProfileScreen
 import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -120,6 +121,7 @@ fun HomePage(
 
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = drawerState.isOpen,
         drawerContent = {
             ModalDrawerSheet(
                 modifier = Modifier.width(200.dp),
@@ -186,7 +188,7 @@ fun HomePage(
 
 
                         USTPager()
-                        CourseMenu(courseViewModel, { DisplayCourseCards(navigateController=navigationController) })
+                        CourseMenu(courseViewModel, navigateController=navigationController)
 
                     }
                 }
@@ -206,7 +208,9 @@ fun HomePage(
                 pageTitle = "downloaded",
                 onNavigateBack = { navigationController.navigateUp() },
                 onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
-                    navViewModel = navViewModel
+                navViewModel = navViewModel,
+                navigationController = navigationController,
+
             )}
             composable(Screens.Profile.screen) {
                   Profile(
@@ -244,8 +248,8 @@ fun HomePage(
                     }
                 }
             }
-            composable(Screens.Favorite.screen) { Favorite() }
-            composable(Screens.ChatRoom.screen) { ChatRoom() }
+//            composable(Screens.Favorite.screen) { Favorite() }
+//            composable(Screens.ChatRoom.screen) { ChatRoom() }
             composable(Screens.Settings.screen) {
                 Settings(
                     onNavigateBack = { navigationController.navigateUp() },
@@ -316,10 +320,16 @@ fun HomePage(
             }
 
             // Document Details
-            composable(Screens.DocumentDetails.screen) {
+            composable(
+                route = Screens.DocumentDetails.screen + "/{documentId}",
+                arguments = listOf(navArgument("documentId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val documentId = backStackEntry.arguments?.getString("documentId") ?: ""
                 DocumentDetailsScreen(
-                    title = "COMP4521 Lecture 7",
-                    onNavigateBack = { navigationController.navigateUp() }
+                    documentId = documentId,
+                    onNavigateBack = { navigationController.navigateUp() },
+                    userViewModel = userViewModel,
+                    navController = navigationController
                 )
             }
 
@@ -328,18 +338,20 @@ fun HomePage(
                 DocumentUploadScreen(
                     onNavigateBack = {
                         navigationController.navigateUp()} ,
-                    navViewModel = navViewModel
-
+                    navViewModel = navViewModel,
+                    userViewModel = userViewModel
                 )
             }
 
             // Bookmarked document List
             composable(Screens.DocumentBookmarkedList.screen) {
-                DocumentListScreen(
+                SpecialDocumentListScreen(
                     pageTitle = "bookmarked",
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
-                    navViewModel = navViewModel
+                    navViewModel = navViewModel,
+                    navigationController = navigationController,
+                    userViewModel = userViewModel
                 )
             }
 
@@ -349,7 +361,8 @@ fun HomePage(
                     pageTitle = "uploaded",
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
-                    navViewModel = navViewModel
+                    navViewModel = navViewModel,
+                    navigationController = navigationController,
                 )
             }
 
@@ -359,17 +372,20 @@ fun HomePage(
                     pageTitle = "downloaded",
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
-                    navViewModel = navViewModel
+                    navViewModel = navViewModel,
+                    navigationController = navigationController,
                 )
             }
             
             // Favorites document List
             composable(Screens.DocumentFavoritesList.screen) {
-                DocumentListScreen(
+                SpecialDocumentListScreen(
                     pageTitle = "favorites",
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
-                    navViewModel = navViewModel
+                    navViewModel = navViewModel,
+                    navigationController = navigationController,
+                    userViewModel = userViewModel
                 )
             }
             // Search results document List
@@ -378,7 +394,8 @@ fun HomePage(
                     pageTitle = "search results",
                     onNavigateBack = { navigationController.navigateUp() }, 
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
-                    navViewModel = navViewModel
+                    navViewModel = navViewModel,
+                    navigationController = navigationController,
                 )
             }
 
@@ -393,8 +410,22 @@ fun HomePage(
                 DocumentListScreen(
                     pageTitle = subject,
                     onNavigateBack = { navigationController.navigateUp() },
-                    onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
-                    navViewModel = navViewModel
+                    navigationController = navigationController,
+                    navViewModel = navViewModel,
+                    onDocumentClick={}
+                )
+            }
+
+            composable(
+                route = Screens.OthersProfile.screen + "/{uid}",
+                arguments = listOf(navArgument("uid") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val uid = backStackEntry.arguments?.getString("uid") ?: ""
+                UploaderProfileScreen(
+                    onNavigateBack = { navigationController.navigateUp() },
+                    navigationController = navigationController,
+                    userViewModel = userViewModel,
+                    uploaderId = uid,
                 )
             }
         }

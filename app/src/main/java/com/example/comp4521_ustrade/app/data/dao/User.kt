@@ -9,11 +9,14 @@ data class User (
     val profile_pic: String? = null,
     val documents: UserDocument? = null,
     val date_of_birth: String? = null,
-    val description: String? = null
+    val description: String? = null,
+    val upload_count : Int = 0,
 )
 
 class UserDocument (
     val uploaded: List<String>,
     val downloaded: List<Document>,
-    val bookmarked: List<String>
+    val bookmarked: List<String>,
+    val liked: List<String>,
+    val disliked: List<String>,
 )

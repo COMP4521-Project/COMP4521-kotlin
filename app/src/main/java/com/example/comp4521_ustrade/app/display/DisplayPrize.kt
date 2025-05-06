@@ -53,7 +53,8 @@ fun DisplayPrize(modifier: Modifier = Modifier, userViewModel : UserViewModel, o
         Prize(R.drawable.prize5),
         Prize(R.drawable.prize6))
 
-    val uploadCount = userViewModel.uploadCount.observeAsState().value
+    val uploadCountString = userViewModel.upload_count.observeAsState().value
+    val uploadCount = uploadCountString?.toIntOrNull() ?: 0
     val confirmPrize = userViewModel.confirmPrize.observeAsState().value
 
     var level = 1

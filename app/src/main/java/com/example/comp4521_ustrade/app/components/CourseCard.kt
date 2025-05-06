@@ -36,8 +36,8 @@ fun CourseCard(CourseCardItem: CourseCardItem,  navigateController: NavControlle
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         // TODO: navigate to course details screen
         onClick = {
-            // Navigate to CourseDetailsScreen
-            navigateController.navigate(Screens.DocumentDetails.screen)
+//            navigateController.navigate(Screens.DocumentDetails.screen)
+            navigateController.navigate(Screens.DocumentDetails.screen + "/${CourseCardItem.documentId}")
         }
     ) {
         Column() {
@@ -60,7 +60,7 @@ fun CourseCard(CourseCardItem: CourseCardItem,  navigateController: NavControlle
             ) {
                 Text(
                     modifier = Modifier.padding(start = 8.dp, top = 4.dp),
-                    text = CourseCardItem.courseTitle,
+                    text = CourseCardItem.course + " - " + CourseCardItem.courseTitle,
                     color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp,
                     maxLines = 1,
 

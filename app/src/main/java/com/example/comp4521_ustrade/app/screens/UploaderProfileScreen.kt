@@ -18,6 +18,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -31,19 +32,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.comp4521_ustrade.app.data.dao.Document
+import com.example.comp4521_ustrade.app.data.dao.User
+import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
+import com.example.comp4521_ustrade.app.data.repository.UserRepository
 import com.example.comp4521_ustrade.app.display.DisplayCourseCards
-import com.example.comp4521_ustrade.app.display.displayProfileCard
+import com.example.comp4521_ustrade.app.display.DisplayUploaderProfileCard
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 import com.example.comp4521_ustrade.ui.theme.USTWhite
 
 @Composable
-fun ProfilePreviewScreen(
+fun UploaderProfileScreen(
     modifier: Modifier = Modifier,
     onNavigateBack: () -> Unit,
     navigationController: NavController,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    uploaderId : String,
 ) {
 
     val context = LocalContext.current
@@ -54,6 +60,18 @@ fun ProfilePreviewScreen(
 
     var isDarkModeEnabled by remember {
         mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
+    }
+
+    val userRepository = remember { UserRepository() }
+    val documentRepository = remember { DocumentRepository() }
+    var otherUser by remember { mutableStateOf<User?>(null) }
+    var uploadedDocuments by remember { mutableStateOf<List<Document>>(emptyList()) }
+
+    // Fetch the other user's info and their uploaded documents
+    LaunchedEffect(uploaderId) {
+        otherUser = userRepository.getUser(uploaderId)
+        val uploadedIds = otherUser?.documents?.uploaded ?: emptyList()
+        uploadedDocuments = documentRepository.getDocumentsByIds(uploadedIds)
     }
 
     Box(
@@ -78,7 +96,7 @@ fun ProfilePreviewScreen(
                     }
                     Text(
                         modifier = Modifier.padding(top = 12.dp),
-                        text = "Profile Preview",
+                        text = "Uploader Profile",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = USTWhite
@@ -92,21 +110,26 @@ fun ProfilePreviewScreen(
                     .width(420.dp).height(280.dp)
                     .padding(start = 16.dp, top = 80.dp, end = 16.dp),
             ) {
-                displayProfileCard(userViewModel = userViewModel)
+                DisplayUploaderProfileCard(uploaderId = uploaderId)
             }
             
             // Add these sections below the profile card
             Spacer(modifier = Modifier.height(16.dp))
-            AboutSection(userViewModel = userViewModel)
+            AboutSection(uploaderId = uploaderId)
             Spacer(modifier = Modifier.height(16.dp))
-            UploadsSection(navigationController, userViewModel = userViewModel)
+            UploadsSection(navigationController, uploaderId = uploaderId)
         }
     }
 }
 
 @Composable
-private fun AboutSection(userViewModel : UserViewModel) {
-    val descriptionLiveData = userViewModel.description.observeAsState()
+private fun AboutSection(uploaderId: String) {
+    val userRepository = remember { UserRepository() }
+    var uploader by remember { mutableStateOf<User?>(null) }
+    LaunchedEffect(uploaderId) {
+        uploader = userRepository.getUser(uploaderId)
+    }
+
 
     Column(
         modifier = Modifier
@@ -127,21 +150,28 @@ private fun AboutSection(userViewModel : UserViewModel) {
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        descriptionLiveData.value?.let {
+        uploader?.description?.let {
             Text(
                 text = it,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
         }
+
         Spacer(modifier = Modifier.height(16.dp))
 
     }
 }
 
 @Composable
-private fun UploadsSection(navigateController: NavController, userViewModel:UserViewModel) {
-    val userId = userViewModel.userid.observeAsState().value
+private fun UploadsSection(navigateController: NavController, uploaderId:String) {
+    val userRepository = remember { UserRepository() }
+    var uploader by remember { mutableStateOf<User?>(null) }
+    LaunchedEffect(uploaderId) {
+        uploader = userRepository.getUser(uploaderId)
+    }
+
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -160,12 +190,10 @@ private fun UploadsSection(navigateController: NavController, userViewModel:User
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        if (userId != null) {
-            DisplayCourseCards(
-                modifier = Modifier.fillMaxWidth(),
-                navigateController = navigateController,
-                userID = userId
-            )
-        }
+        DisplayCourseCards(
+            modifier = Modifier.fillMaxWidth(),
+            navigateController = navigateController,
+            userID = uploaderId
+        )
     }
 } 

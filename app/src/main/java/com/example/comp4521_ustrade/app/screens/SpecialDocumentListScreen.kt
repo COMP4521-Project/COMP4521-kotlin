@@ -27,6 +27,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,24 +40,28 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.DocumentCard
+import com.example.comp4521_ustrade.app.data.dao.Document
+import com.example.comp4521_ustrade.app.data.dao.User
 import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
+import com.example.comp4521_ustrade.app.data.repository.UserRepository
 import com.example.comp4521_ustrade.app.models.CourseCardItem
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
+import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DocumentListScreen(
+fun SpecialDocumentListScreen(
     pageTitle: String,
     onNavigateBack: () -> Unit,
     onDocumentClick: (String) -> Unit,
     navigationController: NavController,
     modifier: Modifier = Modifier,
-    navViewModel: NavViewModel
+    navViewModel: NavViewModel,
+    userViewModel: UserViewModel
 ) {
     var searchQuery by remember { mutableStateOf("") }
-
 
     val context = LocalContext.current
 
@@ -69,23 +74,30 @@ fun DocumentListScreen(
     }
 
     var documentRepository = remember { DocumentRepository() }
-    var documentList by remember { mutableStateOf<List<com.example.comp4521_ustrade.app.data.dao.Document>>(emptyList()) }
+
+    var likedDocuments by remember { mutableStateOf<List<Document>>(emptyList()) }
+
+
+    val userid = userViewModel.userid.observeAsState().value
+    val userRepository = remember { UserRepository() }
+    var user by remember { mutableStateOf<User?>(null) }
 
     LaunchedEffect(Unit) {
-        documentList = documentRepository.getSubjectSpecificDocuments(pageTitle)
+        user = userid?.let { userRepository.getUser(userid) }
     }
 
-    // Sample data - replace with actual data from your backend
-//    val documents = List(5) { index ->
-//        Document(
-//            id = "doc$index",
-//            title = "COMP4521",
-//            subtitle = "Mobile App development",
-//            term = "Spring, 2025",
-//            type = "Lecture 7 Lecture note",
-//            imageUrl = ""
-//        )
-//    }
+    LaunchedEffect(user) {
+        if (pageTitle == "favorites") {
+            val likedList = user?.documents?.liked ?: emptyList()
+            likedDocuments = documentRepository.getDocumentsByIds(likedList)
+        }
+        else if (pageTitle == "bookmarked") {
+            val bookmarkedList = user?.documents?.bookmarked ?: emptyList()
+            likedDocuments = documentRepository.getDocumentsByIds(bookmarkedList)
+        }
+    }
+
+
 
     Scaffold(
         topBar = {
@@ -132,7 +144,7 @@ fun DocumentListScreen(
                     modifier = Modifier
                         .weight(1f),
 
-                    placeholder = { Text(text= stringResource(R.string.FilesFound, documentList.size))}
+                    placeholder = { Text(text= stringResource(R.string.FilesFound, likedDocuments.size))}
 
                 ) { }
                 
@@ -148,11 +160,11 @@ fun DocumentListScreen(
             }
             
             Text(
-                text = stringResource(R.string.FilesFound, documentList.size),
+                text = stringResource(R.string.FilesFound, likedDocuments.size),
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 style = MaterialTheme.typography.bodyMedium
             )
-            if (documentList.isEmpty()) {
+            if (likedDocuments.isEmpty()) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize(),
@@ -160,7 +172,7 @@ fun DocumentListScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "No document in this subject uploaded yet",
+                        text = "No liked documents",
                         color = Color.Gray,
                         style = MaterialTheme.typography.bodyLarge
                     )
@@ -172,7 +184,7 @@ fun DocumentListScreen(
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(documentList) { document ->
+                    items(likedDocuments) { document ->
                         DocumentCard(
                             document = document,
                             onClick = {

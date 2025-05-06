@@ -93,15 +93,25 @@ import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import android.graphics.RectF
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
+import com.example.comp4521_ustrade.app.data.dao.Document
+import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
+import com.example.comp4521_ustrade.app.data.repository.UserRepository
+import com.example.comp4521_ustrade.app.models.Course
+import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
+import kotlinx.coroutines.launch
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun DocumentUploadScreen(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
-    navViewModel: NavViewModel
+    navViewModel: NavViewModel,
+    userViewModel: UserViewModel
 ) {
     var subject by remember { mutableStateOf("") }
     var subjectCode by remember { mutableStateOf("") }
@@ -117,23 +127,20 @@ fun DocumentUploadScreen(
     var showUploadOptions by remember { mutableStateOf(false) }
     var selectedFiles by remember { mutableStateOf<List<Uri>>(emptyList()) }
 
+    //user-related
+    val userId = userViewModel.userid.observeAsState().value
+
     // Add states for dropdown expansions
-    var isSubjectExpanded by remember { mutableStateOf(false) }
-    var isSubjectCodeExpanded by remember { mutableStateOf(false) }
     var isYearExpanded by remember { mutableStateOf(false) }
     var isSemesterExpanded by remember { mutableStateOf(false) }
 
     // Add dropdown options
-    val subjects = listOf("Science", "Engineering", "Business")
-    val subjectCodes = listOf(
-        "COMP", "CPEG", "CSIT", "IEDA", "MECH", "CIVL", "ELEC"
-    )
-    val years = listOf("2024", "2023", "2022", "2021")
+
+
+    val years = listOf("2025","2024", "2023", "2022", "2021")
     val semesters = listOf("Fall", "Spring", "Summer", "Winter")
 
     // Calculate dynamic spacing based on dropdown state
-    val subjectSpacing = if (isSubjectExpanded) (subjects.size * 48).dp else 8.dp
-    val subjectCodeSpacing = if (isSubjectCodeExpanded) (subjectCodes.size * 48).dp else 8.dp
     val yearSpacing = if (isYearExpanded) (years.size * 48).dp else 8.dp
     val semesterSpacing = if (isSemesterExpanded) (semesters.size * 48).dp else 8.dp
 
@@ -143,8 +150,8 @@ fun DocumentUploadScreen(
                 subjectCode.isNotBlank() &&
                 year.isNotBlank() &&
                 semester.isNotBlank() &&
-                title.isNotBlank() &&
-                isFileUploaded
+                title.isNotBlank()
+//               && isFileUploaded
     }
 
     val context = LocalContext.current
@@ -336,7 +343,7 @@ fun DocumentUploadScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(240.dp)
+                        .height(240.dp).padding(top=16.dp)
                         .border(
                             width = 1.dp,
                             color = if (isFileUploaded) MaterialTheme.colorScheme.primary
@@ -486,37 +493,31 @@ fun DocumentUploadScreen(
             }
 
             item {
-                Column {
-                    DropdownList(
-                        title = stringResource(R.string.Subject),
-                        selectedItem = subject.ifEmpty { "Select subject" },
-                        onItemSelected = {
-                            subject = it
-                            isSubjectExpanded = false
-                        },
-                        expanded = isSubjectExpanded,
-                        onExpandedChange = { isSubjectExpanded = it },
-                        content = subjects
-                    )
-                    Spacer(modifier = Modifier.height(subjectSpacing))
-                }
+                CustomTextField(
+                    value = subject,
+                    onValueChange = { input ->
+                        // Only allow capital English letters
+                        val filtered = input.filter { it in 'A'..'Z' }
+                        subject = filtered
+                    },
+                    label = "Subject (in capital English letters only)",
+                    placeholder = "Enter Subject such as 'COMP','ELEC'",
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
 
             item {
-                Column {
-                    DropdownList(
-                        title = stringResource(R.string.SubjectCode),
-                        selectedItem = subjectCode.ifEmpty { "Select subject code" },
-                        onItemSelected = {
-                            subjectCode = it
-                            isSubjectCodeExpanded = false
-                        },
-                        expanded = isSubjectCodeExpanded,
-                        onExpandedChange = { isSubjectCodeExpanded = it },
-                        content = subjectCodes
-                    )
-                    Spacer(modifier = Modifier.height(subjectCodeSpacing))
-                }
+                CustomTextField(
+                    value = subjectCode,
+                    onValueChange = { input ->
+                        // Only allow numbers
+                        val filtered = input.filter { it.isDigit() }
+                        subjectCode = filtered
+                    },
+                    label = "Subject Code (in numbers only)",
+                    placeholder = "Enter Subject code",
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
 
             item {
@@ -552,6 +553,7 @@ fun DocumentUploadScreen(
                     Spacer(modifier = Modifier.height(semesterSpacing))
                 }
             }
+
 
             item {
                 CustomTextField(
@@ -994,6 +996,51 @@ fun DocumentUploadScreen(
                     TextButton(
                         onClick = {
                             // TODO: Implement actual upload logic here
+
+                            //upload to firestore
+                            val document = userId?.let {
+                                Document(
+                                    id = java.util.UUID.randomUUID().toString(),
+                                    title = title,
+                                    description = description,
+                                    subject = subject,
+                                    subjectCode = subjectCode,
+                                    course = subject + subjectCode,
+                                    year = year,
+                                    semester = semester,
+                                    uploaded_by = it, // Replace with actual user ID if available
+                                    upload_date = SimpleDateFormat(
+                                        "yyyy-MM-dd",
+                                        Locale.getDefault()
+                                    ).format(
+                                        Date()
+                                    ),
+                                    document_name = fileName ?: "No file",
+                                    like_count = 0,
+                                    dislike_count = 0
+                                )
+                            }
+
+                            val documentRepository = DocumentRepository()
+                            val userRepository = UserRepository()
+
+                            if (userId != null) {
+                                userViewModel.viewModelScope.launch {
+                                    try {
+                                        if (document != null) {
+                                            documentRepository.addDocument(document)
+                                        }
+                                        userRepository.increaseUserUpload(userId)
+                                        userViewModel.refreshUserData()
+                                        onNavigateBack() // Navigate back after successful update
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                        // Handle error if needed
+                                    }
+                                }
+                            }
+
+
                             showConfirmationDialog = false
                         }
                     ) {

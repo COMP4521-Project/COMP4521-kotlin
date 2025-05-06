@@ -39,12 +39,14 @@ fun DisplayOnlyField(
 
 @Composable
 fun DisplayOnlyFields(
-    fields: List<DisplayOnlyFieldItem>,
+    fields: List<DisplayOnlyFieldItem?>,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
         fields.forEach { field ->
-            DisplayOnlyField(field = field)
+            if (field != null) {
+                DisplayOnlyField(field = field)
+            }
             Spacer(modifier = Modifier.height(32.dp))
         }
     }

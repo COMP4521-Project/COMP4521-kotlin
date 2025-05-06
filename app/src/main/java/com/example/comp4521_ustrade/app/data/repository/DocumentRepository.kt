@@ -1,6 +1,7 @@
 package com.example.comp4521_ustrade.app.data.repository
 
 import com.example.comp4521_ustrade.app.data.dao.Document
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -17,8 +18,13 @@ class DocumentRepository {
                 "uploaded_by" to document.uploaded_by,
                 "upload_date" to document.upload_date,
                 "subject" to document.subject,
+                "subjectCode" to document.subjectCode,
                 "course" to document.course,
-                "document_name" to document.document_name
+                "year" to document.year,
+                "semester" to document.semester,
+                "document_name" to document.document_name,
+                "like_count" to document.like_count,
+                "dislike_count" to document.dislike_count
 
             )
             documentsCollection.document(document.id).set(documentMap).await()
@@ -48,14 +54,73 @@ class DocumentRepository {
                         uploaded_by = data["uploaded_by"] as String,
                         upload_date = data["upload_date"] as String,
                         subject = data["subject"] as String,
+                        subjectCode = data["subjectCode"] as String,
                         course = data["course"] as String,
-                        document_name = data["document_name"] as String
+                        year = data["year"] as String,
+                        semester = data["semester"] as String,
+                        document_name = data["document_name"] as String,
+                        like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
+                        dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
                     )
                 } else null
             } else null
         } catch (e: Exception) {
             e.printStackTrace()
             null
+        }
+    }
+
+    suspend fun getSubjectSpecificDocuments(subject: String): List<Document> {
+        return try {
+            val snapshot = documentsCollection.whereEqualTo("subject", subject).get().await()
+            snapshot.documents.mapNotNull { doc ->
+                val data = doc.data
+                if (data != null) {
+                    Document(
+                        id = data["id"] as String,
+                        title = data["title"] as String,
+                        description = data["description"] as String,
+                        uploaded_by = data["uploaded_by"] as String,
+                        upload_date = data["upload_date"] as String,
+                        subject = data["subject"] as String,
+                        subjectCode = data["subjectCode"] as String,
+                        course = data["course"] as String,
+                        year = data["year"] as String,
+                        semester = data["semester"] as String,
+                        document_name = data["document_name"] as String,
+                    )
+                } else null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+    suspend fun getUserSpecificDocuments(userID: String): List<Document> {
+        return try {
+            val snapshot = documentsCollection.whereEqualTo("uploaded_by", userID).get().await()
+            snapshot.documents.mapNotNull { doc ->
+                val data = doc.data
+                if (data != null) {
+                    Document(
+                        id = data["id"] as String,
+                        title = data["title"] as String,
+                        description = data["description"] as String,
+                        uploaded_by = data["uploaded_by"] as String,
+                        upload_date = data["upload_date"] as String,
+                        subject = data["subject"] as String,
+                        subjectCode = data["subjectCode"] as String,
+                        course = data["course"] as String,
+                        year = data["year"] as String,
+                        semester = data["semester"] as String,
+                        document_name = data["document_name"] as String,
+                    )
+                } else null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
         }
     }
 
@@ -72,7 +137,10 @@ class DocumentRepository {
                         uploaded_by = data["uploaded_by"] as String,
                         upload_date = data["upload_date"] as String,
                         subject = data["subject"] as String,
+                        subjectCode = data["subjectCode"] as String,
                         course = data["course"] as String,
+                        year = data["year"] as String,
+                        semester = data["semester"] as String,
                         document_name = data["document_name"] as String
                     )
                 } else null
@@ -86,6 +154,79 @@ class DocumentRepository {
     suspend fun deleteDocument(id: String) {
         try {
             documentsCollection.document(id).delete().await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun getDocumentsByIds(ids: List<String>): List<Document> {
+        return try {
+            if (ids.isEmpty()) return emptyList()
+            val tasks = ids.map { documentsCollection.document(it).get() }
+            val snapshots = tasks.map { it.await() }
+            snapshots.mapNotNull { doc ->
+                val data = doc.data
+                if (data != null) {
+                    Document(
+                        id = data["id"] as String,
+                        title = data["title"] as String,
+                        description = data["description"] as String,
+                        uploaded_by = data["uploaded_by"] as String,
+                        upload_date = data["upload_date"] as String,
+                        subject = data["subject"] as String,
+                        subjectCode = data["subjectCode"] as String,
+                        course = data["course"] as String,
+                        year = data["year"] as String,
+                        semester = data["semester"] as String,
+                        document_name = data["document_name"] as String,
+                        like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
+                        dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
+                    )
+                } else null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+
+    //extra features
+    suspend fun addLikeToDocument(id: String) {
+        try {
+            documentsCollection.document(id)
+                .update("like_count", FieldValue.increment(1))
+                .await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun removeLikeFromDocument(id: String) {
+        try {
+            documentsCollection.document(id)
+                .update("like_count", FieldValue.increment(-1))
+                .await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun addDislikeToDocument(id: String) {
+        try {
+            documentsCollection.document(id)
+                .update("dislike_count", FieldValue.increment(1))
+                .await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun removeDislikeFromDocument(id: String) {
+        try {
+            documentsCollection.document(id)
+                .update("dislike_count", FieldValue.increment(-1))
+                .await()
         } catch (e: Exception) {
             e.printStackTrace()
         }
