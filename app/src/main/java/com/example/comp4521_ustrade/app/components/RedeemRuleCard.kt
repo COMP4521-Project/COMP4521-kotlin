@@ -97,7 +97,7 @@ fun DialogContent(
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Start
                 )
-                Text("* Each account can only redeem one gift at most", fontSize = 10.sp)
+                Text("* Each account can only redeem one gift at most", fontSize = 10.sp, color = androidx.compose.ui.graphics.Color.Red)
             }
 
             // Action button

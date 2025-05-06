@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Redeem
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -104,6 +105,13 @@ fun Profile(
                             }
                         }
                         Row() {
+                            IconButton(onClick = { navigationController.navigate(Screens.DocumentFavoritesList.screen) }) {
+                                Icon(
+                                    imageVector = Icons.Default.FavoriteBorder,
+                                    contentDescription = "Icon 2",
+                                    tint = USTWhite
+                                )
+                            }
                             IconButton(
                                 onClick = {
                                     navigationController.navigate(Screens.Settings.screen)
@@ -115,20 +123,13 @@ fun Profile(
                                     tint = USTWhite
                                 )
                             }
-                            IconButton(onClick = { /* TODO: Action 2 */ }) {
-                                Icon(
-                                    imageVector = Icons.Default.FavoriteBorder,
-                                    contentDescription = "Icon 2",
-                                    tint = USTWhite
-                                )
-                            }
-                            IconButton(onClick = { /* TODO: Action 3 */ }) {
-                                Icon(
-                                    imageVector = Icons.Default.Chat,
-                                    contentDescription = "Icon 3",
-                                    tint = USTWhite
-                                )
-                            }
+//                            IconButton(onClick = { /* TODO: Action 3 */ }) {
+//                                Icon(
+//                                    imageVector = Icons.Default.Redeem,
+//                                    contentDescription = "Icon 3",
+//                                    tint = USTWhite
+//                                )
+//                            }
                         }
                     }
                 }
@@ -165,7 +166,7 @@ fun Profile(
 
                         ) {
 
-                        ContributorCard(modifier = modifier, userViewModel = userViewModel)
+                        ContributorCard(modifier = modifier, userViewModel = userViewModel, navigationController = navigationController)
                     }
 
                 }

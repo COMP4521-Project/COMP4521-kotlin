@@ -52,4 +52,9 @@ sealed class Screens(val screen: String) {
     object Subject : Screens("subject/{subject}") {
         fun createRoute(subject: String) = "subject/$subject"
     }
+
+    //Other's profile
+    object OthersProfile : Screens("others_profile/{uid}") {
+        fun createRoute(uid: String) = "others_profile/$uid"
+    }
 }

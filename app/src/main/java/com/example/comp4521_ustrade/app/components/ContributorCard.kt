@@ -9,6 +9,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,14 +44,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.comp4521_ustrade.R
+import com.example.comp4521_ustrade.app.screens.Screens
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.Badges
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 
 @Composable
-fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel) {
+fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel, navigationController : NavController) {
 
     val uploadCountString = userViewModel.upload_count.observeAsState().value
     val uploadCount = uploadCountString?.toIntOrNull() ?: 0
@@ -192,7 +195,9 @@ fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ){
-                        Text(text = "Learn more", color = (if (isDarkModeEnabled) USTBlue else USTBlue_dark))
+                        Text(text = "Learn more",
+                            modifier = Modifier.clickable {navigationController.navigate(Screens.RedeemGifts.screen) },
+                            color = (if (isDarkModeEnabled) USTBlue else USTBlue_dark))
                         Icon(
                             modifier = Modifier.padding(start = 5.dp),
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,

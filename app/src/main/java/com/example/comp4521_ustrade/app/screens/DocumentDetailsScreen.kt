@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,6 +52,7 @@ import androidx.compose.ui.layout.ModifierInfo
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.DisplayOnlyFields
 import com.example.comp4521_ustrade.app.components.DocumentPreviewSlider
@@ -58,6 +60,7 @@ import com.example.comp4521_ustrade.app.data.dao.Document
 import com.example.comp4521_ustrade.app.data.dao.User
 import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
 import com.example.comp4521_ustrade.app.data.repository.UserRepository
+import com.example.comp4521_ustrade.app.models.CourseCardItem
 import com.example.comp4521_ustrade.app.models.DisplayOnlyFieldItem
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
@@ -71,7 +74,8 @@ fun DocumentDetailsScreen(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     documentId: String,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    navController: NavController
 ) {
     val userid = userViewModel.userid.observeAsState().value
     val documentRepository = remember { DocumentRepository() }
@@ -221,7 +225,8 @@ fun DocumentDetailsScreen(
                 if (uploader != null) {
                     Text(
                         text = uploader!!.first_name + " " + uploader!!.last_name,
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.clickable { navController.navigate(Screens.OthersProfile.screen + "/${uploader!!.uid}") }
                     )
                 }
             }

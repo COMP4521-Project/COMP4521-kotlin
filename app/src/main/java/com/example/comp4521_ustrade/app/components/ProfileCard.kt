@@ -142,3 +142,103 @@ fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData
         }
     }
 }
+
+
+
+@Composable
+fun UploaderProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData) {
+
+    val uploadCount = ProfileCardData.upload_count
+
+    var level = 0;
+
+    if (uploadCount in 5..11) {
+        level = 1
+    } else if (uploadCount in 12..19) {
+        level = 2
+    } else if (uploadCount >= 20) {
+        level = 3
+    }
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shadowElevation = 8.dp,
+    ) {
+        Card(
+            colors = CardDefaults.cardColors(
+                containerColor = colorScheme.surface,
+                contentColor = colorScheme.onSurface
+            ),
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(4.dp),
+        ) {
+            Row(modifier = modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically)
+            {
+                Image(
+                    painter = painterResource(id = ProfileCardData.profilePicture),
+                    contentDescription = "Profile Picture",
+                    modifier = modifier
+                        .weight(2f)
+                        .size(100.dp)
+                        .padding(start = 8.dp, end = 16.dp)
+                        .clip(androidx.compose.foundation.shape.CircleShape),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                )
+
+                Column(
+                    modifier = modifier.weight(3f),
+                    verticalArrangement = Arrangement.SpaceAround
+                ) {
+                    Text(
+                        text = ProfileCardData.name,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier.padding(2.dp))
+                    ContributorTag(level = level)
+                }
+
+            }
+
+            Row(
+                modifier = modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "$uploadCount", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = "Uploads",
+                        fontSize = 16.sp,
+                        modifier = modifier.padding(top = 8.dp)
+                    )
+                }
+                VerticalDivider(
+                    modifier = modifier
+                        .padding(8.dp)
+                        .height(50.dp),
+                    thickness = 1.dp,
+                    color = androidx.compose.ui.graphics.Color.Gray
+                )
+                Column(
+                    modifier = modifier.padding(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "${ProfileCardData.download_count}",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Downloads",
+                        fontSize = 16.sp,
+                        modifier = modifier.padding(top = 8.dp)
+                    )
+                }
+            }
+        }
+    }
+}

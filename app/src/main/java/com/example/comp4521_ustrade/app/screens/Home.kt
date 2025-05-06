@@ -7,6 +7,7 @@ import NotificationSettingsScreen
 import PreferencesScreen
 import ProfilePreviewScreen
 import Settings
+import UploaderProfileScreen
 import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -247,8 +248,8 @@ fun HomePage(
                     }
                 }
             }
-            composable(Screens.Favorite.screen) { Favorite() }
-            composable(Screens.ChatRoom.screen) { ChatRoom() }
+//            composable(Screens.Favorite.screen) { Favorite() }
+//            composable(Screens.ChatRoom.screen) { ChatRoom() }
             composable(Screens.Settings.screen) {
                 Settings(
                     onNavigateBack = { navigationController.navigateUp() },
@@ -328,6 +329,7 @@ fun HomePage(
                     documentId = documentId,
                     onNavigateBack = { navigationController.navigateUp() },
                     userViewModel = userViewModel,
+                    navController = navigationController
                 )
             }
 
@@ -411,6 +413,19 @@ fun HomePage(
                     navigationController = navigationController,
                     navViewModel = navViewModel,
                     onDocumentClick={}
+                )
+            }
+
+            composable(
+                route = Screens.OthersProfile.screen + "/{uid}",
+                arguments = listOf(navArgument("uid") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val uid = backStackEntry.arguments?.getString("uid") ?: ""
+                UploaderProfileScreen(
+                    onNavigateBack = { navigationController.navigateUp() },
+                    navigationController = navigationController,
+                    userViewModel = userViewModel,
+                    uploaderId = uid,
                 )
             }
         }
