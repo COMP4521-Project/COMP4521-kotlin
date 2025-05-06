@@ -131,6 +131,14 @@ class UserRepository {
         }
     }
 
+    suspend fun addUploadedDocumentToUser(userId: String, documentId: String) {
+        try {
+            val userDocRef = usersCollection.document(userId)
+            userDocRef.update("documents.uploaded", FieldValue.arrayUnion(documentId)).await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
     suspend fun increaseUserUpload(userId: String){
         try {

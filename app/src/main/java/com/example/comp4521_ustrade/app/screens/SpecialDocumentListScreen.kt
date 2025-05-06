@@ -95,6 +95,10 @@ fun SpecialDocumentListScreen(
             val bookmarkedList = user?.documents?.bookmarked ?: emptyList()
             likedDocuments = documentRepository.getDocumentsByIds(bookmarkedList)
         }
+        else if (pageTitle == "uploaded") {
+            val bookmarkedList = user?.documents?.uploaded ?: emptyList()
+            likedDocuments = documentRepository.getDocumentsByIds(bookmarkedList)
+        }
     }
 
 

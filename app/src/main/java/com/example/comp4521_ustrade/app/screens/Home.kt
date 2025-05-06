@@ -357,22 +357,24 @@ fun HomePage(
 
             // Uploaded document List
             composable(Screens.DocumentUploadedList.screen) {
-                DocumentListScreen(
+                SpecialDocumentListScreen(
                     pageTitle = "uploaded",
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
                     navViewModel = navViewModel,
+                    userViewModel = userViewModel,
                     navigationController = navigationController,
                 )
             }
 
             // Downloaded document List
             composable(Screens.DocumentDownloadedList.screen) {
-                DocumentListScreen(
+                SpecialDocumentListScreen(
                     pageTitle = "downloaded",
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
                     navViewModel = navViewModel,
+                    userViewModel = userViewModel,
                     navigationController = navigationController,
                 )
             }

@@ -1031,6 +1031,11 @@ fun DocumentUploadScreen(
                                             documentRepository.addDocument(document)
                                         }
                                         userRepository.increaseUserUpload(userId)
+                                        document?.id?.let {
+                                            userRepository.addUploadedDocumentToUser(userId,
+                                                it
+                                            )
+                                        }
                                         userViewModel.refreshUserData()
                                         onNavigateBack() // Navigate back after successful update
                                     } catch (e: Exception) {
