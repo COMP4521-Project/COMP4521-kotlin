@@ -88,6 +88,8 @@ class DocumentRepository {
                         year = data["year"] as String,
                         semester = data["semester"] as String,
                         document_name = data["document_name"] as String,
+                        like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
+                        dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
                     )
                 } else null
             }
@@ -229,6 +231,109 @@ class DocumentRepository {
                 .await()
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+
+    //search functions
+    suspend fun searchDocumentsByCoursePrefix(query: String): List<Document> {
+        return try {
+            val snapshot = documentsCollection
+                .orderBy("course")
+                .startAt(query)
+                .endAt(query + "\uf8ff")
+                .get()
+                .await()
+            snapshot.documents.mapNotNull { doc ->
+                val data = doc.data
+                if (data != null) {
+                    Document(
+                        id = data["id"] as String,
+                        title = data["title"] as String,
+                        description = data["description"] as String,
+                        uploaded_by = data["uploaded_by"] as String,
+                        upload_date = data["upload_date"] as String,
+                        subject = data["subject"] as String,
+                        subjectCode = data["subjectCode"] as String,
+                        course = data["course"] as String,
+                        year = data["year"] as String,
+                        semester = data["semester"] as String,
+                        document_name = data["document_name"] as String,
+                        like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
+                        dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
+                    )
+                } else null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+    suspend fun searchDocumentsByCourseContains(query: String): List<Document> {
+        return try {
+            val snapshot = documentsCollection.get().await()
+            snapshot.documents.mapNotNull { doc ->
+                val data = doc.data
+                if (data != null) {
+                    val course = data["course"] as String
+                    if (course.contains(query, ignoreCase = true)) {
+                        Document(
+                            id = data["id"] as String,
+                            title = data["title"] as String,
+                            description = data["description"] as String,
+                            uploaded_by = data["uploaded_by"] as String,
+                            upload_date = data["upload_date"] as String,
+                            subject = data["subject"] as String,
+                            subjectCode = data["subjectCode"] as String,
+                            course = course,
+                            year = data["year"] as String,
+                            semester = data["semester"] as String,
+                            document_name = data["document_name"] as String,
+                            like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
+                            dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
+                        )
+                    } else null
+                } else null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+    suspend fun searchDocumentsBySubjectAndCourse(subject: String, query: String): List<Document> {
+        return try {
+            val snapshot = documentsCollection
+                .whereEqualTo("subject", subject)
+                .get()
+                .await()
+            snapshot.documents.mapNotNull { doc ->
+                val data = doc.data
+                if (data != null) {
+                    val course = data["course"] as String
+                    if (course.contains(query, ignoreCase = true)) {
+                        Document(
+                            id = data["id"] as String,
+                            title = data["title"] as String,
+                            description = data["description"] as String,
+                            uploaded_by = data["uploaded_by"] as String,
+                            upload_date = data["upload_date"] as String,
+                            subject = data["subject"] as String,
+                            subjectCode = data["subjectCode"] as String,
+                            course = course,
+                            year = data["year"] as String,
+                            semester = data["semester"] as String,
+                            document_name = data["document_name"] as String,
+                            like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
+                            dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
+                        )
+                    } else null
+                } else null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
         }
     }
 }

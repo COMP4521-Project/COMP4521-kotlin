@@ -1,10 +1,12 @@
 package com.example.comp4521_ustrade.app.display
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,17 +42,16 @@ fun DisplayCourseCards(modifier: Modifier = Modifier, navigateController: NavCon
 
     val documentRepository = DocumentRepository()
     var documentList by remember { mutableStateOf<List<Document>>(emptyList()) }
-
-//    LaunchedEffect(Unit) {
-//        documentList = documentRepository.getSubjectSpecificDocuments(subject)
-//    }
+    var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(subject, userID) {
+        isLoading = true
         documentList = when {
             userID != "" && subject == "" -> documentRepository.getUserSpecificDocuments(userID)
             subject != "" && userID == "" -> documentRepository.getSubjectSpecificDocuments(subject)
             else -> emptyList() // or documentRepository.getAllDocuments()
         }
+        isLoading = false
     }
 
     // Map Document to CourseCardItem
@@ -65,32 +66,36 @@ fun DisplayCourseCards(modifier: Modifier = Modifier, navigateController: NavCon
         )
     }
 
-
-    if (courseList.isEmpty()) {
-        // Show message if no documents
-        androidx.compose.foundation.layout.Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "No document in this subject uploaded yet",
-                color = Color.Gray
-            )
-        }
-    } else {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            items(courseList.size) { index ->
-                CourseCard(
-                    CourseCardItem = courseList[index],
-                    navigateController = navigateController,
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        when {
+            isLoading -> {
+                CircularProgressIndicator()
+            }
+            courseList.isEmpty() -> {
+                Text(
+                    text = "No document in this subject uploaded yet",
+                    color = Color.Gray
                 )
+            }
+            else -> {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp, vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    items(courseList.size) { index ->
+                        CourseCard(
+                            CourseCardItem = courseList[index],
+                            navigateController = navigateController,
+                        )
+                    }
+                }
             }
         }
     }
