@@ -22,8 +22,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.models.DrawerItem
 import com.example.comp4521_ustrade.app.viewmodel.CourseViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
@@ -63,7 +65,7 @@ fun DrawerContent(
             .padding(vertical = 24.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "Select by Subjects",color = USTWhite)
+        Text(text = stringResource(R.string.SelectBySubjects), color = USTWhite)
     }
     items.forEach { item ->
         NavigationDrawerItem(

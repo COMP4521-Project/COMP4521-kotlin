@@ -71,10 +71,10 @@ fun Settings(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.Settings)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.Default.ArrowBack, stringResource(R.string.Back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -97,23 +97,23 @@ fun Settings(
             item {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    color = USTBlue.copy(alpha = 0.1f), // Add transparent background
+                    color = USTBlue.copy(alpha = 0.1f),
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Column {
                         SettingsItem(
                             icon = Icons.Default.Person,
-                            text = "Edit profile",
+                            text = stringResource(R.string.EditProfile),
                             onClick = { navigationController.navigate(Screens.EditProfile.screen) }
                         )
                         SettingsItem(
                             icon = Icons.Default.Lock,
-                            text = "Change Password",
+                            text = stringResource(R.string.ChangePassword),
                             onClick = { navigationController.navigate(Screens.EditPassword.screen) }
                         )
                         SettingsItem(
                             icon = Icons.Default.Notifications,
-                            text = "Notifications",
+                            text = stringResource(R.string.Notifications),
                             onClick = { navigationController.navigate(Screens.NotificationSettings.screen) }
                         )
                     }
@@ -123,33 +123,33 @@ fun Settings(
             // Resources Section
             item { 
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Resources", fontWeight = FontWeight.Bold) 
+                Text(stringResource(R.string.Resources), fontWeight = FontWeight.Bold) 
             }
             item {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    color = USTBlue.copy(alpha = 0.1f), // Add transparent background
+                    color = USTBlue.copy(alpha = 0.1f),
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Column {
                         SettingsItem(
                             icon = Icons.Default.CardGiftcard,
-                            text = "Redeem gifts",
+                            text = stringResource(R.string.RedeemGifts),
                             onClick = { navigationController.navigate(Screens.RedeemGifts.screen) }
                         )
                         SettingsItem(
                             icon = Icons.Default.Bookmark,
-                            text = "Bookmarks",
+                            text = stringResource(R.string.Bookmarks),
                             onClick = { navigationController.navigate(Screens.DocumentBookmarkedList.screen) }
                         )
                         SettingsItem(
                             icon = Icons.Default.Upload,
-                            text = "Uploaded files",
+                            text = stringResource(R.string.UploadedFiles),
                             onClick = { navigationController.navigate(Screens.DocumentUploadedList.screen) }
                         )
                         SettingsItem(
                             icon = Icons.Default.Download,
-                            text = "Downloaded files",
+                            text = stringResource(R.string.DownloadedFiles),
                             onClick = { navigationController.navigate(Screens.DocumentDownloadedList.screen) }
                         )
                     }
@@ -159,32 +159,31 @@ fun Settings(
             // Support & About Section
             item { 
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Support & About", fontWeight = FontWeight.Bold) 
+                Text(stringResource(R.string.SupportAbout), fontWeight = FontWeight.Bold) 
             }
             item {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    color = USTBlue.copy(alpha = 0.1f), // Add transparent background
+                    color = USTBlue.copy(alpha = 0.1f),
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Column {
                         SettingsItem(
                             icon = Icons.Default.Settings,
-                            text = "Preferences",
+                            text = stringResource(R.string.Preferences),
                             onClick = { navigationController.navigate(Screens.Preferences.screen) }
                         )
                         SettingsItem(
                             icon = Icons.Default.Info,
-                            text = "About this app",
+                            text = stringResource(R.string.AboutApp),
                             onClick = { navigationController.navigate(Screens.AboutApp.screen) }
                         )
                         SettingsItem(
                             icon = Icons.Default.ExitToApp,
-                            text = "Log out",
+                            text = stringResource(R.string.LogOut),
                             onClick = {
                                 authViewModel.signOut()
                                 navigationController.navigate(Screens.Landing.screen) {
-                                    // Clear the back stack so user can't go back after logging out
                                     popUpTo(0) { inclusive = true }
                                 }
                             }

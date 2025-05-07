@@ -135,8 +135,6 @@ fun DocumentUploadScreen(
     var isSemesterExpanded by remember { mutableStateOf(false) }
 
     // Add dropdown options
-
-
     val years = listOf("2025","2024", "2023", "2022", "2021")
     val semesters = listOf("Fall", "Spring", "Summer", "Winter")
 
@@ -500,8 +498,8 @@ fun DocumentUploadScreen(
                         val filtered = input.filter { it in 'A'..'Z' }
                         subject = filtered
                     },
-                    label = "Subject (in capital English letters only)",
-                    placeholder = "Enter Subject such as 'COMP','ELEC'",
+                    label = stringResource(R.string.SubjectCapitalLettersOnly),
+                    placeholder = stringResource(R.string.EnterSubjectExample),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -514,8 +512,8 @@ fun DocumentUploadScreen(
                         val filtered = input.filter { it.isDigit() }
                         subjectCode = filtered
                     },
-                    label = "Subject Code (in numbers only)",
-                    placeholder = "Enter Subject code",
+                    label = stringResource(R.string.SubjectCodeNumbersOnly),
+                    placeholder = stringResource(R.string.EnterSubjectCode),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -643,7 +641,7 @@ fun DocumentUploadScreen(
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "Choose Upload Method",
+                        text = stringResource(R.string.ChooseUploadMethod),
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
@@ -670,11 +668,11 @@ fun DocumentUploadScreen(
                         ) {
                             Icon(
                                 Icons.Default.Add,
-                                contentDescription = "Take Photo",
+                                contentDescription = stringResource(R.string.TakePhoto),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.width(16.dp))
-                            Text("Take Photo")
+                            Text(stringResource(R.string.TakePhoto))
                         }
                     }
 
@@ -693,11 +691,11 @@ fun DocumentUploadScreen(
                         ) {
                             Icon(
                                 Icons.Default.Add,
-                                contentDescription = "Choose PDF",
+                                contentDescription = stringResource(R.string.ChoosePDF),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.width(16.dp))
-                            Text("Choose PDF")
+                            Text(stringResource(R.string.ChoosePDF))
                         }
                     }
 
@@ -716,11 +714,11 @@ fun DocumentUploadScreen(
                         ) {
                             Icon(
                                 Icons.Default.Add,
-                                contentDescription = "Choose Image",
+                                contentDescription = stringResource(R.string.ChooseImage),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.width(16.dp))
-                            Text("Choose Image")
+                            Text(stringResource(R.string.ChooseImage))
                         }
                     }
                 }
@@ -736,7 +734,7 @@ fun DocumentUploadScreen(
                         showCamera = false
                     }
                 },
-                title = { Text("Take Photo") },
+                title = { Text(stringResource(R.string.TakePhoto)) },
                 text = {
                     Box(modifier = Modifier.fillMaxSize()) {
                         CameraView(
@@ -851,7 +849,7 @@ fun DocumentUploadScreen(
                         },
                         enabled = !isCapturing && imageCapture != null
                     ) {
-                        Text("Take Photo")
+                        Text(stringResource(R.string.TakePhoto))
                     }
                 },
                 dismissButton = {
@@ -863,7 +861,7 @@ fun DocumentUploadScreen(
                         },
                         enabled = !isCapturing
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.Cancel))
                     }
                 }
             )
@@ -873,16 +871,16 @@ fun DocumentUploadScreen(
         if (!cameraPermissionState.status.isGranted && cameraPermissionState.status.shouldShowRationale) {
             AlertDialog(
                 onDismissRequest = { /* Don't dismiss */ },
-                title = { Text("Camera Permission Required") },
-                text = { Text("This app needs camera access to take photos. Please grant the permission in Settings.") },
+                title = { Text(stringResource(R.string.CameraPermissionRequired)) },
+                text = { Text(stringResource(R.string.CameraPermissionMessage)) },
                 confirmButton = {
                     Button(onClick = { cameraPermissionState.launchPermissionRequest() }) {
-                        Text("Grant Permission")
+                        Text(stringResource(R.string.GrantPermission))
                     }
                 },
                 dismissButton = {
                     Button(onClick = { /* Handle denial */ }) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.Cancel))
                     }
                 }
             )
@@ -891,16 +889,16 @@ fun DocumentUploadScreen(
         if (!storagePermissionState.status.isGranted && storagePermissionState.status.shouldShowRationale) {
             AlertDialog(
                 onDismissRequest = { /* Don't dismiss */ },
-                title = { Text("Storage Permission Required") },
-                text = { Text("This app needs storage access to save photos. Please grant the permission in Settings.") },
+                title = { Text(stringResource(R.string.StoragePermissionRequired)) },
+                text = { Text(stringResource(R.string.StoragePermissionMessage)) },
                 confirmButton = {
                     Button(onClick = { storagePermissionState.launchPermissionRequest() }) {
-                        Text("Grant Permission")
+                        Text(stringResource(R.string.GrantPermission))
                     }
                 },
                 dismissButton = {
                     Button(onClick = { /* Handle denial */ }) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.Cancel))
                     }
                 }
             )
@@ -910,7 +908,7 @@ fun DocumentUploadScreen(
         if (showConfirmationDialog) {
             AlertDialog(
                 onDismissRequest = { showConfirmationDialog = false },
-                title = { Text("Confirm Upload", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.ConfirmUpload), fontWeight = FontWeight.Bold) },
                 text = {
                     Column(
                         modifier = Modifier
@@ -919,41 +917,41 @@ fun DocumentUploadScreen(
                             .padding(vertical = 8.dp)
                     ) {
                         // Subject Information
-                        Text("Subject Information", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Text(stringResource(R.string.SubjectInformation), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                         Spacer(modifier = Modifier.height(4.dp))
                         Row {
-                            Text("Subject: ", fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.Subject) + ": ", fontWeight = FontWeight.Bold)
                             Text(subject)
                         }
                         Row {
-                            Text("Subject Code: ", fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.SubjectCode) + ": ", fontWeight = FontWeight.Bold)
                             Text(subjectCode)
                         }
                         Row {
-                            Text("Year: ", fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.Year) + ": ", fontWeight = FontWeight.Bold)
                             Text(year)
                         }
                         Row {
-                            Text("Semester: ", fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.Semester) + ": ", fontWeight = FontWeight.Bold)
                             Text(semester)
                         }
                         
                         Spacer(modifier = Modifier.height(8.dp))
                         
                         // Document Information
-                        Text("Document Information", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Text(stringResource(R.string.DocumentInformation), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                         Spacer(modifier = Modifier.height(4.dp))
                         Row {
-                            Text("Title: ", fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.Title) + ": ", fontWeight = FontWeight.Bold)
                             Text(title)
                         }
                         Row {
-                            Text("Professor: ", fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.Professor) + ": ", fontWeight = FontWeight.Bold)
                             Text(professor)
                         }
                         if (description.isNotBlank()) {
                             Row {
-                                Text("Description: ", fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.Description) + ": ", fontWeight = FontWeight.Bold)
                                 Text(description)
                             }
                         }
@@ -961,16 +959,16 @@ fun DocumentUploadScreen(
                         Spacer(modifier = Modifier.height(8.dp))
                         
                         // Uploaded Files
-                        Text("Uploaded Files", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Text(stringResource(R.string.UploadedFiles), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                         Spacer(modifier = Modifier.height(4.dp))
                         
                         if (imageFiles.isNotEmpty()) {
-                            Text("Images:", fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.Images) + ":", fontWeight = FontWeight.Bold)
                             imageFiles.forEachIndexed { index, file ->
                                 Column {
-                                    Text("Image ${index + 1}: ${file.name}")
+                                    Text(stringResource(R.string.ImageNumber, index + 1, file.name))
                                     Text(
-                                        "Location: ${file.absolutePath}",
+                                        stringResource(R.string.Location, file.absolutePath),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = Color.Gray
                                     )
@@ -980,11 +978,11 @@ fun DocumentUploadScreen(
                         }
                         
                         if (pdfFile != null) {
-                            Text("PDF:", fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.PDF) + ":", fontWeight = FontWeight.Bold)
                             Column {
-                                Text(pdfFile?.name ?: "Untitled PDF")
+                                Text(pdfFile?.name ?: stringResource(R.string.UntitledPDF))
                                 Text(
-                                    "Location: ${pdfFile?.absolutePath}",
+                                    stringResource(R.string.Location, pdfFile?.absolutePath ?: ""),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Color.Gray
                                 )
@@ -996,67 +994,17 @@ fun DocumentUploadScreen(
                     TextButton(
                         onClick = {
                             // TODO: Implement actual upload logic here
-
-                            //upload to firestore
-                            val document = userId?.let {
-                                Document(
-                                    id = java.util.UUID.randomUUID().toString(),
-                                    title = title,
-                                    description = description,
-                                    subject = subject,
-                                    subjectCode = subjectCode,
-                                    course = subject + subjectCode,
-                                    year = year,
-                                    semester = semester,
-                                    uploaded_by = it, // Replace with actual user ID if available
-                                    upload_date = SimpleDateFormat(
-                                        "yyyy-MM-dd",
-                                        Locale.getDefault()
-                                    ).format(
-                                        Date()
-                                    ),
-                                    document_name = fileName ?: "No file",
-                                    like_count = 0,
-                                    dislike_count = 0
-                                )
-                            }
-
-                            val documentRepository = DocumentRepository()
-                            val userRepository = UserRepository()
-
-                            if (userId != null) {
-                                userViewModel.viewModelScope.launch {
-                                    try {
-                                        if (document != null) {
-                                            documentRepository.addDocument(document)
-                                        }
-                                        userRepository.increaseUserUpload(userId)
-                                        document?.id?.let {
-                                            userRepository.addUploadedDocumentToUser(userId,
-                                                it
-                                            )
-                                        }
-                                        userViewModel.refreshUserData()
-                                        onNavigateBack() // Navigate back after successful update
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                        // Handle error if needed
-                                    }
-                                }
-                            }
-
-
                             showConfirmationDialog = false
                         }
                     ) {
-                        Text("Confirm")
+                        Text(stringResource(R.string.Confirm))
                     }
                 },
                 dismissButton = {
                     TextButton(
                         onClick = { showConfirmationDialog = false }
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.Cancel))
                     }
                 }
             )

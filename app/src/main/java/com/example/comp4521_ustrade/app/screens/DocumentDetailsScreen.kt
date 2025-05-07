@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ModifierInfo
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.comp4521_ustrade.R
@@ -107,10 +108,10 @@ fun DocumentDetailsScreen(
 
 
     val documentFields = listOf(
-        DisplayOnlyFieldItem(title = "Year", value= (document?.year ?: "") + " " + (document?.semester ?: "")),
-        document?.let { DisplayOnlyFieldItem(title="Course", value= it.course) },
-        document?.let { DisplayOnlyFieldItem(title = "Upload Date", value = it.upload_date) },
-        document?.let { DisplayOnlyFieldItem(title = "Description", value = it.description) }
+        DisplayOnlyFieldItem(title = stringResource(R.string.Year), value= (document?.year ?: "") + " " + (document?.semester ?: "")),
+        document?.let { DisplayOnlyFieldItem(title=stringResource(R.string.Course), value= it.course) },
+        document?.let { DisplayOnlyFieldItem(title = stringResource(R.string.UploadDate), value = it.upload_date) },
+        document?.let { DisplayOnlyFieldItem(title = stringResource(R.string.Description), value = it.description) }
     )
 
 
@@ -135,10 +136,10 @@ fun DocumentDetailsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Document Details") },
+                title = { Text(stringResource(R.string.DocumentDetails)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.Default.ArrowBack, stringResource(R.string.Back))
                     }
                 },
         colors = TopAppBarDefaults.topAppBarColors(
@@ -172,12 +173,12 @@ fun DocumentDetailsScreen(
                     ) {
                         Icon(
                             imageVector = if (isBookmarked) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
-                            contentDescription = "Bookmark",
+                            contentDescription = stringResource(R.string.Bookmark),
                             tint = if (isBookmarked) Color.Black else USTWhite
                         )
                     }
                     IconButton(onClick = { /* Handle share */ }) {
-                        Icon(Icons.Default.Share, "Share", tint = USTWhite)
+                        Icon(Icons.Default.Share, stringResource(R.string.Share), tint = USTWhite)
                     }
                 }
             )
@@ -214,7 +215,7 @@ fun DocumentDetailsScreen(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.user1),
-                    contentDescription = "User Avatar",
+                    contentDescription = "",
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
@@ -272,7 +273,7 @@ fun DocumentDetailsScreen(
                     ) {
                         Icon(
                             imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                            contentDescription = "Like",
+                            contentDescription = " ",
                             tint = if (isLiked) Color.Red else Color.Gray
                         )
                     }
@@ -309,7 +310,7 @@ fun DocumentDetailsScreen(
                     ) {
                         Icon(
                             imageVector = if (isDisliked) Icons.Filled.ThumbDown else Icons.Outlined.ThumbDown,
-                            contentDescription = "Dislike",
+                            contentDescription = "",
                             tint = if (isDisliked) MaterialTheme.colorScheme.primary else Color.Gray
                         )
                     }
@@ -324,11 +325,11 @@ fun DocumentDetailsScreen(
                 ) {
                     Icon(
                         Icons.Default.Download,
-                        contentDescription = "Download",
+                        contentDescription = stringResource(R.string.Download),
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Download Document")
+                    Text(stringResource(R.string.DownloadDocument))
                 }
             }
         }

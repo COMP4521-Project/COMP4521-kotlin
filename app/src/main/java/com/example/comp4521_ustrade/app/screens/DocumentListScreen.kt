@@ -133,7 +133,7 @@ fun DocumentListScreen(
                         navViewModel.setSelectedScreen(Screens.Home)
                         onNavigateBack()
                     }) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.Default.ArrowBack, stringResource(R.string.Back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -179,8 +179,8 @@ fun DocumentListScreen(
                         }
                     },
                     modifier = Modifier.weight(1f),
-                    placeholder = { Text(text = "Search in ${pageTitle}") },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") }
+                    placeholder = { Text(text = stringResource(R.string.SearchInSubject, pageTitle)) },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = " ") }
                 )
 
                 IconButton(
@@ -188,7 +188,7 @@ fun DocumentListScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.FilterList,
-                        contentDescription = "Filter"
+                        contentDescription = ""
                     )
                 }
             }
@@ -202,24 +202,24 @@ fun DocumentListScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Active filters:",
+                        text = stringResource(R.string.ActiveFilters),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     if (selectedYear != null) {
                         Text(
-                            text = "Year: $selectedYear",
+                            text = stringResource(R.string.YearFilter, selectedYear!!),
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
                     if (selectedSemester != null) {
                         Text(
-                            text = "Semester: $selectedSemester",
+                            text = stringResource(R.string.SemesterFilter, selectedSemester!!),
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
                     if (selectedSort != null) {
                         Text(
-                            text = "Sort: $selectedSort",
+                            text = stringResource(R.string.SortFilter, selectedSort!!),
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
@@ -239,7 +239,7 @@ fun DocumentListScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "no_documents_found",
+                        text = stringResource(R.string.NoDocumentsFound),
                         color = Color.Gray,
                         style = MaterialTheme.typography.bodyLarge
                     )
@@ -248,7 +248,7 @@ fun DocumentListScreen(
                 when {
                     isLoading -> {
                         Text(
-                            text = "loading",
+                            text = stringResource(R.string.Loading),
                             modifier = Modifier.padding(16.dp)
                         )
                     }
@@ -266,7 +266,7 @@ fun DocumentListScreen(
                     }
                     query.isNotBlank() -> {
                         Text(
-                            text = "no_results_found",
+                            text = stringResource(R.string.NoResultsFound),
                             modifier = Modifier.padding(16.dp)
                         )
                     }
@@ -279,7 +279,7 @@ fun DocumentListScreen(
     if (showFilterDialog) {
         AlertDialog(
             onDismissRequest = { showFilterDialog = false },
-            title = { Text("Filter Documents") },
+            title = { Text(stringResource(R.string.FilterDocuments)) },
             text = {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -291,7 +291,7 @@ fun DocumentListScreen(
                         onExpandedChange = { expandedYearMenu = it }
                     ) {
                         TextField(
-                            value = selectedYear ?: "Select Year",
+                            value = selectedYear ?: stringResource(R.string.SelectYear),
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedYearMenu) },
@@ -304,7 +304,7 @@ fun DocumentListScreen(
                             onDismissRequest = { expandedYearMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("All Years") },
+                                text = { Text(stringResource(R.string.AllYears)) },
                                 onClick = {
                                     selectedYear = null
                                     expandedYearMenu = false
@@ -328,7 +328,7 @@ fun DocumentListScreen(
                         onExpandedChange = { expandedSemesterMenu = it }
                     ) {
                         TextField(
-                            value = selectedSemester ?: "Select Semester",
+                            value = selectedSemester ?: stringResource(R.string.SelectSemester),
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSemesterMenu) },
@@ -341,7 +341,7 @@ fun DocumentListScreen(
                             onDismissRequest = { expandedSemesterMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("All Semesters") },
+                                text = { Text(stringResource(R.string.AllSemesters)) },
                                 onClick = {
                                     selectedSemester = null
                                     expandedSemesterMenu = false
@@ -365,7 +365,7 @@ fun DocumentListScreen(
                         onExpandedChange = { expandedSortMenu = it }
                     ) {
                         TextField(
-                            value = selectedSort ?: "Sort by",
+                            value = selectedSort ?: stringResource(R.string.SortBy),
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSortMenu) },
@@ -378,35 +378,35 @@ fun DocumentListScreen(
                             onDismissRequest = { expandedSortMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Default") },
+                                text = { Text(stringResource(R.string.Default)) },
                                 onClick = {
                                     selectedSort = null
                                     expandedSortMenu = false
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Most Liked") },
+                                text = { Text(stringResource(R.string.MostLiked)) },
                                 onClick = {
                                     selectedSort = "Most Liked"
                                     expandedSortMenu = false
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Least Liked") },
+                                text = { Text(stringResource(R.string.LeastLiked)) },
                                 onClick = {
                                     selectedSort = "Least Liked"
                                     expandedSortMenu = false
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Most Recent Upload") },
+                                text = { Text(stringResource(R.string.MostRecentUpload)) },
                                 onClick = {
                                     selectedSort = "Most Recent Upload"
                                     expandedSortMenu = false
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Least Recent Upload") },
+                                text = { Text(stringResource(R.string.LeastRecentUpload)) },
                                 onClick = {
                                     selectedSort = "Least Recent Upload"
                                     expandedSortMenu = false
@@ -420,7 +420,7 @@ fun DocumentListScreen(
                 Button(
                     onClick = { showFilterDialog = false }
                 ) {
-                    Text("Apply")
+                    Text(stringResource(R.string.Apply))
                 }
             },
             dismissButton = {
@@ -432,7 +432,7 @@ fun DocumentListScreen(
                         showFilterDialog = false
                     }
                 ) {
-                    Text("Clear All")
+                    Text(stringResource(R.string.ClearAll))
                 }
             }
         )

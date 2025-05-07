@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.comp4521_ustrade.R
@@ -107,18 +108,18 @@ fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel
                     Image(
                         modifier = Modifier.weight(1f).padding(start = 50.dp),
                         painter = painterResource(id = R.drawable.reward1),
-                        contentDescription = "reward"
+                        contentDescription = " "
                     )
                     Image(
                         modifier = Modifier.weight(1f).padding(start = 50.dp),
                         painter = painterResource(id = R.drawable.reward1),
-                        contentDescription = "reward"
+                        contentDescription = " "
                     )
                     Image(
                         modifier = Modifier.weight(1f).padding(end=8.dp),
                         alignment = androidx.compose.ui.Alignment.TopEnd,
                         painter = painterResource(id = R.drawable.reward1),
-                        contentDescription = "reward"
+                        contentDescription = " "
                     )
                 }
             }
@@ -166,21 +167,21 @@ fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel
                     if(uploadCount >= 20) {
                         Column {
                             Text(
-                                text = "Congratulations! You have reached the max level.",
+                                text = stringResource(R.string.MaxLevel),
                             )
                         }
                     } else {
                         if (uploadCount >= 12){
                             Text(
-                                text = "Upload ${20 - uploadCount} more documents to become Lv.3 contributor",
+                                text = stringResource(R.string.UploadMore, (20 - uploadCount)),
                             )
                         }else if (uploadCount >= 5){
                             Text(
-                                text = "Upload ${12 - uploadCount} more documents to to become Lv.2 contributor",
+                                text = stringResource(R.string.UploadMore2, (12 - uploadCount)),
                             )
                         } else {
                             Text(
-                                text = "Upload ${5 - uploadCount} more documents to to become Lv.1 contributor",
+                                text = stringResource(R.string.UploadMore3, (5 - uploadCount)),
                             )
                         }
                     }
@@ -195,13 +196,13 @@ fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ){
-                        Text(text = "Learn more",
+                        Text(text = stringResource(R.string.LearnMore),
                             modifier = Modifier.clickable {navigationController.navigate(Screens.RedeemGifts.screen) },
                             color = (if (isDarkModeEnabled) USTBlue else USTBlue_dark))
                         Icon(
                             modifier = Modifier.padding(start = 5.dp),
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "forward",
+                            contentDescription = " ",
                             tint = (if (isDarkModeEnabled) USTBlue else USTBlue_dark)
                         )
                     }

@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import com.example.comp4521_ustrade.R
@@ -65,28 +66,19 @@ fun EditProfileScreen(
     val descriptionLiveData = userViewModel.description.observeAsState()
     var description by remember { mutableStateOf(descriptionLiveData.value ?: "") }
 
-
-    //deprecated
-//    var name by remember { mutableStateOf("") }
-//    var lastname by remember { mutableStateOf("") }
-//    var dateOfBirth by remember { mutableStateOf("") }
-//    var description by remember { mutableStateOf("") }
-
     var showDatePicker by remember { mutableStateOf(false) }
     
     val datePickerState = rememberDatePickerState(
         initialDisplayMode = DisplayMode.Input
     )
 
-
-
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Edit Profile") },
+                title = { Text(stringResource(R.string.EditProfile)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.Default.ArrowBack, stringResource(R.string.Back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -103,23 +95,21 @@ fun EditProfileScreen(
                 .padding(padding)
                 .padding(16.dp)
         ) {
-            // Profile Image Section
             Image(
-                painter = painterResource(id = R.drawable.user1),// show logo
-                contentDescription = "Profile Image",
+                painter = painterResource(id = R.drawable.user1),
+                contentDescription = "",
                 modifier = Modifier
                     .size(150.dp)
                     .clip(CircleShape)
                     .align(Alignment.CenterHorizontally)
             )
-            // ... existing code ...
 
             if (username != null) {
                 CustomTextField(
                     value = firstName,
                     onValueChange = { firstName = it },
-                    label = "Name",
-                    placeholder="Enter Your first name"
+                    label = stringResource(R.string.FirstName),
+                    placeholder = stringResource(R.string.EnterYourFirstname)
                 )
             }
             
@@ -128,21 +118,21 @@ fun EditProfileScreen(
             CustomTextField(
                 value = lastName,
                 onValueChange = { lastName = it },
-                label = "last name",
-                placeholder = "Enter Your last name"
+                label = stringResource(R.string.LastName),
+                placeholder = stringResource(R.string.EnterYourLastname)
             )
             
             Spacer(modifier = Modifier.height(16.dp))
             
             CustomTextField(
                 value = dateOfBirth,
-                onValueChange = { dateOfBirth = it },  // Read-only
-                label = "Date of Birth",
-                placeholder = "Select your date of birth",
+                onValueChange = { dateOfBirth = it },
+                label = stringResource(R.string.DateOfBirth),
+                placeholder = stringResource(R.string.SelectYourDateOfBirth),
                 onClick = { showDatePicker = true },
                 trailingIcon = {
                     IconButton(onClick = { showDatePicker = true }) {
-                        Icon(Icons.Default.DateRange, "Select date")
+                        Icon(Icons.Default.DateRange,"Select date")
                     }
                 }
             )
@@ -160,12 +150,12 @@ fun EditProfileScreen(
                             }
                             showDatePicker = false
                         }) {
-                            Text("OK")
+                            Text(stringResource(R.string.OK))
                         }
                     },
                     dismissButton = {
                         TextButton(onClick = { showDatePicker = false }) {
-                            Text("Cancel")
+                            Text(stringResource(R.string.Cancel))
                         }
                     }
                 ) {
@@ -178,10 +168,10 @@ fun EditProfileScreen(
             CustomTextField(
                 value = description,
                 onValueChange = { description = it },
-                label = "Description (Optional)",
+                label = stringResource(R.string.Description),
                 singleLine = true,
                 minLines = 1,
-                placeholder = "Enter Your Description"
+                placeholder = stringResource(R.string.EnterYourDescription)
             )
             
             Spacer(modifier = Modifier.height(32.dp))
@@ -201,19 +191,17 @@ fun EditProfileScreen(
                         userViewModel.viewModelScope.launch {
                             try {
                                 userRepository.updateUser(userId, userProfileUpdates)
-                                // Refresh user data after successful update
                                 userViewModel.refreshUserData()
-                               onNavigateBack() // Navigate back after successful update
+                                onNavigateBack()
                             } catch (e: Exception) {
                                 e.printStackTrace()
-                                // Handle error if needed
                             }
                         }
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Save changes")
+                Text(stringResource(R.string.SaveChanges))
             }
         }
     }

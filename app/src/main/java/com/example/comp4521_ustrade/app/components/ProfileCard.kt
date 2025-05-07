@@ -27,9 +27,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.models.ProfileCardData
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.Badges
@@ -49,7 +51,6 @@ fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData
         level = 3
     }
 
-
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shadowElevation = 8.dp,
@@ -65,7 +66,7 @@ fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData
             {
                 Image(
                     painter = painterResource(id = ProfileCardData.profilePicture),
-                    contentDescription = "Profile Picture",
+                    contentDescription = stringResource(R.string.ProfilePicture),
                     modifier = modifier
                         .weight(2f)
                         .size(100.dp)
@@ -90,13 +91,11 @@ fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData
                 IconButton(onClick = {}) {
                     Icon(
                         imageVector = Icons.Default.IosShare,
-                        contentDescription = "Share",
+                        contentDescription = stringResource(R.string.Share),
                         modifier = modifier.weight(1f),
                         tint = Color.Gray
                     )
                 }
-
-
             }
 
             Row(
@@ -111,7 +110,7 @@ fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData
                 ) {
                     Text(text = "$uploadCount", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Text(
-                        text = "Uploads",
+                        text = stringResource(R.string.Upload),
                         fontSize = 16.sp,
                         modifier = modifier.padding(top = 8.dp)
                     )
@@ -133,7 +132,7 @@ fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Downloads",
+                        text = stringResource(R.string.Download),
                         fontSize = 16.sp,
                         modifier = modifier.padding(top = 8.dp)
                     )
@@ -143,11 +142,8 @@ fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData
     }
 }
 
-
-
 @Composable
 fun UploaderProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData) {
-
     val uploadCount = ProfileCardData.upload_count
 
     var level = 0;
@@ -175,7 +171,7 @@ fun UploaderProfileCard(modifier: Modifier = Modifier, ProfileCardData : Profile
             {
                 Image(
                     painter = painterResource(id = ProfileCardData.profilePicture),
-                    contentDescription = "Profile Picture",
+                    contentDescription = stringResource(R.string.ProfilePicture),
                     modifier = modifier
                         .weight(2f)
                         .size(100.dp)
@@ -196,7 +192,6 @@ fun UploaderProfileCard(modifier: Modifier = Modifier, ProfileCardData : Profile
                     Spacer(modifier.padding(2.dp))
                     ContributorTag(level = level)
                 }
-
             }
 
             Row(
@@ -211,7 +206,7 @@ fun UploaderProfileCard(modifier: Modifier = Modifier, ProfileCardData : Profile
                 ) {
                     Text(text = "$uploadCount", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Text(
-                        text = "Uploads",
+                        text = stringResource(R.string.Upload),
                         fontSize = 16.sp,
                         modifier = modifier.padding(top = 8.dp)
                     )
@@ -233,7 +228,7 @@ fun UploaderProfileCard(modifier: Modifier = Modifier, ProfileCardData : Profile
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Downloads",
+                        text = stringResource(R.string.Download),
                         fontSize = 16.sp,
                         modifier = modifier.padding(top = 8.dp)
                     )

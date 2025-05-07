@@ -1,4 +1,3 @@
-
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
@@ -58,24 +57,23 @@ fun PreferencesScreen(
 
     val isChatbotEnabled by appSettingsViewModel.isChatbotEnabled.collectAsState()
 
-
     var expanded by remember { mutableStateOf(false) }
     val languages = listOf("English", "Traditional Chinese", "Simplified Chinese")
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Preferences") },
+                title = { Text(stringResource(R.string.Preference)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.Default.ArrowBack, stringResource(R.string.Back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = (if (isDarkTheme) USTBlue_dark else USTBlue),
-                        titleContentColor = Color.White,
-                        navigationIconContentColor = Color.White
-                    )
+                    containerColor = (if (isDarkTheme) USTBlue_dark else USTBlue),
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White
+                )
             )
         }
     ) { padding ->
@@ -92,7 +90,7 @@ fun PreferencesScreen(
             ) {
                 Column {
                     ToggleButton(
-                        text = "Light mode",
+                        text = stringResource(R.string.LightMode),
                         checked = isDarkTheme,
                         onCheckedChange = {
                             onThemeChange(it)
@@ -111,7 +109,7 @@ fun PreferencesScreen(
             ) {
                 Column {
                     ToggleButton(
-                        text = "Chatbot",
+                        text = stringResource(R.string.Chatbot),
                         checked = isChatbotEnabled,
                         onCheckedChange = { appSettingsViewModel.setChatbotEnabled(it) }
                     )
@@ -120,27 +118,30 @@ fun PreferencesScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = Color.Transparent,
+                shape = RoundedCornerShape(8.dp)
             ) {
-                DropdownList(
-                    title = stringResource(id = R.string.Language),
-                    selectedItem = selectedLanguage,
-                    onItemSelected = {
-                        selectedLanguage = it
-                        sharedPreferences.edit().putString("selected_language", it).apply()
-                        when (it) {
-                            "English" -> updateLocale(context, Locale.ENGLISH)
-                            "Traditional Chinese" -> updateLocale(context, Locale("zh", "TW"))
-                            "Simplified Chinese" -> updateLocale(context, Locale("zh", "CN"))
-                        }
-                    },
-                    expanded = expanded,
-                    onExpandedChange = { expanded = it },
-                    content = languages
-                )
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    DropdownList(
+                        title = stringResource(R.string.Language),
+                        selectedItem = selectedLanguage,
+                        onItemSelected = {
+                            selectedLanguage = it
+                            sharedPreferences.edit().putString("selected_language", it).apply()
+                            when (it) {
+                                "English" -> updateLocale(context, Locale.ENGLISH)
+                                "Traditional Chinese" -> updateLocale(context, Locale("zh", "TW"))
+                                "Simplified Chinese" -> updateLocale(context, Locale("zh", "CN"))
+                            }
+                        },
+                        expanded = expanded,
+                        onExpandedChange = { expanded = it },
+                        content = languages
+                    )
+                }
             }
         }
     }

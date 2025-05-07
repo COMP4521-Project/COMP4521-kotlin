@@ -48,11 +48,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ModifierInfo
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.ConfirmRedeemSheet
 import com.example.comp4521_ustrade.app.components.RedeemCard
 import com.example.comp4521_ustrade.app.components.RedeemDialog
@@ -136,10 +138,10 @@ fun Redeem(modifier: Modifier = Modifier,
                         }
                     }
                     Column(modifier = Modifier.padding(top = 43.dp, start = 16.dp)) {
-                        Text(text = "Upload sources", fontSize = 20.sp, color = USTWhite)
+                        Text(text = stringResource(R.string.UploadSources), fontSize = 20.sp, color = USTWhite)
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Level up and redeem rewards",
+                            text = stringResource(R.string.LevelUpAndRedeemRewards),
                             fontSize = 20.sp,
                             color = USTWhite
                         )
@@ -157,7 +159,7 @@ fun Redeem(modifier: Modifier = Modifier,
                     }
                     if (confirmPrize != null) {
                         Text(
-                            text = "You have selected your prize. Please go to the souvenir shop to collect your prize",
+                            text = stringResource(R.string.YouHaveSelectedYourPrize),
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .padding(horizontal = 16.dp),

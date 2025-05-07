@@ -31,7 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.screens.Screens
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
@@ -72,7 +74,7 @@ fun USTTopBar(onOpenDrawer: () -> Unit ,
                     Icon(imageVector = Icons.Default.Search, contentDescription = "Search", tint = Color.Gray)
                 },
                 placeholder = {
-                    Text(text = "Search Resources", color = Color.Gray)
+                    Text(text = stringResource(R.string.SearchResources), color = Color.Gray)
                 },
                 colors = SearchBarDefaults.colors(
                     containerColor = (if (isDarkModeEnabled) USTgray_dark else USTgray),
