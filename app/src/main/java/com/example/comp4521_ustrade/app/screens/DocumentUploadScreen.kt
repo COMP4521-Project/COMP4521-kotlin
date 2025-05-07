@@ -22,6 +22,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -34,6 +35,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -45,10 +47,12 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -123,6 +127,9 @@ fun DocumentUploadScreen(
     var imageLoadingError by remember { mutableStateOf<String?>(null) }
     var showUploadOptions by remember { mutableStateOf(false) }
     var selectedFiles by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    var uploadProgress by remember { mutableStateOf(0f) }
+    var isUploading by remember { mutableStateOf(false) }
+    var currentUploadStatus by remember { mutableStateOf("") }
 
     //user-related
     val userId = userViewModel.userid.observeAsState().value
@@ -999,23 +1006,46 @@ fun DocumentUploadScreen(
                             if (userId != null) {
                                 userViewModel.viewModelScope.launch {
                                     try {
+                                        // Show loading state
+                                        isUploading = true
+                                        uploadProgress = 0f
+                                        currentUploadStatus = "Preparing upload..."
+                                        
                                         // Upload files to Firebase Storage
                                         val fileUrls = mutableListOf<String>()
                                         val fileTypes = mutableListOf<String>()
 
                                         // Upload PDF if exists
                                         pdfFile?.let { file ->
-                                            val url = storageRepository.uploadFile(file, documentId, file.name)
+                                            currentUploadStatus = "Uploading PDF..."
+                                            val url = storageRepository.uploadFile(
+                                                file = file,
+                                                documentId = documentId,
+                                                fileName = file.name
+                                            ) { progress ->
+                                                uploadProgress = progress.toFloat() / 100f
+                                                currentUploadStatus = "Uploading PDF: ${progress.toInt()}%"
+                                            }
                                             fileUrls.add(url)
                                             fileTypes.add("pdf")
                                         }
 
                                         // Upload images if exist
                                         if (imageFiles.isNotEmpty()) {
-                                            val imageUrls = storageRepository.uploadMultipleFiles(imageFiles, documentId)
+                                            val imageUrls = storageRepository.uploadMultipleFiles(
+                                                files = imageFiles,
+                                                documentId = documentId
+                                            ) { index, progress ->
+                                                uploadProgress = progress.toFloat() / 100f
+                                                currentUploadStatus = "Uploading image ${index + 1}/${imageFiles.size}: ${progress.toInt()}%"
+                                            }
                                             fileUrls.addAll(imageUrls)
                                             imageFiles.forEach { fileTypes.add("image") }
                                         }
+
+                                        // Update status
+                                        currentUploadStatus = "Saving document information..."
+                                        uploadProgress = 0.8f
 
                                         // Create and save document to Firestore
                                         val document = Document(
@@ -1043,11 +1073,19 @@ fun DocumentUploadScreen(
                                         userRepository.increaseUserUpload(userId)
                                         userRepository.addUploadedDocumentToUser(userId, documentId)
                                         userViewModel.refreshUserData()
+                                        
+                                        // Complete upload
+                                        uploadProgress = 1f
+                                        currentUploadStatus = "Upload complete!"
+                                        
+                                        // Clear loading state and navigate back
+                                        isUploading = false
                                         onNavigateBack()
                                     } catch (e: Exception) {
                                         e.printStackTrace()
                                         // Show error message to user
                                         imageLoadingError = "Failed to upload document: ${e.message}"
+                                        isUploading = false
                                     }
                                 }
                             }
@@ -1066,6 +1104,46 @@ fun DocumentUploadScreen(
                     }
                 }
             )
+        }
+
+        // Add loading overlay
+        if (isUploading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .padding(24.dp)
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(48.dp),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = currentUploadStatus,
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LinearProgressIndicator(
+                        progress = { uploadProgress },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(8.dp)
+                    )
+                }
+            }
         }
     }
 }
