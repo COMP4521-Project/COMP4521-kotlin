@@ -51,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -205,7 +206,7 @@ fun HomePage(
             }
             composable(Screens.Download.screen) {
                 DocumentListScreen(
-                pageTitle = "downloaded",
+                pageTitle = stringResource(R.string.Downloaded),
                 onNavigateBack = { navigationController.navigateUp() },
                 onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
                 navViewModel = navViewModel,
@@ -346,7 +347,7 @@ fun HomePage(
             // Bookmarked document List
             composable(Screens.DocumentBookmarkedList.screen) {
                 SpecialDocumentListScreen(
-                    pageTitle = "bookmarked",
+                    pageTitle = stringResource(R.string.Bookmarked),
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
                     navViewModel = navViewModel,
@@ -358,7 +359,7 @@ fun HomePage(
             // Uploaded document List
             composable(Screens.DocumentUploadedList.screen) {
                 SpecialDocumentListScreen(
-                    pageTitle = "uploaded",
+                    pageTitle = stringResource(R.string.Uploaded),
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
                     navViewModel = navViewModel,
@@ -370,7 +371,7 @@ fun HomePage(
             // Downloaded document List
             composable(Screens.DocumentDownloadedList.screen) {
                 SpecialDocumentListScreen(
-                    pageTitle = "downloaded",
+                    pageTitle = stringResource(R.string.Downloaded),
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
                     navViewModel = navViewModel,
@@ -382,7 +383,7 @@ fun HomePage(
             // Favorites document List
             composable(Screens.DocumentFavoritesList.screen) {
                 SpecialDocumentListScreen(
-                    pageTitle = "favorites",
+                    pageTitle = stringResource(R.string.Favorites),
                     onNavigateBack = { navigationController.navigateUp() },
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
                     navViewModel = navViewModel,
@@ -393,7 +394,7 @@ fun HomePage(
             // Search results document List
             composable(Screens.DocumentSearchResults.screen) {
                 DocumentListScreen(
-                    pageTitle = "search results",
+                    pageTitle = stringResource(R.string.SearchResults),
                     onNavigateBack = { navigationController.navigateUp() }, 
                     onDocumentClick = { navigationController.navigate(Screens.DocumentDetails.screen) },
                     navViewModel = navViewModel,

@@ -126,6 +126,7 @@
     <string name="Year">
 		年份
 	</string>
+	<string name="Course">科目</string>
     <string name="SubjectCode">
 		科目代碼
 	</string>
@@ -238,7 +239,7 @@
 		明白了
 	</string>
     <string name="UploadSources">
-		上傳來源
+		上傳學習資源
 	</string>
     <string name="LevelUpAndRedeemRewards">
 		升級並兌換獎勵
@@ -577,4 +578,23 @@
 <string name="EnterSubjectExample">輸入科目，例如‘COMP’，‘ELEC’</string>
 <string name="SubjectCodeNumbersOnly">科目代碼（僅限數字）</string>
 <string name="EnterSubjectCode">輸入科目代碼</string>
+<string name="SearchInSubject">搜尋 %1$s</string>
+<string name="ActiveFilters">啟用的篩選條件：</string>
+<string name="YearFilter">年份：%1$s</string>
+<string name="SemesterFilter">學期：%1$s</string>
+<string name="SortFilter">排序：%1$s</string>
+<string name="NoDocumentsFound">未找到文件</string>
+<string name="NoResultsFound">未找到結果</string>
+<string name="FilterDocuments">篩選文件</string>
+<string name="AllYears">所有年份</string>
+<string name="AllSemesters">所有學期</string>
+<string name="SortBy">排序方式</string>
+<string name="Default">預設</string>
+<string name="MostLiked">最受喜愛</string>
+<string name="LeastLiked">最不受喜愛</string>
+<string name="MostRecentUpload">最新上傳</string>
+<string name="LeastRecentUpload">最早上傳</string>
+<string name="Apply">套用</string>
+<string name="ClearAll">清除全部</string>
+<string name="Uploads">上傳</string>
 </resources>

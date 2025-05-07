@@ -597,4 +597,25 @@
 	<string name="EnterSubjectExample">Enter Subject such as \'COMP\',\'ELEC\'</string>
 	<string name="SubjectCodeNumbersOnly">Subject Code (in numbers only)</string>
 	<string name="EnterSubjectCode">Enter Subject code</string>
+	<string name="Course">Course</string>
+	<string name="SearchInSubject">Search in %1$s</string>
+	<string name="ActiveFilters">Active filters:</string>
+	<string name="YearFilter">Year: %1$s</string>
+	<string name="SemesterFilter">Semester: %1$s</string>
+	<string name="SortFilter">Sort: %1$s</string>
+	<string name="NoDocumentsFound">No documents found</string>
+	<string name="NoResultsFound">No results found</string>
+	<string name="FilterDocuments">Filter Documents</string>
+	<string name="AllYears">All Years</string>
+	<string name="AllSemesters">All Semesters</string>
+	<string name="SortBy">Sort by</string>
+	<string name="Default">Default</string>
+	<string name="MostLiked">Most Liked</string>
+	<string name="LeastLiked">Least Liked</string>
+	<string name="MostRecentUpload">Most Recent Upload</string>
+	<string name="LeastRecentUpload">Least Recent Upload</string>
+	<string name="Apply">Apply</string>
+	<string name="ClearAll">Clear All</string>
+	<string name="Uploads">Uploads</string>
+
 </resources>
