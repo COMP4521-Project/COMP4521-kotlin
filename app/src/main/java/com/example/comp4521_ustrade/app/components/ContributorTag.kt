@@ -24,7 +24,7 @@ fun ContributorTag(modifier: Modifier = Modifier, level : Int) {
                 shape = MaterialTheme.shapes.small
             ) {
                 Text(
-                    text = stringResource(R.string.Lv1Contributor),
+                    text = stringResource(R.string.Lv1Contributortag),
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                     color = Color.Black
                 )
@@ -36,7 +36,7 @@ fun ContributorTag(modifier: Modifier = Modifier, level : Int) {
                 shape = MaterialTheme.shapes.small
             ) {
                 Text(
-                    text = stringResource(R.string.Lv2Contributor),
+                    text = stringResource(R.string.Lv2Contributortag),
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                     color = Color.Black
                 )
@@ -48,7 +48,7 @@ fun ContributorTag(modifier: Modifier = Modifier, level : Int) {
                 shape = MaterialTheme.shapes.small
             ) {
                 Text(
-                    text = stringResource(R.string.Lv3Contributor),
+                    text = stringResource(R.string.Lv3Contributortag),
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                     color = USTWhite
                 )

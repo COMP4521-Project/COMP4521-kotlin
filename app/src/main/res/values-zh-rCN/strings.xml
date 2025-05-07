@@ -192,14 +192,23 @@
     <string name="ContributorLv">
 		贡献者 Lv.%1$d
 	</string>
-    <string name="Lv1Contributor">
-		Lv.1 贡献者
+	<string name="Lv1Contributortag">
+		 Lv.1 贡献者
 	</string>
-    <string name="Lv2Contributor">
+	<string name="Lv2Contributortag">
 		Lv.2 贡献者
 	</string>
-    <string name="Lv3Contributor">
+	<string name="Lv3Contributortag">
 		Lv.3 贡献者
+	</string>
+	<string name="Lv1Contributor">
+	• 5 个文档 → Lv.1 贡献者
+	</string>
+	<string name="Lv2Contributor">
+	• 12 个文档 → Lv.2 贡献者
+	</string>
+	<string name="Lv3Contributor">
+	• 20 个文档 → Lv.3 贡献者
 	</string>
     <string name="UploadedDocuments">
 		您已上传%1$d份文件
@@ -492,6 +501,9 @@
     <string name="ELEC">
 		ELEC
 	</string>
+	<string name="Year2025">
+		2025
+	</string>
     <string name="Year2024">
 		2024
 	</string>
@@ -540,4 +552,29 @@
 	<string name="Clear">清除</string>
 	<string name="Chatbotname">USTrade 聊天机器人助手</string>
 	<string name="Chatbotsubtitle">欢迎随时咨询有关 USTrade 的任何问题</string>
+
+<!-- 文档上传界面 -->
+<string name="ChooseUploadMethod">选择上传方式</string>
+<string name="TakePhoto">拍照</string>
+<string name="ChoosePDF">选择 PDF</string>
+<string name="ChooseImage">选择图片</string>
+<string name="CameraPermissionRequired">需要相机权限</string>
+<string name="CameraPermissionMessage">此应用需要相机权限以拍照。请在设置中授予权限。</string>
+<string name="StoragePermissionRequired">需要存储权限</string>
+<string name="StoragePermissionMessage">此应用需要存储权限以保存照片。请在设置中授予权限。</string>
+<string name="GrantPermission">授予权限</string>
+<string name="ConfirmUpload">确认上传</string>
+<string name="SubjectInformation">科目信息</string>
+<string name="DocumentInformation">文档信息</string>
+<string name="Images">图片</string>
+<string name="ImageNumber">图片 %1$d：%2$s</string>
+<string name="Location">位置：%1$s</string>
+<string name="PDF">PDF</string>
+<string name="UntitledPDF">未命名 PDF</string>
+<string name="AddMore">添加更多</string>
+<string name="ViewPDF">查看 PDF</string>
+<string name="SubjectCapitalLettersOnly">科目（仅限大写英文字母）</string>
+<string name="EnterSubjectExample">输入科目，例如‘COMP’，‘ELEC’</string>
+<string name="SubjectCodeNumbersOnly">科目代码（仅限数字）</string>
+<string name="EnterSubjectCode">输入科目代码</string>
 </resources>

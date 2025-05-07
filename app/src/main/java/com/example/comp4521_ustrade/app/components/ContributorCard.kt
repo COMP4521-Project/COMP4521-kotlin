@@ -108,18 +108,18 @@ fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel
                     Image(
                         modifier = Modifier.weight(1f).padding(start = 50.dp),
                         painter = painterResource(id = R.drawable.reward1),
-                        contentDescription = "reward"
+                        contentDescription = " "
                     )
                     Image(
                         modifier = Modifier.weight(1f).padding(start = 50.dp),
                         painter = painterResource(id = R.drawable.reward1),
-                        contentDescription = "reward"
+                        contentDescription = " "
                     )
                     Image(
                         modifier = Modifier.weight(1f).padding(end=8.dp),
                         alignment = androidx.compose.ui.Alignment.TopEnd,
                         painter = painterResource(id = R.drawable.reward1),
-                        contentDescription = "reward"
+                        contentDescription = " "
                     )
                 }
             }
@@ -202,7 +202,7 @@ fun ContributorCard(modifier: Modifier = Modifier, userViewModel : UserViewModel
                         Icon(
                             modifier = Modifier.padding(start = 5.dp),
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "",
+                            contentDescription = " ",
                             tint = (if (isDarkModeEnabled) USTBlue else USTBlue_dark)
                         )
                     }

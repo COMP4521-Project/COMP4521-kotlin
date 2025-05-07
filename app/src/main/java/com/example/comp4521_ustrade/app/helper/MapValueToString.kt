@@ -24,6 +24,7 @@ fun mapValueToString(value: String): String {
         "MECH" -> stringResource(R.string.MECH)
         "CIVL" -> stringResource(R.string.CIVL)
         "ELEC" -> stringResource(R.string.ELEC)
+        "2025" -> stringResource(R.string.Year2025)
         "2024" -> stringResource(R.string.Year2024)
         "2023" -> stringResource(R.string.Year2023)
         "2022" -> stringResource(R.string.Year2022)

@@ -189,17 +189,26 @@
     <string name="UploadMore3">
 		再上傳 %1$d 份文件即可成為 Lv.1 貢獻者
 	</string>
+	<string name="Lv1Contributortag">
+	 Lv.1 貢獻者
+	</string>
+	<string name="Lv2Contributortag">
+	Lv.2 貢獻者
+	</string>
+	<string name="Lv3Contributortag">
+	Lv.3 貢獻者
+	</string>
     <string name="ContributorLv">
 		貢獻者 Lv.%1$d
 	</string>
-    <string name="Lv1Contributor">
-		Lv.1 貢獻者
+	<string name="Lv1Contributor">
+	• 5 個文件 → Lv.1 貢獻者
 	</string>
-    <string name="Lv2Contributor">
-		Lv.2 貢獻者
+	<string name="Lv2Contributor">
+	• 12 個文件 → Lv.2 貢獻者
 	</string>
-    <string name="Lv3Contributor">
-		Lv.3 貢獻者
+	<string name="Lv3Contributor">
+	• 20 個文件 → Lv.3 貢獻者
 	</string>
     <string name="UploadedDocuments">
 		您已上傳%1$d份文件
@@ -492,6 +501,9 @@
     <string name="ELEC">
 		ELEC
 	</string>
+	<string name="Year2025">
+		2025
+	</string>
     <string name="Year2024">
 		2024
 	</string>
@@ -540,4 +552,29 @@
 	<string name="Clear">清除</string>
 	<string name="Chatbotname">USTrade 聊天機器人助手</string>
 	<string name="Chatbotsubtitle">隨時詢問有關 USTrade 的任何問題</string>
+
+<!-- 文件上傳界面 -->
+<string name="ChooseUploadMethod">選擇上傳方式</string>
+<string name="TakePhoto">拍照</string>
+<string name="ChoosePDF">選擇 PDF</string>
+<string name="ChooseImage">選擇圖片</string>
+<string name="CameraPermissionRequired">需要相機權限</string>
+<string name="CameraPermissionMessage">此應用需要相機權限以拍照。請在設定中授予權限。</string>
+<string name="StoragePermissionRequired">需要存儲權限</string>
+<string name="StoragePermissionMessage">此應用需要存儲權限以保存照片。請在設定中授予權限。</string>
+<string name="GrantPermission">授予權限</string>
+<string name="ConfirmUpload">確認上傳</string>
+<string name="SubjectInformation">科目信息</string>
+<string name="DocumentInformation">文件信息</string>
+<string name="Images">圖片</string>
+<string name="ImageNumber">圖片 %1$d：%2$s</string>
+<string name="Location">位置：%1$s</string>
+<string name="PDF">PDF</string>
+<string name="UntitledPDF">未命名 PDF</string>
+<string name="AddMore">添加更多</string>
+<string name="ViewPDF">檢視 PDF</string>
+<string name="SubjectCapitalLettersOnly">科目（僅限大寫英文字母）</string>
+<string name="EnterSubjectExample">輸入科目，例如‘COMP’，‘ELEC’</string>
+<string name="SubjectCodeNumbersOnly">科目代碼（僅限數字）</string>
+<string name="EnterSubjectCode">輸入科目代碼</string>
 </resources>

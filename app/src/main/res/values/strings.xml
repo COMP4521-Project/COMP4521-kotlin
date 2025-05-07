@@ -222,6 +222,15 @@
 	<string name="RedeemThisPrize">
 		Redeem this prize
 	</string>
+	<string name="Lv1Contributortag">
+		 Lv.1 contributor
+	</string>
+	<string name="Lv2Contributortag">
+		Lv.2 contributor
+	</string>
+	<string name="Lv3Contributortag">
+		Lv.3 contributor
+	</string>
 	<string name="Lv1Contributor">
 		• 5 documents → Lv.1 contributor
 	</string>
@@ -510,6 +519,9 @@
 	<string name="ELEC">
 		ELEC
 	</string>
+	<string name="Year2025">
+		2025
+	</string>
 	<string name="Year2024">
 		2024
 	</string>
@@ -560,4 +572,29 @@
 	<string name="Clear">Clear</string>
 	<string name="Chatbotname">USTrade Chatbot Assistant</string>
 	<string name="Chatbotsubtitle">Feel free to ask anything about USTrade</string>
+	
+	<!-- Document Upload Screen -->
+	<string name="ChooseUploadMethod">Choose Upload Method</string>
+	<string name="TakePhoto">Take Photo</string>
+	<string name="ChoosePDF">Choose PDF</string>
+	<string name="ChooseImage">Choose Image</string>
+	<string name="CameraPermissionRequired">Camera Permission Required</string>
+	<string name="CameraPermissionMessage">This app needs camera access to take photos. Please grant the permission in Settings.</string>
+	<string name="StoragePermissionRequired">Storage Permission Required</string>
+	<string name="StoragePermissionMessage">This app needs storage access to save photos. Please grant the permission in Settings.</string>
+	<string name="GrantPermission">Grant Permission</string>
+	<string name="ConfirmUpload">Confirm Upload</string>
+	<string name="SubjectInformation">Subject Information</string>
+	<string name="DocumentInformation">Document Information</string>
+	<string name="Images">Images</string>
+	<string name="ImageNumber">Image %1$d: %2$s</string>
+	<string name="Location">Location: %1$s</string>
+	<string name="PDF">PDF</string>
+	<string name="UntitledPDF">Untitled PDF</string>
+	<string name="AddMore">Add More</string>
+	<string name="ViewPDF">View PDF</string>
+	<string name="SubjectCapitalLettersOnly">Subject (in capital English letters only)</string>
+	<string name="EnterSubjectExample">Enter Subject such as \'COMP\',\'ELEC\'</string>
+	<string name="SubjectCodeNumbersOnly">Subject Code (in numbers only)</string>
+	<string name="EnterSubjectCode">Enter Subject code</string>
 </resources>
