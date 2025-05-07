@@ -1,108 +1,105 @@
 package com.example.comp4521_ustrade.app.screens
 
+import android.Manifest
+import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.graphics.pdf.PdfRenderer
+import android.media.ExifInterface
+import android.media.MediaScannerConnection
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.os.ParcelFileDescriptor
+import android.provider.MediaStore
+import android.provider.MediaStore.Images.Media
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.lifecycle.viewModelScope
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.CustomTextField
 import com.example.comp4521_ustrade.app.components.DropdownList
+import com.example.comp4521_ustrade.app.data.dao.Document
+import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
+import com.example.comp4521_ustrade.app.data.repository.StorageRepository
+import com.example.comp4521_ustrade.app.data.repository.UserRepository
+import com.example.comp4521_ustrade.app.screens.camera.CameraView
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
+import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
-import androidx.compose.material3.AlertDialog
-import androidx.core.content.ContextCompat
-import android.util.Log
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
+import kotlinx.coroutines.launch
+import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import com.example.comp4521_ustrade.app.screens.camera.CameraView
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
-import android.Manifest
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.shouldShowRationale
-import android.os.Environment
-import android.content.ContentValues
-import android.provider.MediaStore
-import android.os.Build
-import androidx.compose.foundation.Image
-import androidx.compose.ui.layout.ContentScale
-import android.graphics.BitmapFactory
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import android.content.ContentResolver
-import android.provider.MediaStore.Images.Media
-import android.media.ExifInterface
-import android.graphics.Matrix
-import android.graphics.Bitmap
-import android.media.MediaScannerConnection
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.Divider
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import android.content.Intent
-import android.net.Uri
-import androidx.core.content.FileProvider
-import java.io.File
-import android.graphics.pdf.PdfRenderer
-import android.os.ParcelFileDescriptor
-import android.graphics.RectF
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewModelScope
-import com.example.comp4521_ustrade.app.data.dao.Document
-import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
-import com.example.comp4521_ustrade.app.data.repository.UserRepository
-import com.example.comp4521_ustrade.app.models.Course
-import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
-import kotlinx.coroutines.launch
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
@@ -994,6 +991,67 @@ fun DocumentUploadScreen(
                     TextButton(
                         onClick = {
                             // TODO: Implement actual upload logic here
+                            val documentId = UUID.randomUUID().toString()
+                            val storageRepository = StorageRepository()
+                            val documentRepository = DocumentRepository()
+                            val userRepository = UserRepository()
+
+                            if (userId != null) {
+                                userViewModel.viewModelScope.launch {
+                                    try {
+                                        // Upload files to Firebase Storage
+                                        val fileUrls = mutableListOf<String>()
+                                        val fileTypes = mutableListOf<String>()
+
+                                        // Upload PDF if exists
+                                        pdfFile?.let { file ->
+                                            val url = storageRepository.uploadFile(file, documentId, file.name)
+                                            fileUrls.add(url)
+                                            fileTypes.add("pdf")
+                                        }
+
+                                        // Upload images if exist
+                                        if (imageFiles.isNotEmpty()) {
+                                            val imageUrls = storageRepository.uploadMultipleFiles(imageFiles, documentId)
+                                            fileUrls.addAll(imageUrls)
+                                            imageFiles.forEach { fileTypes.add("image") }
+                                        }
+
+                                        // Create and save document to Firestore
+                                        val document = Document(
+                                            id = documentId,
+                                            title = title,
+                                            description = description,
+                                            subject = subject,
+                                            subjectCode = subjectCode,
+                                            course = subject + subjectCode,
+                                            year = year,
+                                            semester = semester,
+                                            uploaded_by = userId,
+                                            upload_date = SimpleDateFormat(
+                                                "yyyy-MM-dd",
+                                                Locale.getDefault()
+                                            ).format(Date()),
+                                            document_name = fileName ?: "No file",
+                                            like_count = 0,
+                                            dislike_count = 0,
+                                            file_urls = fileUrls,
+                                            file_types = fileTypes
+                                        )
+
+                                        documentRepository.addDocument(document)
+                                        userRepository.increaseUserUpload(userId)
+                                        userRepository.addUploadedDocumentToUser(userId, documentId)
+                                        userViewModel.refreshUserData()
+                                        onNavigateBack()
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                        // Show error message to user
+                                        imageLoadingError = "Failed to upload document: ${e.message}"
+                                    }
+                                }
+                            }
+
                             showConfirmationDialog = false
                         }
                     ) {

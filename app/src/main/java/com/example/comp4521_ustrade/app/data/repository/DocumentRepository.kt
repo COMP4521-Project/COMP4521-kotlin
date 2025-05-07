@@ -24,12 +24,14 @@ class DocumentRepository {
                 "semester" to document.semester,
                 "document_name" to document.document_name,
                 "like_count" to document.like_count,
-                "dislike_count" to document.dislike_count
-
+                "dislike_count" to document.dislike_count,
+                "file_urls" to document.file_urls,
+                "file_types" to document.file_types
             )
             documentsCollection.document(document.id).set(documentMap).await()
         } catch (e: Exception) {
             e.printStackTrace()
+            throw e
         }
     }
 
@@ -38,6 +40,7 @@ class DocumentRepository {
             documentsCollection.document(id).update(updates).await()
         } catch (e: Exception) {
             e.printStackTrace()
+            throw e
         }
     }
 
@@ -59,8 +62,10 @@ class DocumentRepository {
                         year = data["year"] as String,
                         semester = data["semester"] as String,
                         document_name = data["document_name"] as String,
-                        like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
-                        dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
+                        like_count = (data["like_count"] as? Number)?.toInt() ?: 0,
+                        dislike_count = (data["dislike_count"] as? Number)?.toInt() ?: 0,
+                        file_urls = (data["file_urls"] as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
+                        file_types = (data["file_types"] as? List<*>)?.filterIsInstance<String>() ?: emptyList()
                     )
                 } else null
             } else null
@@ -88,8 +93,10 @@ class DocumentRepository {
                         year = data["year"] as String,
                         semester = data["semester"] as String,
                         document_name = data["document_name"] as String,
-                        like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
-                        dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
+                        like_count = (data["like_count"] as? Number)?.toInt() ?: 0,
+                        dislike_count = (data["dislike_count"] as? Number)?.toInt() ?: 0,
+                        file_urls = (data["file_urls"] as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
+                        file_types = (data["file_types"] as? List<*>)?.filterIsInstance<String>() ?: emptyList()
                     )
                 } else null
             }
@@ -117,6 +124,10 @@ class DocumentRepository {
                         year = data["year"] as String,
                         semester = data["semester"] as String,
                         document_name = data["document_name"] as String,
+                        like_count = (data["like_count"] as? Number)?.toInt() ?: 0,
+                        dislike_count = (data["dislike_count"] as? Number)?.toInt() ?: 0,
+                        file_urls = (data["file_urls"] as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
+                        file_types = (data["file_types"] as? List<*>)?.filterIsInstance<String>() ?: emptyList()
                     )
                 } else null
             }
@@ -143,7 +154,11 @@ class DocumentRepository {
                         course = data["course"] as String,
                         year = data["year"] as String,
                         semester = data["semester"] as String,
-                        document_name = data["document_name"] as String
+                        document_name = data["document_name"] as String,
+                        like_count = (data["like_count"] as? Number)?.toInt() ?: 0,
+                        dislike_count = (data["dislike_count"] as? Number)?.toInt() ?: 0,
+                        file_urls = (data["file_urls"] as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
+                        file_types = (data["file_types"] as? List<*>)?.filterIsInstance<String>() ?: emptyList()
                     )
                 } else null
             }
@@ -158,6 +173,7 @@ class DocumentRepository {
             documentsCollection.document(id).delete().await()
         } catch (e: Exception) {
             e.printStackTrace()
+            throw e
         }
     }
 
@@ -181,8 +197,10 @@ class DocumentRepository {
                         year = data["year"] as String,
                         semester = data["semester"] as String,
                         document_name = data["document_name"] as String,
-                        like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
-                        dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
+                        like_count = (data["like_count"] as? Number)?.toInt() ?: 0,
+                        dislike_count = (data["dislike_count"] as? Number)?.toInt() ?: 0,
+                        file_urls = (data["file_urls"] as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
+                        file_types = (data["file_types"] as? List<*>)?.filterIsInstance<String>() ?: emptyList()
                     )
                 } else null
             }
@@ -259,8 +277,10 @@ class DocumentRepository {
                         year = data["year"] as String,
                         semester = data["semester"] as String,
                         document_name = data["document_name"] as String,
-                        like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
-                        dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
+                        like_count = (data["like_count"] as? Number)?.toInt() ?: 0,
+                        dislike_count = (data["dislike_count"] as? Number)?.toInt() ?: 0,
+                        file_urls = (data["file_urls"] as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
+                        file_types = (data["file_types"] as? List<*>)?.filterIsInstance<String>() ?: emptyList()
                     )
                 } else null
             }
@@ -290,8 +310,10 @@ class DocumentRepository {
                             year = data["year"] as String,
                             semester = data["semester"] as String,
                             document_name = data["document_name"] as String,
-                            like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
-                            dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
+                            like_count = (data["like_count"] as? Number)?.toInt() ?: 0,
+                            dislike_count = (data["dislike_count"] as? Number)?.toInt() ?: 0,
+                            file_urls = (data["file_urls"] as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
+                            file_types = (data["file_types"] as? List<*>)?.filterIsInstance<String>() ?: emptyList()
                         )
                     } else null
                 } else null
@@ -325,8 +347,10 @@ class DocumentRepository {
                             year = data["year"] as String,
                             semester = data["semester"] as String,
                             document_name = data["document_name"] as String,
-                            like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
-                            dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
+                            like_count = (data["like_count"] as? Number)?.toInt() ?: 0,
+                            dislike_count = (data["dislike_count"] as? Number)?.toInt() ?: 0,
+                            file_urls = (data["file_urls"] as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
+                            file_types = (data["file_types"] as? List<*>)?.filterIsInstance<String>() ?: emptyList()
                         )
                     } else null
                 } else null

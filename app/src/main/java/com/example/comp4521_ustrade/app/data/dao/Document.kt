@@ -14,5 +14,7 @@ data class Document (
     val document_name: String,
     val like_count: Int = 0,
     val dislike_count: Int = 0,
+    val file_urls: List<String> = emptyList(),
+    val file_types: List<String> = emptyList()
 )
 
