@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.comp4521_ustrade.app.helper.mapValueToString
 
 @Composable
 fun DropdownList(
@@ -40,7 +41,7 @@ fun DropdownList(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(text = selectedItem)
+                Text(text = mapValueToString(selectedItem))
                 Icon(Icons.Default.ArrowDropDown, "Expand")
             }
         }
@@ -53,7 +54,7 @@ fun DropdownList(
         ) {
             content.forEach { item ->
                 DropdownMenuItem(
-                    text = { Text(item) },
+                    text = { Text(text = mapValueToString(item)) },
                     onClick = {
                         onItemSelected(item)
                         onExpandedChange(false)

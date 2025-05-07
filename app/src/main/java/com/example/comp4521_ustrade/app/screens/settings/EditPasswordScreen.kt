@@ -21,7 +21,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.CustomPasswordTextField
 import com.example.comp4521_ustrade.auth.AuthViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
@@ -42,10 +44,10 @@ fun EditPasswordScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Edit Password") },
+                title = { Text(stringResource(R.string.EditPassword)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.Default.ArrowBack, stringResource(R.string.Back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -65,9 +67,9 @@ fun EditPasswordScreen(
             CustomPasswordTextField(
                 value = currentPassword,
                 onValueChange = { currentPassword = it },
-                label = "Existing password",
+                label = stringResource(R.string.ExistingPassword),
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = "Enter your existing password",
+                placeholder = stringResource(R.string.EnterYourExistingPassword),
                 isError = false,
                 passwordVisible = currentPasswordVisible,
                 onPasswordVisibilityChange = { currentPasswordVisible = !currentPasswordVisible }
@@ -78,32 +80,33 @@ fun EditPasswordScreen(
             CustomPasswordTextField(
                 value = newPassword,
                 onValueChange = { newPassword = it },
-                label = "New password",
+                label = stringResource(R.string.NewPassword),
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = "Enter your new password",
+                placeholder = stringResource(R.string.EnterYourNewPassword),
                 isError = false,
                 passwordVisible = newPasswordVisible,
                 onPasswordVisibilityChange = { newPasswordVisible = !newPasswordVisible }
             )
             
             Spacer(modifier = Modifier.height(32.dp))
-
+            val successText = stringResource(R.string.PasswordUpdatedSuccessfully)
+            val failureText = stringResource(R.string.FailedToUpdatePassword)
             Button(
                 onClick = {
                     errorMessage = null
                     successMessage = null
                     authViewModel.changePassword(currentPassword, newPassword) { success, error ->
                         if (success) {
-                            successMessage = "Password updated successfully!"
+                            successMessage = successText
                             // Optionally navigate back or clear fields
                         } else {
-                            errorMessage = error ?: "Failed to update password"
+                            errorMessage = error ?: failureText
                         }
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Save changes")
+                Text(stringResource(R.string.SaveChanges))
             }
 
             errorMessage?.let {

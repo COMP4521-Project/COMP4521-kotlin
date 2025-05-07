@@ -338,11 +338,11 @@
 	<string name="Name">
 		Name
 	</string>
-	<string name="EnterYourUsername">
-		Enter Your username
+	<string name="EnterYourFirstname">
+		Enter Your first name
 	</string>
-	<string name="Email">
-		Email
+	<string name="EnterYourLastname">
+		Enter your last name
 	</string>
 	<string name="DateOfBirth">
 		Date of Birth
@@ -546,4 +546,10 @@
 	<string name="SelectSemester">
 		Select semester
 	</string>
+
+	<string name="Chatbot">
+		Chat bot
+	</string>
+	<string name="PasswordUpdatedSuccessfully">Password updated successfully</string>
+	<string name="FailedToUpdatePassword">Failed to update password</string>
 </resources>

@@ -1,14 +1,536 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">USTrade</string>
-    <string name="Language">語言</string>
-    <string name="Account">帳戶</string>
-    <string name="Bookmark">書籤</string>
-    <string name="Upload">上傳</string>
-    <string name="Redeem">兌換</string>
-    <string name="Download">下載</string>
-    <string name="AI">人工智能</string>
-    <string name="Preview">預覽</string>
-    <string name="Preference">偏好設定</string>
-    <string name="Logout">登出</string>
+	<string name="app_name">
+		USTrade
+	</string>
+    <string name="Language">
+		語言
+	</string>
+    <string name="Account">
+		帳戶
+	</string>
+    <string name="Bookmark">
+		書籤
+	</string>
+    <string name="Upload">
+		上傳
+	</string>
+    <string name="Redeem">
+		兌換
+	</string>
+    <string name="Download">
+		下載
+	</string>
+    <string name="AI">
+		人工智能
+	</string>
+    <string name="Preview">
+		預覽
+	</string>
+    <string name="Preference">
+		偏好設定
+	</string>
+    <string name="Logout">
+		登出
+	</string>
+    <string name="Confirm">
+		確認
+	</string>
+    <string name="Cancel">
+		取消
+	</string>
+    <string name="UploadedDocument">
+		已上傳文件
+	</string>
+    <string name="About">
+		關於
+	</string>
+    <string name="LearnMore">
+		了解更多
+	</string>
+    <string name="Downloaded">
+		已下載
+	</string>
+    <string name="Favorites">
+		收藏
+	</string>
+    <string name="SearchResults">
+		搜尋結果
+	</string>
+    <string name="Uploaded">
+		已上傳
+	</string>
+    <string name="Bookmarked">
+		已收藏
+	</string>
+    <string name="Back">
+		返回
+	</string>
+    <string name="OK">
+		確定
+	</string>
+    <string name="Login">
+		登入
+	</string>
+    <string name="Registration">
+		註冊
+	</string>
+    <string name="Documents">
+		文件
+	</string>
+    <string name="ProfilePicture">
+		個人照片
+	</string>
+    <string name="Share">
+		分享
+	</string>
+    <string name="ProfilePreview">
+		個人資料預覽
+	</string>
+    <string name="SearchResources">
+		搜尋資源
+	</string>
+    <string name="RecentSearches">
+		最近搜尋
+	</string>
+    <string name="SearchFiles">
+		搜尋%1$s文件
+	</string>
+    <string name="PoweredBy">
+		由以下提供技術支援
+	</string>
+    <string name="Version">
+		版本
+	</string>
+    <string name="TermsOfService">
+		服務條款
+	</string>
+    <string name="PrivacyPolicy">
+		私隱政策
+	</string>
+    <string name="AppNavigationSupport">
+		應用程式導航支援
+	</string>
+    <string name="ResourceRecommendations">
+		資源推薦
+	</string>
+    <string name="FAQandTroubleshooting">
+		常見問題及故障排除
+	</string>
+    <string name="AIDetails">
+		人工智能詳情
+	</string>
+    <string name="Functions">
+		功能
+	</string>
+    <string name="Year">
+		年份
+	</string>
+    <string name="SubjectCode">
+		科目代碼
+	</string>
+    <string name="UploadDate">
+		上傳日期
+	</string>
+    <string name="Description">
+		描述
+	</string>
+    <string name="DocumentDetails">
+		文件詳情
+	</string>
+    <string name="DownloadDocument">
+		下載文件
+	</string>
+    <string name="UploadDocument">
+		上傳文件
+	</string>
+    <string name="ClickToChangeFile">
+		點擊更改文件
+	</string>
+    <string name="ClickToUploadOrTakePhoto">
+		點擊上傳或拍照
+	</string>
+    <string name="MaxFileSize">
+		(最大文件大小：25 MB)
+	</string>
+    <string name="Subject">
+		科目
+	</string>
+    <string name="Semester">
+		學期
+	</string>
+    <string name="Title">
+		標題
+	</string>
+    <string name="EnterDocumentTitle">
+		輸入文件標題
+	</string>
+    <string name="Professor">
+		教授
+	</string>
+    <string name="EnterProfessorName">
+		輸入教授姓名
+	</string>
+    <string name="EnterDocumentDescription">
+		輸入文件描述
+	</string>
+    <string name="Congratulations">
+		恭喜！
+	</string>
+    <string name="MaxLevel">
+		恭喜！您已達到最高等級。
+	</string>
+    <string name="UploadMore">
+		再上傳 %1$d 份文件即可成為 Lv.3 貢獻者
+	</string>
+    <string name="UploadMore2">
+		再上傳 %1$d 份文件即可成為 Lv.2 貢獻者
+	</string>
+    <string name="UploadMore3">
+		再上傳 %1$d 份文件即可成為 Lv.1 貢獻者
+	</string>
+    <string name="ContributorLv">
+		貢獻者 Lv.%1$d
+	</string>
+    <string name="Lv1Contributor">
+		Lv.1 貢獻者
+	</string>
+    <string name="Lv2Contributor">
+		Lv.2 貢獻者
+	</string>
+    <string name="Lv3Contributor">
+		Lv.3 貢獻者
+	</string>
+    <string name="UploadedDocuments">
+		您已上傳%1$d份文件
+	</string>
+    <string name="LevelUp">
+		升級以兌換您的第一份獎品
+	</string>
+    <string name="PickAPrizeBelow">
+		在下方選擇獎品
+	</string>
+    <string name="RedeemPrizeRules">
+		兌換獎品規則
+	</string>
+    <string name="RedeemThisPrize">
+		兌換此獎品
+	</string>
+    <string name="EachLevelUnlocks">
+		每個等級解鎖2個獎品選項
+	</string>
+    <string name="GoToSouvenirShop">
+		按下確認按鈕後，請前往紀念品商店領取您的獎品
+	</string>
+    <string name="EachAccountCanOnlyRedeemOneGift">
+		* 每個帳戶最多只能兌換一份禮物
+	</string>
+    <string name="GotIt">
+		明白了
+	</string>
+    <string name="UploadSources">
+		上傳來源
+	</string>
+    <string name="LevelUpAndRedeemRewards">
+		升級並兌換獎勵
+	</string>
+    <string name="YouHaveSelectedYourPrize">
+		您已選擇獎品。請前往紀念品商店領取您的獎品
+	</string>
+    <string name="SelectBySubjects">
+		按科目選擇
+	</string>
+    <string name="UploadTest">
+		上傳測試
+	</string>
+    <string name="Notifications">
+		通知
+	</string>
+    <string name="NoNotifications">
+		沒有通知
+	</string>
+    <string name="Messages">
+		訊息
+	</string>
+    <string name="Settings">
+		設定
+	</string>
+    <string name="EditProfile">
+		編輯個人資料
+	</string>
+    <string name="ChangePassword">
+		更改密碼
+	</string>
+    <string name="RedeemGifts">
+		兌換禮物
+	</string>
+    <string name="UploadedFiles">
+		已上傳文件
+	</string>
+    <string name="DownloadedFiles">
+		已下載文件
+	</string>
+    <string name="SupportAbout">
+		支援與關於
+	</string>
+    <string name="Preferences">
+		偏好設定
+	</string>
+    <string name="AboutApp">
+		關於此應用程式
+	</string>
+    <string name="LogOut">
+		登出
+	</string>
+    <string name="LightMode">
+		淺色模式
+	</string>
+    <string name="PleaseEnterYourEmail">
+		請輸入您的電郵
+	</string>
+    <string name="ResetPassword">
+		重設密碼
+	</string>
+    <string name="SendResetLink">
+		發送重設連結
+	</string>
+    <string name="BackToLogin">
+		返回登入
+	</string>
+    <string name="EditPassword">
+		編輯密碼
+	</string>
+    <string name="ExistingPassword">
+		現有密碼
+	</string>
+    <string name="EnterYourExistingPassword">
+		輸入您的現有密碼
+	</string>
+    <string name="NewPassword">
+		新密碼
+	</string>
+    <string name="EnterYourNewPassword">
+		輸入您的新密碼
+	</string>
+    <string name="SaveChanges">
+		儲存更改
+	</string>
+    <string name="Name">
+		姓名
+	</string>
+<string name="EnterYourFirstname">
+	輸入您的名字
+</string>
+<string name="EnterYourLastname">
+	輸入您的姓氏
+</string>
+    <string name="EnterYourEmail">
+		輸入您的電郵
+	</string>
+    <string name="DateOfBirth">
+		出生日期
+	</string>
+    <string name="SelectYourDateOfBirth">
+		選擇您的出生日期
+	</string>
+    <string name="InvalidEmailOrPassword">
+		無效的電郵或密碼
+	</string>
+    <string name="Password">
+		密碼
+	</string>
+    <string name="EnterYourPassword">
+		輸入您的密碼
+	</string>
+    <string name="ForgotPassword">
+		忘記密碼？
+	</string>
+    <string name="DontHaveAnAccount">
+		沒有帳戶？註冊
+	</string>
+    <string name="AlreadyHaveAnAccount">
+		已有帳戶？登入
+	</string>
+    <string name="SignUp">
+		註冊
+	</string>
+    <string name="ConfirmPassword">
+		確認密碼
+	</string>
+    <string name="EnterYourConfirmPassword">
+		確認您的密碼
+	</string>
+    <string name="FirstName">
+		名字
+	</string>
+    <string name="EnterYourFirstName">
+		輸入您的名字
+	</string>
+    <string name="LastName">
+		姓氏
+	</string>
+    <string name="EnterYourLastName">
+		輸入您的姓氏
+	</string>
+    <string name="QuestionMark">
+		&amp;
+	</string>
+    <string name="PasswordMustContain">
+		密碼必須包含：
+	</string>
+    <string name="AtLeast8Characters">
+		• 至少8個字符
+	</string>
+    <string name="AtLeastOneUppercaseLetter">
+		• 至少一個大寫字母 (A-Z)
+	</string>
+    <string name="AtLeastOneNumber">
+		• 至少一個數字 (0-9)
+	</string>
+    <string name="AtLeastOneLowercaseLetter">
+		• 至少一個小寫字母 (a-z)
+	</string>
+    <string name="AtLeastOneSpecialCharacter">
+		• 至少一個特殊字符 (!@#$%^&amp;*...)
+	</string>
+    <string name="MaximumLengthOf4096Characters">
+		• 最大長度為4096個字符
+	</string>
+    <string name="PleaseEnterYourFirstName">
+		請輸入您的名字
+	</string>
+    <string name="PleaseEnterYourLastName">
+		請輸入您的姓氏
+	</string>
+    <string name="PleaseEnterAValidEmailAddress">
+		請輸入有效的電郵地址
+	</string>
+    <string name="PasswordMustContainAtLeast8CharactersWithUppercaseLowercaseNumberAndSymbol">
+		密碼必須包含至少8個字符，包括大寫字母、小寫字母、數字和符號
+	</string>
+    <string name="PasswordsDoNotMatch">
+		密碼不匹配
+	</string>
+    <string name="Resources">
+		資源
+	</string>
+    <string name="Bookmarks">
+		書籤
+	</string>
+    <string name="EnterYourDescription">
+		輸入您的描述
+	</string>
+    <string name="All">
+		全部
+	</string>
+    <string name="Read">
+		已讀
+	</string>
+    <string name="Unread">
+		未讀
+	</string>
+    <string name="English">
+		英文
+	</string>
+    <string name="ChineseTraditional">
+		繁體中文
+	</string>
+    <string name="ChineseSimplified">
+		簡體中文
+	</string>
+    <string name="FilesFound">
+		找到%1$d份文件
+	</string>
+    <string name="WaitCountdown">
+		等待 %1$d 秒後重發
+	</string>
+    <string name="PleaseUploadAFile">
+		• 請上傳文件
+	</string>
+    <string name="SubjectIsRequired">
+		• 科目是必需的
+	</string>
+    <string name="SubjectCodeIsRequired">
+		• 科目代碼是必需的
+	</string>
+    <string name="YearIsRequired">
+		• 年份是必需的
+	</string>
+    <string name="SemesterIsRequired">
+		• 學期是必需的
+	</string>
+    <string name="TitleIsRequired">
+		• 標題是必需的
+	</string>
+    <string name="Science">
+		科學
+	</string>
+    <string name="Engineering">
+		工程
+	</string>
+    <string name="Business">
+		商業
+	</string>
+    <string name="COMP">
+		COMP
+	</string>
+    <string name="CPEG">
+		CPEG
+	</string>
+    <string name="CSIT">
+		CSIT
+	</string>
+    <string name="IEDA">
+		IEDA
+	</string>
+    <string name="MECH">
+		MECH
+	</string>
+    <string name="CIVL">
+		CIVL
+	</string>
+    <string name="ELEC">
+		ELEC
+	</string>
+    <string name="Year2024">
+		2024
+	</string>
+    <string name="Year2023">
+		2023
+	</string>
+    <string name="Year2022">
+		2022
+	</string>
+    <string name="Year2021">
+		2021
+	</string>
+    <string name="Fall">
+		秋季
+	</string>
+    <string name="Winter">
+		冬季
+	</string>
+    <string name="Summer">
+		夏季
+	</string>
+    <string name="Spring">
+		春季
+	</string>
+    <string name="SelectSubject">
+		選擇科目
+	</string>
+    <string name="SelectSubjectCode">
+		選擇科目代碼
+	</string>
+    <string name="SelectYear">
+		選擇年份
+	</string>
+    <string name="SelectSemester">
+		選擇學期
+	</string>
+	<string name="Chatbot">
+		聊天機器人
+	</string>
+	<string name="PasswordUpdatedSuccessfully">密碼已成功更新</string>
+	<string name="FailedToUpdatePassword">密碼更新失敗</string>
 </resources>
