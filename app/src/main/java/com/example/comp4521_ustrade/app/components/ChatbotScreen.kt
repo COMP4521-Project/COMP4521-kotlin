@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.example.comp4521_ustrade.R
@@ -118,14 +119,14 @@ fun ChatbotScreen(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            "USTrade Chatbot Assistant",
+                            text = stringResource(R.string.Chatbotname),
                             color = Color.White,
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
 
                         )
                         Text(
-                            text = "Feel free to ask anything about USTrade",
+                            text = stringResource(R.string.Chatbotsubtitle),
                             color = Color.Gray,
                             style = MaterialTheme.typography.bodySmall
                         )

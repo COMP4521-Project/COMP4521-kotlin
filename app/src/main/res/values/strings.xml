@@ -250,7 +250,7 @@
 		Level up and redeem rewards
 	</string>
 	<string name="YouHaveSelectedYourPrize">
-		You have selected your prize. Please go to the souvenir shop to collect your prize
+		If you have selected your prize. Please go to the souvenir shop to collect your prize
 	</string>
 	<!-- Upload -->
 	<!-- Drawer -->
@@ -547,9 +547,17 @@
 		Select semester
 	</string>
 
+<!--	new -->
 	<string name="Chatbot">
 		Chat bot
 	</string>
 	<string name="PasswordUpdatedSuccessfully">Password updated successfully</string>
 	<string name="FailedToUpdatePassword">Failed to update password</string>
+	<string name="Loading">
+		Loading...
+	</string>
+	<string name="NoRecentlyOpenedDocuments">No recently opened documents</string>
+	<string name="Clear">Clear</string>
+	<string name="Chatbotname">USTrade Chatbot Assistant</string>
+	<string name="Chatbotsubtitle">Feel free to ask anything about USTrade</string>
 </resources>

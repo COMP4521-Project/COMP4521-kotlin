@@ -48,8 +48,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.data.dao.Document
 import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
 import com.example.comp4521_ustrade.app.models.CourseCardItem
@@ -170,7 +172,7 @@ fun Search(
             active = active,
             onActiveChange = { active = it },
             placeholder = {
-                Text(text = "Search Resources")
+                Text(text = stringResource(R.string.SearchResources))
             },
             shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
             colors = SearchBarDefaults.colors(
@@ -196,7 +198,7 @@ fun Search(
             ) {
             when {
                 isLoading -> {
-                    Text("Loading...")
+                    Text(text = stringResource(R.string.Loading))
                 }
 
                 query.isEmpty() -> {
@@ -208,7 +210,7 @@ fun Search(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                "Recent Opened Documents",
+                                text= stringResource(R.string.NoRecentlyOpenedDocuments),
                                 modifier = Modifier.weight(1f),
                                 fontSize = 18.sp
                             )
@@ -221,11 +223,11 @@ fun Search(
                                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
                                 modifier = Modifier.height(32.dp)
                             ) {
-                                Text("Clear", fontSize = 14.sp)
+                                Text(text = stringResource(R.string.Clear), fontSize = 14.sp)
                             }
                         }
                         if (recentOpenedDocs.isEmpty()) {
-                            Text("No recently opened documents")
+                            Text(text= stringResource(R.string.NoRecentlyOpenedDocuments))
                         } else {
                             recentOpenedDocs.forEach { doc ->
                                 ListItem(
@@ -295,3 +297,4 @@ fun Search(
         }
     }
 }
+

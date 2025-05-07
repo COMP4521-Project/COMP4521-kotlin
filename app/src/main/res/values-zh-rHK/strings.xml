@@ -533,4 +533,11 @@
 	</string>
 	<string name="PasswordUpdatedSuccessfully">密碼已成功更新</string>
 	<string name="FailedToUpdatePassword">密碼更新失敗</string>
+	<string name="Loading">
+		載入中...
+	</string>
+	<string name="NoRecentlyOpenedDocuments">沒有最近開啟的文件</string>
+	<string name="Clear">清除</string>
+	<string name="Chatbotname">USTrade 聊天機器人助手</string>
+	<string name="Chatbotsubtitle">隨時詢問有關 USTrade 的任何問題</string>
 </resources>
