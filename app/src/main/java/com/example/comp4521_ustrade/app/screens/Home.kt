@@ -232,7 +232,9 @@ fun HomePage(
             }
             composable(Screens.Notification.screen) { Notification(
                 onNavigateBack = { navigationController.navigateUp() },
-                navViewModel = navViewModel
+                navViewModel = navViewModel,
+                userViewModel = userViewModel,
+                navController = navigationController
             ) }
             composable(Screens.Search.screen) {
                 Scaffold(

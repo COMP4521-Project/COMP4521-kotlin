@@ -61,6 +61,8 @@ import com.example.comp4521_ustrade.app.data.dao.Document
 import com.example.comp4521_ustrade.app.data.dao.User
 import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
 import com.example.comp4521_ustrade.app.data.repository.UserRepository
+import com.example.comp4521_ustrade.app.data.repository.NotificationRepository
+import com.example.comp4521_ustrade.app.data.dao.UserNotification
 import com.example.comp4521_ustrade.app.models.CourseCardItem
 import com.example.comp4521_ustrade.app.models.DisplayOnlyFieldItem
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
@@ -68,6 +70,7 @@ import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 import com.example.comp4521_ustrade.ui.theme.USTWhite
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -91,6 +94,8 @@ fun DocumentDetailsScreen(
     var isBookmarked by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
+
+    val notificationRepository = remember { NotificationRepository() }
 
     LaunchedEffect(documentId) {
         document = documentRepository.getDocument(documentId)
@@ -253,18 +258,43 @@ fun DocumentDetailsScreen(
                             coroutineScope.launch {
                                 val likedList = user?.documents?.liked ?: emptyList()
                                 val dislikedList = user?.documents?.disliked ?: emptyList()
+                                
                                 if (!likedList.contains(documentId)) {
+                                    // Add like
                                     documentRepository.addLikeToDocument(documentId)
                                     if (userid != null) userRepository.addLikedDocumentToUser(userid, documentId)
+                                    
+                                    // Send notification to document uploader
+                                    document?.let { doc ->
+                                        if (userid != null && user != null && doc.uploaded_by != userid) {
+                                            // Create and send notification only if the liker is not the uploader
+                                            val notification = UserNotification(
+                                                id = UUID.randomUUID().toString(),
+                                                from_user_id = userid,
+                                                from_user_name = "${user!!.first_name} ${user!!.last_name}",
+                                                from_user_propic = user!!.profile_pic?.toString(),
+                                                updated_at = System.currentTimeMillis(),
+                                                message = "${user!!.first_name} liked your document: ${doc.title}",
+                                                read = false,
+                                                related_document_id = documentId
+                                            )
+                                            
+                                            // Add notification to uploader's notifications
+                                            notificationRepository.addNotification(doc.uploaded_by, notification)
+                                        }
+                                    }
+                                    
                                     // If previously disliked, remove dislike
                                     if (dislikedList.contains(documentId)) {
                                         documentRepository.removeDislikeFromDocument(documentId)
                                         if (userid != null) userRepository.removeDislikedDocumentFromUser(userid, documentId)
                                     }
                                 } else {
+                                    // Remove like
                                     documentRepository.removeLikeFromDocument(documentId)
                                     if (userid != null) userRepository.removeLikedDocumentFromUser(userid, documentId)
                                 }
+                                
                                 // Refresh user and document state
                                 user = userid?.let { userRepository.getUser(it) }
                                 document = documentRepository.getDocument(documentId)

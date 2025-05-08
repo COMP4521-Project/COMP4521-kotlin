@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,9 +32,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,34 +48,53 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.comp4521_ustrade.R
-import com.example.comp4521_ustrade.app.models.NotificationData
+import com.example.comp4521_ustrade.app.data.dao.UserNotification
+import com.example.comp4521_ustrade.app.data.repository.NotificationRepository
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
+import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Notification(
     modifier: Modifier = Modifier,
     onNavigateBack: () -> Unit = {},
-    navViewModel: NavViewModel
+    navViewModel: NavViewModel,
+    userViewModel: UserViewModel,
+    navController: NavController
 ) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("All", "Read", "Unread")
-    val unreadCount = getNotifications(0).count { !it.isRead }  // Count unread notifications
-
+    
+    val userId = userViewModel.userid.observeAsState().value
+    val notificationRepository = remember { NotificationRepository() }
+    var notifications by remember { mutableStateOf<List<UserNotification>>(emptyList()) }
+    val coroutineScope = rememberCoroutineScope()
+    
+    // Load notifications when the screen is displayed
+    LaunchedEffect(userId) {
+        userId?.let {
+            notifications = notificationRepository.getUserNotifications(it)
+        }
+    }
+    
+    val unreadCount = notifications.count { !it.read }
 
     val context = LocalContext.current
-
     val sharedPreferences = remember {
         context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
     }
-
     var isDarkModeEnabled by remember {
         mutableStateOf(sharedPreferences.getBoolean("is_dark_theme", false))
     }
-
 
     Scaffold(
         topBar = {
@@ -86,10 +109,10 @@ fun Notification(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = if(isDarkModeEnabled) USTBlue_dark else USTBlue,
-                        titleContentColor = Color.White,
-                        navigationIconContentColor = Color.White
-                    )
+                    containerColor = if(isDarkModeEnabled) USTBlue_dark else USTBlue,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White
+                )
             )
         }
     ) { padding ->
@@ -143,25 +166,48 @@ fun Notification(
                 }
             }
 
-            // Add animation for content
+            // Notification List with animation
             AnimatedVisibility(
                 visible = true,
                 enter = fadeIn() + slideInVertically(),
                 modifier = Modifier.weight(1f)
             ) {
-                // Notification List
+                val filteredNotifications = when (selectedTab) {
+                    0 -> notifications // All
+                    1 -> notifications.filter { it.read } // Read
+                    2 -> notifications.filter { !it.read } // Unread
+                    else -> emptyList()
+                }
+                
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 16.dp)
                 ) {
-                    items(getNotifications(selectedTab)) { notification ->
-                        NotificationItem(notification)
+                    items(filteredNotifications) { notification ->
+                        NotificationItem(
+                            notification = notification,
+                            onClick = {
+                                // Mark as read when clicked
+                                if (!notification.read) {
+                                    coroutineScope.launch {
+                                        notificationRepository.markNotificationAsRead(userId!!, notification.id)
+                                        // Refresh notifications
+                                        notifications = notificationRepository.getUserNotifications(userId)
+                                    }
+                                }
+                                
+                                // Navigate to related document if available
+                                notification.related_document_id?.let { docId ->
+                                    navController.navigate(Screens.DocumentDetails.screen + "/$docId")
+                                }
+                            }
+                        )
                         Divider()
                     }
 
                     item {
-                        if (getNotifications(selectedTab).isEmpty()) {
+                        if (filteredNotifications.isEmpty()) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -183,29 +229,25 @@ fun Notification(
 }
 
 @Composable
-fun NotificationItem(notification: NotificationData) {
+fun NotificationItem(notification: UserNotification, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .padding(vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // User Avatar
-        Image(
-            painter = painterResource(R.drawable.user1),
+        // User Avatar with better error handling
+        AsyncImage(
+            model = notification.from_user_propic,
             contentDescription = "User avatar",
             modifier = Modifier
-                .size(64.dp)
+                .size(48.dp)
                 .clip(CircleShape),
+            error = painterResource(R.drawable.user1),  // Default icon for errors
+            fallback = painterResource(R.drawable.user1),  // Default icon when null
+            placeholder = painterResource(R.drawable.user1)  // Default icon during loading
         )
-        // AsyncImage(
-        //     model = notification.userAvatar,
-        //     contentDescription = "User avatar",
-        //     modifier = Modifier
-        //         .size(40.dp)
-        //         .clip(CircleShape),
-        //     contentScale = ContentScale.Crop
-        // )
 
         Column(
             modifier = Modifier
@@ -213,50 +255,55 @@ fun NotificationItem(notification: NotificationData) {
                 .padding(start = 16.dp)
         ) {
             Text(
-                text = notification.userName,
-                style = MaterialTheme.typography.titleLarge,
+                text = notification.from_user_name,
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Medium
             )
             Text(
                 text = notification.message,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
 
+        // Format timestamp to readable time
+        val formattedTime = remember(notification.updated_at) {
+            formatTimestamp(notification.updated_at)
+        }
+        
         Text(
-            text = notification.time,
-            style = MaterialTheme.typography.bodyMedium,
+            text = formattedTime,
+            style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(start = 8.dp)
         )
+        
+        // Unread indicator
+        if (!notification.read) {
+            Box(
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .size(8.dp)
+                    .background(MaterialTheme.colorScheme.primary, CircleShape)
+            )
+        }
     }
 }
 
-fun getNotifications(tabIndex: Int): List<NotificationData> {
-    // This is a sample implementation - you should replace this with actual data from your backend
-    val allNotifications = listOf(
-        NotificationData(
-            userAvatar = "https://example.com/avatar1.jpg",
-            userName = "Hannah Flores",
-            message = "Liked your upload.",
-            time = "10:04 AM",
-            isRead = true
-        ),
-        NotificationData(
-            userAvatar = "https://example.com/avatar1.jpg",
-            userName = "Hannah Flores",
-            message = "has sent you a message",
-            time = "10:04 AM",
-            isRead = false
-        )
-    )
-
-    return when (tabIndex) {
-        0 -> allNotifications // All
-        1 -> allNotifications.filter { it.isRead } // Read
-        2 -> allNotifications.filter { !it.isRead } // Unread
-        else -> emptyList()
+// Helper function to format timestamp to readable time
+private fun formatTimestamp(timestamp: Long): String {
+    val now = System.currentTimeMillis()
+    val diff = now - timestamp
+    
+    return when {
+        diff < 60 * 1000 -> "Just now"
+        diff < 60 * 60 * 1000 -> "${diff / (60 * 1000)}m ago"
+        diff < 24 * 60 * 60 * 1000 -> "${diff / (60 * 60 * 1000)}h ago"
+        diff < 7 * 24 * 60 * 60 * 1000 -> "${diff / (24 * 60 * 60 * 1000)}d ago"
+        else -> {
+            val sdf = SimpleDateFormat("MMM dd", Locale.getDefault())
+            sdf.format(Date(timestamp))
+        }
     }
 }
