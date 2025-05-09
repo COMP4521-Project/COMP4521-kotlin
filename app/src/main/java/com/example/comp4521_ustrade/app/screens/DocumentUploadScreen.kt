@@ -45,6 +45,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -101,6 +102,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -223,6 +225,9 @@ fun DocumentUploadScreen(
     var imageFiles by remember { mutableStateOf<List<File>>(emptyList()) }
     var fileUri by remember { mutableStateOf<Uri?>(null) }
     var selectedCourse by remember { mutableStateOf<Course?>(null) }
+
+    // Add state for upload completed
+    var isUploadComplete by remember { mutableStateOf(false) }
 
     // File picker launcher
     val filePickerLauncher = rememberLauncherForActivityResult(
@@ -352,9 +357,22 @@ fun DocumentUploadScreen(
     LaunchedEffect(uploadState) {
         when (uploadState) {
             is UploadState.Success -> {
+                // Mark upload as complete
+                isUploadComplete = true
+                // Navigate back after small delay to show completion
+                kotlinx.coroutines.delay(1000)
                 onUploadComplete((uploadState as UploadState.Success).documentId)
             }
-            else -> {} // Handle other states if needed
+            is UploadState.Uploading -> {
+                isUploading = true
+                currentUploadStatus = "Uploading... ${(uploadState as UploadState.Uploading).progress}%"
+                uploadProgress = (uploadState as UploadState.Uploading).progress.toFloat() / 100f
+            }
+            is UploadState.Error -> {
+                isUploading = false
+                currentUploadStatus = "Error: ${(uploadState as UploadState.Error).message}"
+            }
+            else -> {}
         }
     }
 
@@ -379,50 +397,142 @@ fun DocumentUploadScreen(
             )
         }
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item {
-                // Upload box
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(240.dp).padding(top=16.dp)
-                        .border(
-                            width = 1.dp,
-                            color = if (isFileUploaded) MaterialTheme.colorScheme.primary
-                            else Color.Gray.copy(alpha = 0.5f),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .clickable {
-                            showUploadOptions = true
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (capturedPhotos.isNotEmpty() || fileUri != null) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .horizontalScroll(rememberScrollState())
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            capturedPhotos.forEach { photo ->
-                                Image(
-                                    bitmap = photo,
-                                    contentDescription = "Captured Image",
-                                    modifier = Modifier
-                                        .height(200.dp)
-                                        .width(150.dp),
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Main content 
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item {
+                    // Upload box
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(240.dp).padding(top=16.dp)
+                            .border(
+                                width = 1.dp,
+                                color = if (isFileUploaded) MaterialTheme.colorScheme.primary
+                                else Color.Gray.copy(alpha = 0.5f),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .clickable {
+                                showUploadOptions = true
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (capturedPhotos.isNotEmpty() || selectedFiles.isNotEmpty() || fileUri != null) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .horizontalScroll(rememberScrollState())
+                                    .padding(8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                // Show captured photos
+                                capturedPhotos.forEach { photo ->
+                                    Image(
+                                        bitmap = photo,
+                                        contentDescription = "Captured Image",
+                                        modifier = Modifier
+                                            .height(200.dp)
+                                            .width(150.dp),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
 
-                            fileUri?.let { uri ->
+                                // Show PDF files
+                                selectedFiles.forEach { uri ->
+                                    val mimeType = context.contentResolver.getType(uri)
+                                    if (mimeType == "application/pdf") {
+                                        Box(
+                                            modifier = Modifier
+                                                .height(200.dp)
+                                                .width(150.dp)
+                                                .border(
+                                                    width = 1.dp,
+                                                    color = MaterialTheme.colorScheme.primary,
+                                                    shape = RoundedCornerShape(8.dp)
+                                                ),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            if (pdfPreviewBitmap != null) {
+                                                Image(
+                                                    bitmap = pdfPreviewBitmap!!,
+                                                    contentDescription = "PDF Preview",
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    contentScale = ContentScale.Fit
+                                                )
+                                            } else {
+                                                Column(
+                                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                                    verticalArrangement = Arrangement.Center
+                                                ) {
+                                                    Icon(
+                                                        Icons.Default.Description,
+                                                        contentDescription = "PDF File",
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                    Text(
+                                                        fileName ?: "PDF Document",
+                                                        color = MaterialTheme.colorScheme.primary,
+                                                        textAlign = TextAlign.Center,
+                                                        maxLines = 2,
+                                                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                                                        modifier = Modifier.padding(horizontal = 8.dp)
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Show single PDF file URI if present
+                                fileUri?.let { uri ->
+                                    Box(
+                                        modifier = Modifier
+                                            .height(200.dp)
+                                            .width(150.dp)
+                                            .border(
+                                                width = 1.dp,
+                                                color = MaterialTheme.colorScheme.primary,
+                                                shape = RoundedCornerShape(8.dp)
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        if (pdfPreviewBitmap != null) {
+                                            Image(
+                                                bitmap = pdfPreviewBitmap!!,
+                                                contentDescription = "PDF Preview",
+                                                modifier = Modifier.fillMaxSize(),
+                                                contentScale = ContentScale.Fit
+                                            )
+                                        } else {
+                                            Column(
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
+                                                Icon(
+                                                    Icons.Default.Description,
+                                                    contentDescription = "PDF File",
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                                Text(
+                                                    fileName ?: "PDF Document",
+                                                    color = MaterialTheme.colorScheme.primary,
+                                                    textAlign = TextAlign.Center,
+                                                    maxLines = 2,
+                                                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                                                    modifier = Modifier.padding(horizontal = 8.dp)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Add button to take more photos or add more files
                                 Box(
                                     modifier = Modifier
                                         .height(200.dp)
@@ -433,256 +543,264 @@ fun DocumentUploadScreen(
                                             shape = RoundedCornerShape(8.dp)
                                         )
                                         .clickable {
-                                            try {
-                                                val intent = Intent(Intent.ACTION_VIEW).apply {
-                                                    setDataAndType(uri, "application/pdf")
-                                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                                    addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-                                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                                }
-                                                context.startActivity(intent)
-                                            } catch (e: Exception) {
-                                                Log.e("PDFViewer", "Error opening PDF: ${e.message}")
-                                                imageLoadingError = "Error opening PDF: ${e.message}"
+                                            if (cameraPermissionState.status.isGranted && storagePermissionState.status.isGranted) {
+                                                showCamera = true
                                             }
                                         },
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    if (pdfPreviewBitmap != null) {
-                                        Image(
-                                            bitmap = pdfPreviewBitmap!!,
-                                            contentDescription = "PDF Preview",
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentScale = ContentScale.Fit
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        Icon(
+                                            Icons.Default.Add,
+                                            contentDescription = "Add More",
+                                            tint = MaterialTheme.colorScheme.primary
                                         )
-                                    } else {
-                                        Column(
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center
-                                        ) {
-                                            Icon(
-                                                Icons.Default.Description,
-                                                contentDescription = "PDF Preview",
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                            Text(
-                                                "View PDF",
-                                                color = MaterialTheme.colorScheme.primary,
-                                                textAlign = TextAlign.Center
-                                            )
-                                        }
+                                        Text(
+                                            "Add More",
+                                            color = MaterialTheme.colorScheme.primary,
+                                            textAlign = TextAlign.Center
+                                        )
                                     }
                                 }
                             }
-
-                            // Add button to take more photos or add more files
-                            Box(
-                                modifier = Modifier
-                                    .height(200.dp)
-                                    .width(150.dp)
-                                    .border(
-                                        width = 1.dp,
-                                        color = MaterialTheme.colorScheme.primary,
-                                        shape = RoundedCornerShape(8.dp)
-                                    )
-                                    .clickable {
-                                        if (cameraPermissionState.status.isGranted && storagePermissionState.status.isGranted) {
-                                            showCamera = true
-                                        }
-                                    },
-                                contentAlignment = Alignment.Center
+                        } else {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
                             ) {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Icon(
-                                        Icons.Default.Add,
-                                        contentDescription = "Add More",
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                    Text(
-                                        "Add More",
-                                        color = MaterialTheme.colorScheme.primary,
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
+
+                                Icon(
+                                    Icons.Default.Add,
+                                    contentDescription = "Upload",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    stringResource(R.string.ClickToUploadOrTakePhoto),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    textAlign = TextAlign.Center
+                                )
+                                Text(
+                                    stringResource(R.string.MaxFileSize),
+                                    color = Color.Gray,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
                             }
                         }
-                    } else {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
+                    }
+                }
 
+                item {
+                    CustomTextField(
+                        value = subject,
+                        onValueChange = { input ->
+                            // Only allow capital English letters
+                            val filtered = input.filter { it in 'A'..'Z' }
+                            subject = filtered
+                        },
+                        label = stringResource(R.string.SubjectCapitalLettersOnly),
+                        placeholder = stringResource(R.string.EnterSubjectExample),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                item {
+                    CustomTextField(
+                        value = subjectCode,
+                        onValueChange = { input ->
+                            // Only allow numbers
+                            val filtered = input.filter { it.isDigit() }
+                            subjectCode = filtered
+                        },
+                        label = stringResource(R.string.SubjectCodeNumbersOnly),
+                        placeholder = stringResource(R.string.EnterSubjectCode),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                item {
+                    Column {
+                        DropdownList(
+                            title = stringResource(R.string.Year),
+                            selectedItem = year.ifEmpty { "Select year" },
+                            onItemSelected = {
+                                year = it
+                                isYearExpanded = false
+                            },
+                            expanded = isYearExpanded,
+                            onExpandedChange = { isYearExpanded = it },
+                            content = years
+                        )
+                        Spacer(modifier = Modifier.height(yearSpacing))
+                    }
+                }
+
+                item {
+                    Column {
+                        DropdownList(
+                            title = stringResource(R.string.Semester),
+                            selectedItem = semester.ifEmpty { "Select semester" },
+                            onItemSelected = {
+                                semester = it
+                                isSemesterExpanded = false
+                            },
+                            expanded = isSemesterExpanded,
+                            onExpandedChange = { isSemesterExpanded = it },
+                            content = semesters
+                        )
+                        Spacer(modifier = Modifier.height(semesterSpacing))
+                    }
+                }
+
+
+                item {
+                    CustomTextField(
+                        value = title,
+                        onValueChange = { title = it },
+                        label = stringResource(R.string.Title),
+                        placeholder = stringResource(R.string.EnterDocumentTitle),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                item {
+                    CustomTextField(
+                        value = professor,
+                        onValueChange = { professor = it },
+                        label = stringResource(R.string.Professor),
+                        placeholder = stringResource(R.string.EnterProfessorName),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                item {
+                    CustomTextField(
+                        value = description,
+                        onValueChange = { description = it },
+                        label = stringResource(R.string.Description),
+                        placeholder = stringResource(R.string.EnterDocumentDescription),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                item {
+                    Button(
+                        onClick = {
+                            // Validate form before showing confirmation
+                            if (userId != null && title.isNotEmpty() && subject.isNotEmpty() && 
+                                subjectCode.isNotEmpty() && (capturedPhotos.isNotEmpty() || selectedFiles.isNotEmpty() || fileUri != null)) {
+                                
+                                // Show confirmation dialog instead of uploading directly
+                                showConfirmationDialog = true
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        enabled = !isUploading && userId != null && title.isNotEmpty() && 
+                                  subject.isNotEmpty() && subjectCode.isNotEmpty() && 
+                                  (capturedPhotos.isNotEmpty() || selectedFiles.isNotEmpty() || fileUri != null),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    ) {
+                        Text("Proceed to Upload")
+                    }
+                }
+
+                // If form is not valid and user has attempted to submit, show error message
+                item {
+                    if (!isFormValid) {
+                        val errorMessage = buildString {
+                            if (!isFileUploaded) append(stringResource(R.string.PleaseUploadAFile) + "\n")
+                            if (subject.isBlank()) append(stringResource(R.string.SubjectIsRequired) + "\n")
+                            if (subjectCode.isBlank()) append(stringResource(R.string.SubjectCodeIsRequired) + "\n")
+                            if (year.isBlank()) append(stringResource(R.string.YearIsRequired) + "\n")
+                            if (semester.isBlank()) append(stringResource(R.string.SemesterIsRequired) + "\n")
+                            if (title.isBlank()) append(stringResource(R.string.TitleIsRequired) + "\n")
+                        }
+
+                        if (errorMessage.isNotEmpty()) {
+                            Text(
+                                text = errorMessage,
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
+                        }
+                    }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+
+            // Upload progress overlay
+            if (isUploading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.7f))
+                        .clickable(enabled = false) { /* Disable clicks behind the overlay */ },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .width(300.dp)
+                            .background(
+                                MaterialTheme.colorScheme.surface,
+                                RoundedCornerShape(16.dp)
+                            )
+                            .padding(24.dp)
+                    ) {
+                        if (isUploadComplete) {
+                            // Show check mark or success icon
                             Icon(
-                                Icons.Default.Add,
-                                contentDescription = "Upload",
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "Upload Complete",
+                                modifier = Modifier.size(64.dp),
                                 tint = MaterialTheme.colorScheme.primary
                             )
+                            Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                stringResource(R.string.ClickToUploadOrTakePhoto),
-                                color = MaterialTheme.colorScheme.primary,
+                                text = "Upload Complete!",
+                                style = MaterialTheme.typography.titleLarge,
                                 textAlign = TextAlign.Center
                             )
+                        } else {
                             Text(
-                                stringResource(R.string.MaxFileSize),
-                                color = Color.Gray,
-                                style = MaterialTheme.typography.bodySmall
+                                text = "Uploading Document",
+                                style = MaterialTheme.typography.titleLarge,
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            LinearProgressIndicator(
+                                progress = { uploadProgress },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(8.dp),
+                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = currentUploadStatus,
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Center
                             )
                         }
                     }
                 }
-            }
-
-            item {
-                CustomTextField(
-                    value = subject,
-                    onValueChange = { input ->
-                        // Only allow capital English letters
-                        val filtered = input.filter { it in 'A'..'Z' }
-                        subject = filtered
-                    },
-                    label = stringResource(R.string.SubjectCapitalLettersOnly),
-                    placeholder = stringResource(R.string.EnterSubjectExample),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            item {
-                CustomTextField(
-                    value = subjectCode,
-                    onValueChange = { input ->
-                        // Only allow numbers
-                        val filtered = input.filter { it.isDigit() }
-                        subjectCode = filtered
-                    },
-                    label = stringResource(R.string.SubjectCodeNumbersOnly),
-                    placeholder = stringResource(R.string.EnterSubjectCode),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            item {
-                Column {
-                    DropdownList(
-                        title = stringResource(R.string.Year),
-                        selectedItem = year.ifEmpty { "Select year" },
-                        onItemSelected = {
-                            year = it
-                            isYearExpanded = false
-                        },
-                        expanded = isYearExpanded,
-                        onExpandedChange = { isYearExpanded = it },
-                        content = years
-                    )
-                    Spacer(modifier = Modifier.height(yearSpacing))
-                }
-            }
-
-            item {
-                Column {
-                    DropdownList(
-                        title = stringResource(R.string.Semester),
-                        selectedItem = semester.ifEmpty { "Select semester" },
-                        onItemSelected = {
-                            semester = it
-                            isSemesterExpanded = false
-                        },
-                        expanded = isSemesterExpanded,
-                        onExpandedChange = { isSemesterExpanded = it },
-                        content = semesters
-                    )
-                    Spacer(modifier = Modifier.height(semesterSpacing))
-                }
-            }
-
-
-            item {
-                CustomTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = stringResource(R.string.Title),
-                    placeholder = stringResource(R.string.EnterDocumentTitle),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            item {
-                CustomTextField(
-                    value = professor,
-                    onValueChange = { professor = it },
-                    label = stringResource(R.string.Professor),
-                    placeholder = stringResource(R.string.EnterProfessorName),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            item {
-                CustomTextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    label = stringResource(R.string.Description),
-                    placeholder = stringResource(R.string.EnterDocumentDescription),
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            item {
-                Button(
-                    onClick = {
-                        // Validate form before showing confirmation
-                        if (userId != null && title.isNotEmpty() && subject.isNotEmpty() && 
-                            subjectCode.isNotEmpty() && (capturedPhotos.isNotEmpty() || selectedFiles.isNotEmpty() || fileUri != null)) {
-                            
-                            // Show confirmation dialog instead of uploading directly
-                            showConfirmationDialog = true
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    enabled = !isUploading && userId != null && title.isNotEmpty() && 
-                              subject.isNotEmpty() && subjectCode.isNotEmpty() && 
-                              (capturedPhotos.isNotEmpty() || selectedFiles.isNotEmpty() || fileUri != null),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
-                ) {
-                    Text("Proceed to Upload")
-                }
-            }
-
-            // If form is not valid and user has attempted to submit, show error message
-            item {
-                if (!isFormValid) {
-                    val errorMessage = buildString {
-                        if (!isFileUploaded) append(stringResource(R.string.PleaseUploadAFile) + "\n")
-                        if (subject.isBlank()) append(stringResource(R.string.SubjectIsRequired) + "\n")
-                        if (subjectCode.isBlank()) append(stringResource(R.string.SubjectCodeIsRequired) + "\n")
-                        if (year.isBlank()) append(stringResource(R.string.YearIsRequired) + "\n")
-                        if (semester.isBlank()) append(stringResource(R.string.SemesterIsRequired) + "\n")
-                        if (title.isBlank()) append(stringResource(R.string.TitleIsRequired) + "\n")
-                    }
-
-                    if (errorMessage.isNotEmpty()) {
-                        Text(
-                            text = errorMessage,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(top = 8.dp)
-                        )
-                    }
-                }
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
 
