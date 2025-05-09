@@ -6,6 +6,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -61,6 +62,8 @@ import com.example.comp4521_ustrade.app.data.dao.Document
 import com.example.comp4521_ustrade.app.data.dao.User
 import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
 import com.example.comp4521_ustrade.app.data.repository.UserRepository
+import com.example.comp4521_ustrade.app.data.repository.NotificationRepository
+import com.example.comp4521_ustrade.app.data.dao.UserNotification
 import com.example.comp4521_ustrade.app.models.CourseCardItem
 import com.example.comp4521_ustrade.app.models.DisplayOnlyFieldItem
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
@@ -68,6 +71,12 @@ import com.example.comp4521_ustrade.ui.theme.USTBlue
 import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 import com.example.comp4521_ustrade.ui.theme.USTWhite
 import kotlinx.coroutines.launch
+import java.util.UUID
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
+import androidx.compose.foundation.background
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -91,6 +100,8 @@ fun DocumentDetailsScreen(
     var isBookmarked by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
+
+    val notificationRepository = remember { NotificationRepository() }
 
     LaunchedEffect(documentId) {
         document = documentRepository.getDocument(documentId)
@@ -191,12 +202,85 @@ fun DocumentDetailsScreen(
                 .padding(16.dp)
         ) {
             // Replace the existing preview Surface with:
-            DocumentPreviewSlider(
-                images = previewImages,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-            )
+            document?.let { doc ->
+                // Check if document has upload_documents with cover images
+                if (doc.upload_documents.isNotEmpty()) {
+                    // Create a list of all available cover images
+                    val coverImages = doc.upload_documents
+                        .mapNotNull { it.coverImageUrl }
+                        .filter { it.isNotEmpty() }
+                    
+                    if (coverImages.isNotEmpty()) {
+                        // Create a state to track current page
+                        val pagerState = rememberPagerState(initialPage = 0) { coverImages.size }
+                        val currentPage = pagerState.currentPage
+                        
+                        // Show image carousel/pager for multiple images
+                        Column {
+                            HorizontalPager(
+                                state = pagerState,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp)
+                            ) { index ->
+                                AsyncImage(
+                                    model = coverImages[index],
+                                    contentDescription = "Document Cover ${index + 1}",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop,
+                                    error = painterResource(id = getDefaultPreviewImage(doc.course.toString())),
+                                    placeholder = painterResource(id = getDefaultPreviewImage(doc.course.toString()))
+                                )
+                            }
+                            
+                            // Page indicator dots
+                            if (coverImages.size > 1) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 8.dp),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    repeat(coverImages.size) { index ->
+                                        Box(
+                                            modifier = Modifier
+                                                .padding(horizontal = 2.dp)
+                                                .size(8.dp)
+                                                .background(
+                                                    color = if (index == currentPage) 
+                                                        MaterialTheme.colorScheme.primary 
+                                                    else 
+                                                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                                                    shape = CircleShape
+                                                )
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // No cover images, show default for course
+                        Image(
+                            painter = painterResource(id = getDefaultPreviewImage(doc.course.toString())),
+                            contentDescription = "Document Preview",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                } else {
+                    // No upload documents, show default for course
+                    Image(
+                        painter = painterResource(id = getDefaultPreviewImage(doc.course.toString())),
+                        contentDescription = "Document Preview",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
             // Document title
@@ -253,18 +337,43 @@ fun DocumentDetailsScreen(
                             coroutineScope.launch {
                                 val likedList = user?.documents?.liked ?: emptyList()
                                 val dislikedList = user?.documents?.disliked ?: emptyList()
+                                
                                 if (!likedList.contains(documentId)) {
+                                    // Add like
                                     documentRepository.addLikeToDocument(documentId)
                                     if (userid != null) userRepository.addLikedDocumentToUser(userid, documentId)
+                                    
+                                    // Send notification to document uploader
+                                    document?.let { doc ->
+                                        if (userid != null && user != null && doc.uploaded_by != userid) {
+                                            // Create and send notification only if the liker is not the uploader
+                                            val notification = UserNotification(
+                                                id = UUID.randomUUID().toString(),
+                                                from_user_id = userid,
+                                                from_user_name = "${user!!.first_name} ${user!!.last_name}",
+                                                from_user_propic = user!!.profile_pic?.toString(),
+                                                updated_at = System.currentTimeMillis(),
+                                                message = "${user!!.first_name} liked your document: ${doc.title}",
+                                                read = false,
+                                                related_document_id = documentId
+                                            )
+                                            
+                                            // Add notification to uploader's notifications
+                                            notificationRepository.addNotification(doc.uploaded_by, notification)
+                                        }
+                                    }
+                                    
                                     // If previously disliked, remove dislike
                                     if (dislikedList.contains(documentId)) {
                                         documentRepository.removeDislikeFromDocument(documentId)
                                         if (userid != null) userRepository.removeDislikedDocumentFromUser(userid, documentId)
                                     }
                                 } else {
+                                    // Remove like
                                     documentRepository.removeLikeFromDocument(documentId)
                                     if (userid != null) userRepository.removeLikedDocumentFromUser(userid, documentId)
                                 }
+                                
                                 // Refresh user and document state
                                 user = userid?.let { userRepository.getUser(it) }
                                 document = documentRepository.getDocument(documentId)
@@ -333,5 +442,15 @@ fun DocumentDetailsScreen(
                 }
             }
         }
+    }
+}
+
+// Add this function to get default course images
+private fun getDefaultPreviewImage(courseName: String): Int {
+    return when (courseName) {
+        "COMP4521" -> R.drawable.comp1
+        "COMP2011" -> R.drawable.comp2
+        "COMP2012" -> R.drawable.comp3
+        else -> R.drawable.comp1 // Default fallback
     }
 }

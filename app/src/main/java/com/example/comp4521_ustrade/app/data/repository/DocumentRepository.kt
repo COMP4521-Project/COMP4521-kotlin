@@ -1,6 +1,7 @@
 package com.example.comp4521_ustrade.app.data.repository
 
 import com.example.comp4521_ustrade.app.data.dao.Document
+import com.example.comp4521_ustrade.app.data.dao.UploadDocument
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -22,14 +23,16 @@ class DocumentRepository {
                 "course" to document.course,
                 "year" to document.year,
                 "semester" to document.semester,
-                "document_name" to document.document_name,
+                "thumbnailUrl" to document.thumbnailUrl,
+                "upload_documents" to document.upload_documents,
+                "downloadCount" to document.downloadCount,
                 "like_count" to document.like_count,
                 "dislike_count" to document.dislike_count
-
             )
             documentsCollection.document(document.id).set(documentMap).await()
         } catch (e: Exception) {
             e.printStackTrace()
+            throw e
         }
     }
 
@@ -38,7 +41,37 @@ class DocumentRepository {
             documentsCollection.document(id).update(updates).await()
         } catch (e: Exception) {
             e.printStackTrace()
+            throw e
         }
+    }
+
+    // Helper function to convert Firestore document data to Document object
+    @Suppress("UNCHECKED_CAST")
+    private fun mapToDocument(data: Map<String, Any>): Document {
+        return Document(
+            id = data["id"] as String,
+            title = data["title"] as String,
+            description = data["description"] as String,
+            uploaded_by = data["uploaded_by"] as String,
+            upload_date = data["upload_date"] as String,
+            subject = data["subject"] as String,
+            subjectCode = data["subjectCode"] as String,
+            course = data["course"] as String,
+            year = data["year"] as String,
+            semester = data["semester"] as String,
+            thumbnailUrl = data["thumbnailUrl"] as? String,
+            upload_documents = (data["upload_documents"] as? List<Map<String, Any>>)?.map { 
+                UploadDocument(
+                    file_url = it["file_url"] as String,
+                    file_type = it["file_type"] as String,
+                    coverImageUrl = it["coverImageUrl"] as? String,
+                    document_name = it["document_name"] as String
+                )
+            } ?: emptyList(),
+            downloadCount = (data["downloadCount"] as? Number)?.toInt() ?: 0,
+            like_count = (data["like_count"] as? Number)?.toInt() ?: 0,
+            dislike_count = (data["dislike_count"] as? Number)?.toInt() ?: 0
+        )
     }
 
     suspend fun getDocument(id: String): Document? {
@@ -47,21 +80,7 @@ class DocumentRepository {
             if (document.exists()) {
                 val data = document.data
                 if (data != null) {
-                    Document(
-                        id = data["id"] as String,
-                        title = data["title"] as String,
-                        description = data["description"] as String,
-                        uploaded_by = data["uploaded_by"] as String,
-                        upload_date = data["upload_date"] as String,
-                        subject = data["subject"] as String,
-                        subjectCode = data["subjectCode"] as String,
-                        course = data["course"] as String,
-                        year = data["year"] as String,
-                        semester = data["semester"] as String,
-                        document_name = data["document_name"] as String,
-                        like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
-                        dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
-                    )
+                    mapToDocument(data)
                 } else null
             } else null
         } catch (e: Exception) {
@@ -76,21 +95,7 @@ class DocumentRepository {
             snapshot.documents.mapNotNull { doc ->
                 val data = doc.data
                 if (data != null) {
-                    Document(
-                        id = data["id"] as String,
-                        title = data["title"] as String,
-                        description = data["description"] as String,
-                        uploaded_by = data["uploaded_by"] as String,
-                        upload_date = data["upload_date"] as String,
-                        subject = data["subject"] as String,
-                        subjectCode = data["subjectCode"] as String,
-                        course = data["course"] as String,
-                        year = data["year"] as String,
-                        semester = data["semester"] as String,
-                        document_name = data["document_name"] as String,
-                        like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
-                        dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
-                    )
+                    mapToDocument(data)
                 } else null
             }
         } catch (e: Exception) {
@@ -105,19 +110,7 @@ class DocumentRepository {
             snapshot.documents.mapNotNull { doc ->
                 val data = doc.data
                 if (data != null) {
-                    Document(
-                        id = data["id"] as String,
-                        title = data["title"] as String,
-                        description = data["description"] as String,
-                        uploaded_by = data["uploaded_by"] as String,
-                        upload_date = data["upload_date"] as String,
-                        subject = data["subject"] as String,
-                        subjectCode = data["subjectCode"] as String,
-                        course = data["course"] as String,
-                        year = data["year"] as String,
-                        semester = data["semester"] as String,
-                        document_name = data["document_name"] as String,
-                    )
+                    mapToDocument(data)
                 } else null
             }
         } catch (e: Exception) {
@@ -132,19 +125,7 @@ class DocumentRepository {
             snapshot.documents.mapNotNull { doc ->
                 val data = doc.data
                 if (data != null) {
-                    Document(
-                        id = data["id"] as String,
-                        title = data["title"] as String,
-                        description = data["description"] as String,
-                        uploaded_by = data["uploaded_by"] as String,
-                        upload_date = data["upload_date"] as String,
-                        subject = data["subject"] as String,
-                        subjectCode = data["subjectCode"] as String,
-                        course = data["course"] as String,
-                        year = data["year"] as String,
-                        semester = data["semester"] as String,
-                        document_name = data["document_name"] as String
-                    )
+                    mapToDocument(data)
                 } else null
             }
         } catch (e: Exception) {
@@ -158,6 +139,7 @@ class DocumentRepository {
             documentsCollection.document(id).delete().await()
         } catch (e: Exception) {
             e.printStackTrace()
+            throw e
         }
     }
 
@@ -169,21 +151,7 @@ class DocumentRepository {
             snapshots.mapNotNull { doc ->
                 val data = doc.data
                 if (data != null) {
-                    Document(
-                        id = data["id"] as String,
-                        title = data["title"] as String,
-                        description = data["description"] as String,
-                        uploaded_by = data["uploaded_by"] as String,
-                        upload_date = data["upload_date"] as String,
-                        subject = data["subject"] as String,
-                        subjectCode = data["subjectCode"] as String,
-                        course = data["course"] as String,
-                        year = data["year"] as String,
-                        semester = data["semester"] as String,
-                        document_name = data["document_name"] as String,
-                        like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
-                        dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
-                    )
+                    mapToDocument(data)
                 } else null
             }
         } catch (e: Exception) {
@@ -191,7 +159,6 @@ class DocumentRepository {
             emptyList()
         }
     }
-
 
     //extra features
     suspend fun addLikeToDocument(id: String) {
@@ -234,7 +201,6 @@ class DocumentRepository {
         }
     }
 
-
     //search functions
     suspend fun searchDocumentsByCoursePrefix(query: String): List<Document> {
         return try {
@@ -247,21 +213,7 @@ class DocumentRepository {
             snapshot.documents.mapNotNull { doc ->
                 val data = doc.data
                 if (data != null) {
-                    Document(
-                        id = data["id"] as String,
-                        title = data["title"] as String,
-                        description = data["description"] as String,
-                        uploaded_by = data["uploaded_by"] as String,
-                        upload_date = data["upload_date"] as String,
-                        subject = data["subject"] as String,
-                        subjectCode = data["subjectCode"] as String,
-                        course = data["course"] as String,
-                        year = data["year"] as String,
-                        semester = data["semester"] as String,
-                        document_name = data["document_name"] as String,
-                        like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
-                        dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
-                    )
+                    mapToDocument(data)
                 } else null
             }
         } catch (e: Exception) {
@@ -278,21 +230,7 @@ class DocumentRepository {
                 if (data != null) {
                     val course = data["course"] as String
                     if (course.contains(query, ignoreCase = true)) {
-                        Document(
-                            id = data["id"] as String,
-                            title = data["title"] as String,
-                            description = data["description"] as String,
-                            uploaded_by = data["uploaded_by"] as String,
-                            upload_date = data["upload_date"] as String,
-                            subject = data["subject"] as String,
-                            subjectCode = data["subjectCode"] as String,
-                            course = course,
-                            year = data["year"] as String,
-                            semester = data["semester"] as String,
-                            document_name = data["document_name"] as String,
-                            like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
-                            dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
-                        )
+                        mapToDocument(data)
                     } else null
                 } else null
             }
@@ -313,21 +251,7 @@ class DocumentRepository {
                 if (data != null) {
                     val course = data["course"] as String
                     if (course.contains(query, ignoreCase = true)) {
-                        Document(
-                            id = data["id"] as String,
-                            title = data["title"] as String,
-                            description = data["description"] as String,
-                            uploaded_by = data["uploaded_by"] as String,
-                            upload_date = data["upload_date"] as String,
-                            subject = data["subject"] as String,
-                            subjectCode = data["subjectCode"] as String,
-                            course = course,
-                            year = data["year"] as String,
-                            semester = data["semester"] as String,
-                            document_name = data["document_name"] as String,
-                            like_count = (data["like_count"] as? Long)?.toInt() ?: 0,
-                            dislike_count = (data["dislike_count"] as? Long)?.toInt() ?: 0
-                        )
+                        mapToDocument(data)
                     } else null
                 } else null
             }
