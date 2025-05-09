@@ -345,15 +345,24 @@ fun DocumentUploadScreen(
         )
     }
 
+    var hasNavigatedAfterUpload by remember { mutableStateOf(false) }
+
     // Handle upload state changes
     LaunchedEffect(uploadState) {
+        Log.d("DocumentUpload", "Upload state changed to: $uploadState")
         when (uploadState) {
             is UploadState.Success -> {
-                // Mark upload as complete
-                isUploadComplete = true
-                // Navigate back after small delay to show completion
-                kotlinx.coroutines.delay(1000)
-                onUploadComplete((uploadState as UploadState.Success).documentId)
+                Log.d("DocumentUpload", "Upload success, hasNavigatedAfterUpload=$hasNavigatedAfterUpload")
+                // Only navigate if we haven't already
+                if (!hasNavigatedAfterUpload) {
+                    // Mark upload as complete
+                    isUploadComplete = true
+                    // Navigate back after small delay to show completion
+                    kotlinx.coroutines.delay(1000)
+                    Log.d("DocumentUpload", "Navigating after successful upload")
+                    onUploadComplete((uploadState as UploadState.Success).documentId)
+                    hasNavigatedAfterUpload = true
+                }
             }
             is UploadState.Loading -> {
                 isUploading = true
@@ -368,13 +377,27 @@ fun DocumentUploadScreen(
         }
     }
 
+    // Reset the flag when returning to the screen
+    LaunchedEffect(Unit) {
+        Log.d("DocumentUpload", "Screen mounted, resetting navigation flag")
+        hasNavigatedAfterUpload = false
+        // If available, try to reset the upload state in the ViewModel too
+         docUploadViewModel.resetUploadState()
+    }
+
+    LaunchedEffect(Unit) {
+        isUploading = false
+        isUploadComplete = false
+        uploadProgress = 0f
+        currentUploadStatus = ""
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.UploadDocument)) },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navViewModel.setSelectedScreen(Screens.Home)
                         onNavigateBack()
                     }
                     ) {

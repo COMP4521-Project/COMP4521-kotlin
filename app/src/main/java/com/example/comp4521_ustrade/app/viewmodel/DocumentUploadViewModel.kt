@@ -501,12 +501,16 @@ class DocumentUploadViewModel : ViewModel() {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return sdf.format(Date())
     }
+    // Add this to your DocumentUploadViewModel class
+    fun resetUploadState() {
+        _uploadState.value = UploadState.Initial
+    }
 }
 
 sealed class UploadState {
     object Initial : UploadState()
-    data class Loading(val progress: Int = 0) : UploadState()
     data class Success(val documentId: String) : UploadState()
+    data class Loading(val progress: Int) : UploadState()
     data class Error(val message: String) : UploadState()
 }
 
