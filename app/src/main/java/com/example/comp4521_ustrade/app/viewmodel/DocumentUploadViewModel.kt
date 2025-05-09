@@ -9,8 +9,6 @@ import com.example.comp4521_ustrade.app.data.dao.Document
 import com.example.comp4521_ustrade.app.data.dao.UploadDocument
 import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
 import com.example.comp4521_ustrade.app.data.repository.UserRepository
-import com.example.comp4521_ustrade.app.models.Course
-import com.example.comp4521_ustrade.app.utils.DocumentUtils
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -90,6 +88,118 @@ class DocumentUploadViewModel : ViewModel() {
                 documentRepository.addDocument(updatedDocument)
                 
                 // 7. Update user's uploaded documents
+                userRepository.addUploadedDocumentToUser(userId, documentId)
+                userRepository.increaseUserUpload(userId)
+                
+                _uploadState.value = UploadState.Success(documentId)
+            } catch (e: Exception) {
+                _uploadState.value = UploadState.Error(e.message ?: "Unknown error occurred")
+            }
+        }
+    }
+    
+    fun uploadDocumentWithAllContent(
+        context: Context,
+        document: Document,
+        fileUris: List<Uri>,
+        bitmapFiles: List<Bitmap>
+    ) {
+        viewModelScope.launch {
+            _uploadState.value = UploadState.Loading
+            
+            try {
+                val documentId = document.id
+                val userId = document.uploaded_by
+                val uploadDocuments = mutableListOf<UploadDocument>()
+                var thumbnailUrl: String? = null
+                
+                // First, process and upload file URIs
+                fileUris.forEachIndexed { index, fileUri ->
+                    // Get file info
+                    val originalFileName = getOriginalFileName(context, fileUri)
+                    val mimeType = getMimeType(context, fileUri) ?: "application/octet-stream"
+                    val fileExtension = getFileExtension(context, fileUri)
+                    
+                    // Upload the file
+                    val fileName = "file_${index+1}_${System.currentTimeMillis()}.$fileExtension"
+                    val documentPath = "documents/$userId/$documentId/$fileName"
+                    val storageRef = storage.reference.child(documentPath)
+                    
+                    storageRef.putFile(fileUri).await()
+                    val fileUrl = storageRef.downloadUrl.await().toString()
+                    
+                    // Generate cover image for the file
+                    val coverImageUrl = processAndUploadCoverImage(context, fileUri, userId, documentId)
+                    
+                    // Generate thumbnail for the first file
+                    if (index == 0 && thumbnailUrl == null) {
+                        thumbnailUrl = processAndUploadThumbnail(context, fileUri, userId, documentId)
+                    }
+                    
+                    // Add to upload documents
+                    uploadDocuments.add(
+                        UploadDocument(
+                            file_url = fileUrl,
+                            file_type = mimeType,
+                            coverImageUrl = coverImageUrl,
+                            document_name = originalFileName
+                        )
+                    )
+                }
+                
+                // Next, process and upload bitmap files
+                bitmapFiles.forEachIndexed { index, bitmap ->
+                    // Generate filename
+                    val fileName = "photo_${index+1}_${System.currentTimeMillis()}.jpg"
+                    val documentPath = "documents/$userId/$documentId/$fileName"
+                    
+                    // Upload bitmap
+                    val fileUrl = uploadBitmapToStorage(
+                        bitmap, 
+                        documentPath, 
+                        90, // High quality
+                        2048 // Good resolution
+                    ) ?: throw Exception("Failed to upload photo")
+                    
+                    // Generate cover image (smaller version)
+                    val coverImageUrl = uploadBitmapToStorage(
+                        bitmap,
+                        "covers/$userId/$documentId/photo_${index+1}.jpg",
+                        85,
+                        1024
+                    )
+                    
+                    // Generate thumbnail for the first file if none exists yet
+                    if (thumbnailUrl == null && index == 0) {
+                        thumbnailUrl = uploadBitmapToStorage(
+                            bitmap,
+                            "thumbnails/$userId/$documentId.jpg",
+                            75,
+                            300
+                        )
+                    }
+                    
+                    // Add to upload documents
+                    uploadDocuments.add(
+                        UploadDocument(
+                            file_url = fileUrl,
+                            file_type = "image/jpeg",
+                            coverImageUrl = coverImageUrl,
+                            document_name = "Photo_${index+1}"
+                        )
+                    )
+                }
+                
+                // Update document with all content
+                val updatedDocument = document.copy(
+                    upload_documents = uploadDocuments,
+                    thumbnailUrl = thumbnailUrl
+                )
+                
+                // Save to Firestore
+                documentRepository.addDocument(updatedDocument)
+                
+                // Update user's uploaded documents
                 userRepository.addUploadedDocumentToUser(userId, documentId)
                 userRepository.increaseUserUpload(userId)
                 

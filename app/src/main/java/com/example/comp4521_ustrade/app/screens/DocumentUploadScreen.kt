@@ -48,6 +48,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -106,11 +107,27 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.UUID
-import com.example.comp4521_ustrade.app.utils.DocumentUtils
-import com.example.comp4521_ustrade.app.viewmodel.DocumentUploadViewModel
-import com.example.comp4521_ustrade.app.data.dao.Course
-import com.example.comp4521_ustrade.app.viewmodel.UploadState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import com.example.comp4521_ustrade.app.models.Course
+
+/**
+ * Converts a Compose ImageBitmap to Android's Bitmap
+ */
+fun ImageBitmap.asBitmap(): Bitmap {
+    val width = this.width
+    val height = this.height
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val buffer = IntArray(width * height)
+    
+    // Read pixels from ImageBitmap
+    this.readPixels(buffer)
+    
+    // Write pixels to Android Bitmap
+    bitmap.setPixels(buffer, 0, width, 0, 0, width, height)
+    
+    return bitmap
+}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -119,14 +136,13 @@ fun DocumentUploadScreen(
     modifier: Modifier = Modifier,
     navViewModel: NavViewModel,
     userViewModel: UserViewModel,
-    docUploadViewModel: DocumentUploadViewModel = viewModel(),
+    docUploadViewModel: DocumentUploadViewModel,
     onUploadComplete: (String) -> Unit
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val uploadState by docUploadViewModel.uploadState.collectAsState()
-    val userId = userViewModel.userid.observeAsState().value
-    
+
     var subject by remember { mutableStateOf("") }
     var subjectCode by remember { mutableStateOf("") }
     var year by remember { mutableStateOf("") }
@@ -169,7 +185,6 @@ fun DocumentUploadScreen(
 //               && isFileUploaded
     }
 
-    val context = LocalContext.current
 
     val sharedPreferences = remember {
         context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
@@ -619,15 +634,27 @@ fun DocumentUploadScreen(
 
             item {
                 Button(
-                    onClick = { 
-                        if (isFormValid) {
+                    onClick = {
+                        // Validate form before showing confirmation
+                        if (userId != null && title.isNotEmpty() && subject.isNotEmpty() && 
+                            subjectCode.isNotEmpty() && (capturedPhotos.isNotEmpty() || selectedFiles.isNotEmpty() || fileUri != null)) {
+                            
+                            // Show confirmation dialog instead of uploading directly
                             showConfirmationDialog = true
                         }
                     },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = isFormValid
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    enabled = !isUploading && userId != null && title.isNotEmpty() && 
+                              subject.isNotEmpty() && subjectCode.isNotEmpty() && 
+                              (capturedPhotos.isNotEmpty() || selectedFiles.isNotEmpty() || fileUri != null),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
                 ) {
-                    Text(stringResource(R.string.Upload))
+                    Text("Proceed to Upload")
                 }
             }
 
@@ -1023,159 +1050,97 @@ fun DocumentUploadScreen(
                 confirmButton = {
                     TextButton(
                         onClick = {
-                            // TODO: Implement actual upload logic here
-                            val documentId = UUID.randomUUID().toString()
-                            val storageRepository = StorageRepository()
-                            val documentRepository = DocumentRepository()
-                            val userRepository = UserRepository()
-
                             if (userId != null) {
-                                coroutineScope.launch {
-                                    try {
-                                        // Show loading state
-                                        isUploading = true
-                                        uploadProgress = 0f
-                                        currentUploadStatus = "Preparing upload..."
-                                        
-                                        // Upload files to Firebase Storage
-                                        val fileUrls = mutableListOf<String>()
-                                        val fileTypes = mutableListOf<String>()
-
-                                        // Upload PDF if exists
-                                        fileUri?.let { uri ->
-                                            currentUploadStatus = "Uploading PDF..."
-                                            val url = storageRepository.uploadFile(
-                                                file = File(uri.toString()),
-                                                documentId = documentId,
-                                                fileName = fileName ?: "No file"
-                                            ) { progress ->
-                                                uploadProgress = progress.toFloat() / 100f
-                                                currentUploadStatus = "Uploading PDF: ${progress.toInt()}%"
-                                            }
-                                            fileUrls.add(url)
-                                            fileTypes.add("pdf")
-                                        }
-
-                                        // Upload images if exist
-                                        if (capturedPhotos.isNotEmpty()) {
-                                            val imageUrls = storageRepository.uploadMultipleFiles(
-                                                files = capturedPhotos.map { it.asBitmap() },
-                                                documentId = documentId
-                                            ) { index, progress ->
-                                                uploadProgress = progress.toFloat() / 100f
-                                                currentUploadStatus = "Uploading image ${index + 1}/${capturedPhotos.size}: ${progress.toInt()}%"
-                                            }
-                                            fileUrls.addAll(imageUrls)
-                                            fileTypes.addAll(List(capturedPhotos.size) { "image" })
-                                        }
-
-                                        // Update status
-                                        currentUploadStatus = "Saving document information..."
-                                        uploadProgress = 0.8f
-
-                                        // Create and save document to Firestore
-                                        val document = Document(
-                                            id = documentId,
-                                            title = title,
-                                            description = description,
-                                            subject = subject,
-                                            subjectCode = subjectCode,
-                                            course = subject + subjectCode,
-                                            year = year,
-                                            semester = semester,
-                                            uploaded_by = userId,
-                                            upload_date = SimpleDateFormat(
-                                                "yyyy-MM-dd",
-                                                Locale.getDefault()
-                                            ).format(Date()),
-                                            document_name = fileName ?: "No file",
-                                            like_count = 0,
-                                            dislike_count = 0,
-                                            file_urls = fileUrls,
-                                            file_types = fileTypes
-                                        )
-
-                                        documentRepository.addDocument(document)
-                                        userRepository.increaseUserUpload(userId)
-                                        userRepository.addUploadedDocumentToUser(userId, documentId)
-                                        userViewModel.refreshUserData()
-                                        
-                                        // Complete upload
-                                        uploadProgress = 1f
-                                        currentUploadStatus = "Upload complete!"
-                                        
-                                        // Clear loading state and navigate back
-                                        isUploading = false
-                                        onUploadComplete(documentId)
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                        // Show error message to user
-                                        imageLoadingError = "Failed to upload document: ${e.message}"
-                                        isUploading = false
+                                // Create document object using ViewModel
+                                val document = docUploadViewModel.createDocumentObject(
+                                    title = title,
+                                    description = description,
+                                    userId = userId,
+                                    subject = subject,
+                                    subjectCode = subjectCode,
+                                    year = year,
+                                    semester = semester
+                                )
+                                
+                                // Collect all file URIs to upload
+                                val allFileUris = mutableListOf<Uri>()
+                                
+                                // Add all selected files
+                                allFileUris.addAll(selectedFiles)
+                                
+                                // Add single file URI if present and not already in list
+                                fileUri?.let { 
+                                    if (!allFileUris.contains(it)) {
+                                        allFileUris.add(it)
                                     }
                                 }
+                                
+                                // For captured photos, save as files and get URIs
+                                if (capturedPhotos.isNotEmpty()) {
+                                    try {
+                                        // Create directory for photos if it doesn't exist
+                                        val photosDir = File(context.cacheDir, "photos").apply { mkdirs() }
+                                        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                                        
+                                        // Process each captured photo
+                                        capturedPhotos.forEachIndexed { index, imageBitmap ->
+                                            // Create a file for the image
+                                            val photoFile = File(photosDir, "PHOTO_${timeStamp}_${index}.jpg")
+                                            
+                                            // Save the bitmap to file
+                                            FileOutputStream(photoFile).use { out ->
+                                                imageBitmap.asBitmap().compress(Bitmap.CompressFormat.JPEG, 90, out)
+                                            }
+                                            
+                                            // Get URI using FileProvider
+                                            val photoUri = FileProvider.getUriForFile(
+                                                context,
+                                                "${context.packageName}.provider",
+                                                photoFile
+                                            )
+                                            
+                                            // Add to list of URIs to upload
+                                            allFileUris.add(photoUri)
+                                        }
+                                    } catch (e: Exception) {
+                                        Log.e("DocumentUpload", "Error saving photos: ${e.message}")
+                                        // Show error message to user if needed
+                                        currentUploadStatus = "Error preparing photos: ${e.message}"
+                                    }
+                                }
+                                
+                                // Upload all files together as one document
+                                if (allFileUris.isNotEmpty()) {
+                                    try {
+                                        // Start upload
+                                        docUploadViewModel.uploadDocument(
+                                            context = context,
+                                            fileUris = allFileUris,
+                                            document = document
+                                        )
+                                        
+                                        // Close dialog and show upload progress
+                                        showConfirmationDialog = false
+                                        isUploading = true
+                                        currentUploadStatus = "Starting upload..."
+                                        uploadProgress = 0.1f
+                                    } catch (e: Exception) {
+                                        Log.e("DocumentUpload", "Error starting upload: ${e.message}")
+                                        currentUploadStatus = "Error: ${e.message}"
+                                    }
+                                } else {
+                                    // No files to upload
+                                    currentUploadStatus = "No files selected for upload"
+                                }
                             }
-
-                            showConfirmationDialog = false
-                        }
+                        },
+                        enabled = !isUploading && userId != null && 
+                                 (capturedPhotos.isNotEmpty() || selectedFiles.isNotEmpty() || fileUri != null)
                     ) {
-                        Text(stringResource(R.string.Confirm))
-                    }
-                },
-                dismissButton = {
-                    TextButton(
-                        onClick = { showConfirmationDialog = false }
-                    ) {
-                        Text(stringResource(R.string.Cancel))
+                        Text("Confirm Upload")
                     }
                 }
             )
         }
-
-        // Add loading overlay
-        if (isUploading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.surface,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .padding(24.dp)
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(48.dp),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = currentUploadStatus,
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LinearProgressIndicator(
-                        progress = { uploadProgress },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(8.dp)
-                    )
-                }
-            }
-        }
     }
 }
-
-private fun Uri.toBitmap(context: Context): android.graphics.Bitmap {
-    return context.contentResolver.openInputStream(this)?.use { inputStream ->
-        BitmapFactory.decodeStream(inputStream)
-    } ?: throw IllegalStateException("Could not load image from URI")
-} 

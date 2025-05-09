@@ -6,6 +6,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -73,7 +74,9 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
-import com.example.comp4521_ustrade.app.models.Course
+import androidx.compose.foundation.background
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -200,20 +203,74 @@ fun DocumentDetailsScreen(
         ) {
             // Replace the existing preview Surface with:
             document?.let { doc ->
-                if (doc.coverImageUrl != null) {
-                    // Show the actual document cover
-                    AsyncImage(
-                        model = doc.coverImageUrl,
-                        contentDescription = "Document Cover",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp),
-                        contentScale = ContentScale.Crop,
-                        error = painterResource(id = getDefaultPreviewImage(doc.course.toString())),
-                        placeholder = painterResource(id = getDefaultPreviewImage(doc.course.toString()))
-                    )
+                // Check if document has upload_documents with cover images
+                if (doc.upload_documents.isNotEmpty()) {
+                    // Create a list of all available cover images
+                    val coverImages = doc.upload_documents
+                        .mapNotNull { it.coverImageUrl }
+                        .filter { it.isNotEmpty() }
+                    
+                    if (coverImages.isNotEmpty()) {
+                        // Create a state to track current page
+                        val pagerState = rememberPagerState(initialPage = 0) { coverImages.size }
+                        val currentPage = pagerState.currentPage
+                        
+                        // Show image carousel/pager for multiple images
+                        Column {
+                            HorizontalPager(
+                                state = pagerState,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp)
+                            ) { index ->
+                                AsyncImage(
+                                    model = coverImages[index],
+                                    contentDescription = "Document Cover ${index + 1}",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop,
+                                    error = painterResource(id = getDefaultPreviewImage(doc.course.toString())),
+                                    placeholder = painterResource(id = getDefaultPreviewImage(doc.course.toString()))
+                                )
+                            }
+                            
+                            // Page indicator dots
+                            if (coverImages.size > 1) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 8.dp),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    repeat(coverImages.size) { index ->
+                                        Box(
+                                            modifier = Modifier
+                                                .padding(horizontal = 2.dp)
+                                                .size(8.dp)
+                                                .background(
+                                                    color = if (index == currentPage) 
+                                                        MaterialTheme.colorScheme.primary 
+                                                    else 
+                                                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                                                    shape = CircleShape
+                                                )
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // No cover images, show default for course
+                        Image(
+                            painter = painterResource(id = getDefaultPreviewImage(doc.course.toString())),
+                            contentDescription = "Document Preview",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 } else {
-                    // Show default preview for the course
+                    // No upload documents, show default for course
                     Image(
                         painter = painterResource(id = getDefaultPreviewImage(doc.course.toString())),
                         contentDescription = "Document Preview",

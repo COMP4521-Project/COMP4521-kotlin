@@ -1,6 +1,7 @@
 package com.example.comp4521_ustrade.app.screens
 
 import AboutAppScreen
+import DocumentUploadViewModel
 import EditPasswordScreen
 import EditProfileScreen
 import NotificationSettingsScreen
@@ -97,6 +98,7 @@ fun HomePage(
 
     val userViewModel: UserViewModel = viewModel { UserViewModel(authViewModel) }
     val navViewModel : NavViewModel = viewModel()
+    val docUploadViewModel: DocumentUploadViewModel = viewModel()
 
     val courseViewModel :CourseViewModel = viewModel()
     val context = LocalContext.current
@@ -340,9 +342,15 @@ fun HomePage(
             composable(Screens.DocumentUpload.screen) {
                 DocumentUploadScreen(
                     onNavigateBack = {
-                        navigationController.navigateUp()} ,
+                        navigationController.navigateUp()
+                    },
+                    onUploadComplete = {
+                        // Navigate back or to document list after successful upload
+                        navigationController.navigateUp()
+                    },
                     navViewModel = navViewModel,
-                    userViewModel = userViewModel
+                    userViewModel = userViewModel,
+                    docUploadViewModel = docUploadViewModel,
                 )
             }
 
