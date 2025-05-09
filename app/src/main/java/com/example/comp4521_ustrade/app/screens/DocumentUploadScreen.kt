@@ -1,5 +1,6 @@
 package com.example.comp4521_ustrade.app.screens
 
+import DocumentUploadViewModel
 import android.Manifest
 import android.content.ContentValues
 import android.content.Context
@@ -62,6 +63,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -105,6 +107,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.UUID
+import com.example.comp4521_ustrade.app.utils.DocumentUtils
+import com.example.comp4521_ustrade.app.viewmodel.DocumentUploadViewModel
+import com.example.comp4521_ustrade.app.data.dao.Course
+import com.example.comp4521_ustrade.app.viewmodel.UploadState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -112,8 +118,15 @@ fun DocumentUploadScreen(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     navViewModel: NavViewModel,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    docUploadViewModel: DocumentUploadViewModel = viewModel(),
+    onUploadComplete: (String) -> Unit
 ) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val uploadState by docUploadViewModel.uploadState.collectAsState()
+    val userId = userViewModel.userid.observeAsState().value
+    
     var subject by remember { mutableStateOf("") }
     var subjectCode by remember { mutableStateOf("") }
     var year by remember { mutableStateOf("") }
@@ -193,6 +206,8 @@ fun DocumentUploadScreen(
 
     // Add state for file locations
     var imageFiles by remember { mutableStateOf<List<File>>(emptyList()) }
+    var fileUri by remember { mutableStateOf<Uri?>(null) }
+    var selectedCourse by remember { mutableStateOf<Course?>(null) }
 
     // File picker launcher
     val filePickerLauncher = rememberLauncherForActivityResult(
@@ -221,7 +236,7 @@ fun DocumentUploadScreen(
                             
                             val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
                             capturedPhotos = capturedPhotos + bitmap.asImageBitmap()
-                            imageFiles = imageFiles + imageFile
+                            //imageFiles = imageFiles + imageFile
                             isFileUploaded = true
                             fileName = imageFileName
                             
@@ -287,6 +302,12 @@ fun DocumentUploadScreen(
                                 pdfRenderer.close()
                                 pfd.close()
                             }
+                            fileUri = FileProvider.getUriForFile(
+                                context,
+                                "${context.packageName}.provider",
+                                newPdfFile
+                            )
+                            Log.d("FilePicker", "PDF saved to: ${newPdfFile.absolutePath}")
                         }
                         else -> {
                             Log.e("FilePicker", "Unsupported file type: $mimeType")
@@ -310,6 +331,16 @@ fun DocumentUploadScreen(
             ".jpg",
             storageDir
         )
+    }
+
+    // Handle upload state changes
+    LaunchedEffect(uploadState) {
+        when (uploadState) {
+            is UploadState.Success -> {
+                onUploadComplete((uploadState as UploadState.Success).documentId)
+            }
+            else -> {} // Handle other states if needed
+        }
     }
 
     Scaffold(
@@ -357,7 +388,7 @@ fun DocumentUploadScreen(
                         },
                     contentAlignment = Alignment.Center
                 ) {
-                    if (capturedPhotos.isNotEmpty() || pdfFile != null) {
+                    if (capturedPhotos.isNotEmpty() || fileUri != null) {
                         Row(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -376,7 +407,7 @@ fun DocumentUploadScreen(
                                 )
                             }
 
-                            pdfFile?.let { file ->
+                            fileUri?.let { uri ->
                                 Box(
                                     modifier = Modifier
                                         .height(200.dp)
@@ -388,11 +419,6 @@ fun DocumentUploadScreen(
                                         )
                                         .clickable {
                                             try {
-                                                val uri = FileProvider.getUriForFile(
-                                                    context,
-                                                    "${context.packageName}.provider",
-                                                    file
-                                                )
                                                 val intent = Intent(Intent.ACTION_VIEW).apply {
                                                     setDataAndType(uri, "application/pdf")
                                                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -1004,7 +1030,7 @@ fun DocumentUploadScreen(
                             val userRepository = UserRepository()
 
                             if (userId != null) {
-                                userViewModel.viewModelScope.launch {
+                                coroutineScope.launch {
                                     try {
                                         // Show loading state
                                         isUploading = true
@@ -1016,12 +1042,12 @@ fun DocumentUploadScreen(
                                         val fileTypes = mutableListOf<String>()
 
                                         // Upload PDF if exists
-                                        pdfFile?.let { file ->
+                                        fileUri?.let { uri ->
                                             currentUploadStatus = "Uploading PDF..."
                                             val url = storageRepository.uploadFile(
-                                                file = file,
+                                                file = File(uri.toString()),
                                                 documentId = documentId,
-                                                fileName = file.name
+                                                fileName = fileName ?: "No file"
                                             ) { progress ->
                                                 uploadProgress = progress.toFloat() / 100f
                                                 currentUploadStatus = "Uploading PDF: ${progress.toInt()}%"
@@ -1031,16 +1057,16 @@ fun DocumentUploadScreen(
                                         }
 
                                         // Upload images if exist
-                                        if (imageFiles.isNotEmpty()) {
+                                        if (capturedPhotos.isNotEmpty()) {
                                             val imageUrls = storageRepository.uploadMultipleFiles(
-                                                files = imageFiles,
+                                                files = capturedPhotos.map { it.asBitmap() },
                                                 documentId = documentId
                                             ) { index, progress ->
                                                 uploadProgress = progress.toFloat() / 100f
-                                                currentUploadStatus = "Uploading image ${index + 1}/${imageFiles.size}: ${progress.toInt()}%"
+                                                currentUploadStatus = "Uploading image ${index + 1}/${capturedPhotos.size}: ${progress.toInt()}%"
                                             }
                                             fileUrls.addAll(imageUrls)
-                                            imageFiles.forEach { fileTypes.add("image") }
+                                            fileTypes.addAll(List(capturedPhotos.size) { "image" })
                                         }
 
                                         // Update status
@@ -1080,7 +1106,7 @@ fun DocumentUploadScreen(
                                         
                                         // Clear loading state and navigate back
                                         isUploading = false
-                                        onNavigateBack()
+                                        onUploadComplete(documentId)
                                     } catch (e: Exception) {
                                         e.printStackTrace()
                                         // Show error message to user

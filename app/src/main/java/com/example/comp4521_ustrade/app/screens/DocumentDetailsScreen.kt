@@ -71,6 +71,9 @@ import com.example.comp4521_ustrade.ui.theme.USTBlue_dark
 import com.example.comp4521_ustrade.ui.theme.USTWhite
 import kotlinx.coroutines.launch
 import java.util.UUID
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
+import com.example.comp4521_ustrade.app.models.Course
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -196,12 +199,31 @@ fun DocumentDetailsScreen(
                 .padding(16.dp)
         ) {
             // Replace the existing preview Surface with:
-            DocumentPreviewSlider(
-                images = previewImages,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-            )
+            document?.let { doc ->
+                if (doc.coverImageUrl != null) {
+                    // Show the actual document cover
+                    AsyncImage(
+                        model = doc.coverImageUrl,
+                        contentDescription = "Document Cover",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        contentScale = ContentScale.Crop,
+                        error = painterResource(id = getDefaultPreviewImage(doc.course.toString())),
+                        placeholder = painterResource(id = getDefaultPreviewImage(doc.course.toString()))
+                    )
+                } else {
+                    // Show default preview for the course
+                    Image(
+                        painter = painterResource(id = getDefaultPreviewImage(doc.course.toString())),
+                        contentDescription = "Document Preview",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
             // Document title
@@ -363,5 +385,15 @@ fun DocumentDetailsScreen(
                 }
             }
         }
+    }
+}
+
+// Add this function to get default course images
+private fun getDefaultPreviewImage(courseName: String): Int {
+    return when (courseName) {
+        "COMP4521" -> R.drawable.comp1
+        "COMP2011" -> R.drawable.comp2
+        "COMP2012" -> R.drawable.comp3
+        else -> R.drawable.comp1 // Default fallback
     }
 }
