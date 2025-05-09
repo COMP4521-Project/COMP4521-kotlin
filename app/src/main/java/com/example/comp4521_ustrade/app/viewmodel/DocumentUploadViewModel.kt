@@ -42,50 +42,43 @@ class DocumentUploadViewModel : ViewModel() {
         document: Document
     ) {
         viewModelScope.launch {
-            _uploadState.value = UploadState.Loading
+            _uploadState.value = UploadState.Loading(0)
             
             try {
                 val documentId = document.id
                 val userId = document.uploaded_by
                 var documentThumbnailUrl: String? = null
+                var totalProgress = 0
                 
                 // Process and upload each file
-                val uploadDocuments = fileUris.mapIndexed { index, fileUri ->
-                    // 1. Upload the actual document file
-                    val fileExtension = getFileExtension(context, fileUri)
+                fileUris.forEachIndexed { index, fileUri ->
+                    // Get file info
                     val originalFileName = getOriginalFileName(context, fileUri)
-                    val fileName = "file_${System.currentTimeMillis()}.$fileExtension"
+                    val mimeType = getMimeType(context, fileUri) ?: "application/octet-stream"
+                    val fileExtension = getFileExtension(context, fileUri)
+                    
+                    // Upload the file
+                    val fileName = "file_${index+1}_${System.currentTimeMillis()}.$fileExtension"
                     val documentPath = "documents/$userId/$documentId/$fileName"
                     val storageRef = storage.reference.child(documentPath)
                     
-                    storageRef.putFile(fileUri).await()
+                    // Monitor upload progress
+                    storageRef.putFile(fileUri).addOnProgressListener { taskSnapshot ->
+                        val progress = (100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount).toInt()
+                        totalProgress = (index * 100 + progress) / fileUris.size
+                        _uploadState.value = UploadState.Loading(totalProgress)
+                    }.await()
+                    
                     val fileUrl = storageRef.downloadUrl.await().toString()
                     
-                    // 2. Generate and upload cover image
+                    // Generate cover image for the file
                     val coverImageUrl = processAndUploadCoverImage(context, fileUri, userId, documentId)
                     
-                    // 3. For the first file, also generate a thumbnail for the main document
-                    if (index == 0) {
+                    // Generate thumbnail for the first file
+                    if (index == 0 && documentThumbnailUrl == null) {
                         documentThumbnailUrl = processAndUploadThumbnail(context, fileUri, userId, documentId)
                     }
-                    
-                    // 4. Create UploadDocument with the simplified structure
-                    UploadDocument(
-                        file_url = fileUrl,
-                        file_type = getMimeType(context, fileUri) ?: "application/octet-stream",
-                        coverImageUrl = coverImageUrl,
-                        document_name = originalFileName
-                    )
                 }
-                
-                // 5. Create updated document with uploaded files
-                val updatedDocument = document.copy(
-                    upload_documents = uploadDocuments,
-                    thumbnailUrl = documentThumbnailUrl
-                )
-                
-                // 6. Save to Firestore
-                documentRepository.addDocument(updatedDocument)
                 
                 // 7. Update user's uploaded documents
                 userRepository.addUploadedDocumentToUser(userId, documentId)
@@ -105,13 +98,15 @@ class DocumentUploadViewModel : ViewModel() {
         bitmapFiles: List<Bitmap>
     ) {
         viewModelScope.launch {
-            _uploadState.value = UploadState.Loading
+            _uploadState.value = UploadState.Loading(0)
             
             try {
                 val documentId = document.id
                 val userId = document.uploaded_by
                 val uploadDocuments = mutableListOf<UploadDocument>()
                 var thumbnailUrl: String? = null
+                var totalProgress = 0
+                val totalFiles = fileUris.size + bitmapFiles.size
                 
                 // First, process and upload file URIs
                 fileUris.forEachIndexed { index, fileUri ->
@@ -125,7 +120,13 @@ class DocumentUploadViewModel : ViewModel() {
                     val documentPath = "documents/$userId/$documentId/$fileName"
                     val storageRef = storage.reference.child(documentPath)
                     
-                    storageRef.putFile(fileUri).await()
+                    // Monitor upload progress
+                    storageRef.putFile(fileUri).addOnProgressListener { taskSnapshot ->
+                        val progress = (100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount).toInt()
+                        totalProgress = (index * 100 + progress) / totalFiles
+                        _uploadState.value = UploadState.Loading(totalProgress)
+                    }.await()
+                    
                     val fileUrl = storageRef.downloadUrl.await().toString()
                     
                     // Generate cover image for the file
@@ -153,12 +154,16 @@ class DocumentUploadViewModel : ViewModel() {
                     val fileName = "photo_${index+1}_${System.currentTimeMillis()}.jpg"
                     val documentPath = "documents/$userId/$documentId/$fileName"
                     
-                    // Upload bitmap
+                    // Upload bitmap with progress monitoring
                     val fileUrl = uploadBitmapToStorage(
                         bitmap, 
                         documentPath, 
                         90, // High quality
-                        2048 // Good resolution
+                        2048, // Good resolution
+                        onProgress = { progress ->
+                            totalProgress = ((fileUris.size + index) * 100 + progress) / totalFiles
+                            _uploadState.value = UploadState.Loading(totalProgress)
+                        }
                     ) ?: throw Exception("Failed to upload photo")
                     
                     // Generate cover image (smaller version)
@@ -327,7 +332,8 @@ class DocumentUploadViewModel : ViewModel() {
         bitmap: Bitmap, 
         path: String, 
         quality: Int,
-        maxDimension: Int
+        maxDimension: Int,
+        onProgress: (Int) -> Unit = {}
     ): String? {
         return try {
             // Resize bitmap if needed
@@ -343,7 +349,10 @@ class DocumentUploadViewModel : ViewModel() {
             val data = baos.toByteArray()
             
             val storageRef = FirebaseStorage.getInstance().reference.child(path)
-            storageRef.putBytes(data).await()
+            storageRef.putBytes(data).addOnProgressListener { taskSnapshot ->
+                val progress = (100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount).toInt()
+                onProgress(progress)
+            }.await()
             storageRef.downloadUrl.await().toString()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -496,7 +505,7 @@ class DocumentUploadViewModel : ViewModel() {
 
 sealed class UploadState {
     object Initial : UploadState()
-    object Loading : UploadState()
+    data class Loading(val progress: Int = 0) : UploadState()
     data class Success(val documentId: String) : UploadState()
     data class Error(val message: String) : UploadState()
 }

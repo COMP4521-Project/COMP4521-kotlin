@@ -1,10 +1,10 @@
 package com.example.comp4521_ustrade.app.screens
 
 import DocumentUploadViewModel
+import UploadState
 import android.Manifest
 import android.content.ContentValues
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -50,7 +50,6 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -66,10 +65,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -85,14 +86,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.lifecycle.viewModelScope
 import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.CustomTextField
 import com.example.comp4521_ustrade.app.components.DropdownList
-import com.example.comp4521_ustrade.app.data.dao.Document
-import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
-import com.example.comp4521_ustrade.app.data.repository.StorageRepository
-import com.example.comp4521_ustrade.app.data.repository.UserRepository
+import com.example.comp4521_ustrade.app.models.Course
 import com.example.comp4521_ustrade.app.screens.camera.CameraView
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
@@ -102,16 +99,11 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
-import com.example.comp4521_ustrade.app.models.Course
 
 /**
  * Converts a Compose ImageBitmap to Android's Bitmap
@@ -363,10 +355,10 @@ fun DocumentUploadScreen(
                 kotlinx.coroutines.delay(1000)
                 onUploadComplete((uploadState as UploadState.Success).documentId)
             }
-            is UploadState.Uploading -> {
+            is UploadState.Loading -> {
                 isUploading = true
-                currentUploadStatus = "Uploading... ${(uploadState as UploadState.Uploading).progress}%"
-                uploadProgress = (uploadState as UploadState.Uploading).progress.toFloat() / 100f
+                currentUploadStatus = "Uploading... ${(uploadState as UploadState.Loading).progress}%"
+                uploadProgress = (uploadState as UploadState.Loading).progress.toFloat() / 100f
             }
             is UploadState.Error -> {
                 isUploading = false
