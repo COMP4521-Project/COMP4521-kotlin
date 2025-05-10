@@ -1,7 +1,10 @@
+
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.pdf.PdfRenderer
 import android.net.Uri
+import android.os.ParcelFileDescriptor
 import android.webkit.MimeTypeMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,14 +22,11 @@ import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.UUID
 import kotlin.math.max
-import android.os.ParcelFileDescriptor
-import android.graphics.pdf.PdfRenderer
 
 class DocumentUploadViewModel : ViewModel() {
     private val documentRepository = DocumentRepository()
@@ -49,6 +49,7 @@ class DocumentUploadViewModel : ViewModel() {
                 val userId = document.uploaded_by
                 var documentThumbnailUrl: String? = null
                 var totalProgress = 0
+                val uploadDocuments = mutableListOf<UploadDocument>()
                 
                 // Process and upload each file
                 fileUris.forEachIndexed { index, fileUri ->
@@ -78,9 +79,28 @@ class DocumentUploadViewModel : ViewModel() {
                     if (index == 0 && documentThumbnailUrl == null) {
                         documentThumbnailUrl = processAndUploadThumbnail(context, fileUri, userId, documentId)
                     }
+
+                    // Add to upload documents list
+                    uploadDocuments.add(
+                        UploadDocument(
+                            file_url = fileUrl,
+                            file_type = mimeType,
+                            coverImageUrl = coverImageUrl,
+                            document_name = originalFileName
+                        )
+                    )
                 }
+
+                // Create updated document with all content
+                val updatedDocument = document.copy(
+                    upload_documents = uploadDocuments,
+                    thumbnailUrl = documentThumbnailUrl
+                )
+
+                // Save document to Firestore
+                documentRepository.addDocument(updatedDocument)
                 
-                // 7. Update user's uploaded documents
+                // Update user's uploaded documents
                 userRepository.addUploadedDocumentToUser(userId, documentId)
                 userRepository.increaseUserUpload(userId)
                 
