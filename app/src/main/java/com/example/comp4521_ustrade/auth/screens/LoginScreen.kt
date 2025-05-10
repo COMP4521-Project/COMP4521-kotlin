@@ -30,10 +30,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.auth.AuthState
 import com.example.comp4521_ustrade.ui.theme.USTBlue
 
@@ -61,23 +63,23 @@ fun LoginScreen(
         horizontalAlignment = Alignment.Start
     ) {
         Spacer(modifier = Modifier.height(64.dp))
-        
+
         Text(
-            text = "Login",
+            text = stringResource(R.string.Login),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold
         )
-        
+
         Spacer(modifier = Modifier.height(32.dp))
 
-        Text("E-mail", style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.Email), style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(8.dp))
-        
+
         TextField(
             value = email,
             onValueChange = { email = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Enter your email") },
+            placeholder = { Text(stringResource(R.string.EnterYourEmail)) },
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
             colors = TextFieldDefaults.colors(
@@ -89,15 +91,15 @@ fun LoginScreen(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        
-        Text("Password", style = MaterialTheme.typography.bodyMedium)
+
+        Text(stringResource(R.string.Password), style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(8.dp))
 
         TextField(
             value = password,
             onValueChange = { password = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Enter your password") },
+            placeholder = { Text(stringResource(R.string.EnterYourPassword)) },
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
@@ -105,11 +107,11 @@ fun LoginScreen(
             trailingIcon = {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
                     Icon(
-                        imageVector = if (passwordVisible) 
-                            Icons.Outlined.VisibilityOff 
+                        imageVector = if (passwordVisible)
+                            Icons.Outlined.VisibilityOff
                         else Icons.Outlined.Visibility,
-                        contentDescription = if (passwordVisible) 
-                            "Hide password" 
+                        contentDescription = if (passwordVisible)
+                            "Hide password"
                         else "Show password"
                     )
                 }
@@ -122,7 +124,7 @@ fun LoginScreen(
 
         if (hasError) {
             Text(
-                text = "Invalid email or password",
+                text = stringResource(R.string.InvalidEmailOrPassword),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(start = 8.dp, top = 4.dp)
@@ -133,13 +135,13 @@ fun LoginScreen(
             onClick = onNavigateToForgotPassword,
             modifier = Modifier.align(Alignment.End)
         ) {
-            Text("Forgot Password?")
+            Text(stringResource(R.string.ForgotPassword))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { 
+            onClick = {
                 onSignIn(email, password)
             },
             modifier = Modifier.fillMaxWidth(),
@@ -148,7 +150,7 @@ fun LoginScreen(
             ),
             shape = RoundedCornerShape(8.dp)
         ) {
-            Text("Login", modifier = Modifier.padding(vertical = 8.dp))
+            Text(stringResource(R.string.Login), modifier = Modifier.padding(vertical = 8.dp))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -158,7 +160,7 @@ fun LoginScreen(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(8.dp)
         ) {
-            Text("Don't have an account? Register")
+            Text(stringResource(R.string.DontHaveAnAccount))
         }
     }
 } 

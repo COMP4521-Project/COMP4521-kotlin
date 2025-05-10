@@ -597,4 +597,7 @@
 <string name="Apply">套用</string>
 <string name="ClearAll">清除全部</string>
 <string name="Uploads">上傳</string>
+	<string name="Email">
+		電郵
+	</string>
 </resources>

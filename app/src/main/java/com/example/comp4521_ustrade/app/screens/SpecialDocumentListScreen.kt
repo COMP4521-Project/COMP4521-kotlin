@@ -82,6 +82,23 @@ fun SpecialDocumentListScreen(
     val userRepository = remember { UserRepository() }
     var user by remember { mutableStateOf<User?>(null) }
 
+    // Get the localized page title for display
+    val localizedPageTitle = when (pageTitle) {
+        "Favorites" -> stringResource(R.string.Favorites)
+        "Bookmarked" -> stringResource(R.string.Bookmarked)
+        "Uploaded" -> stringResource(R.string.Uploaded)
+        else -> pageTitle
+    }
+
+    // Get the document type based on the page title
+    val documentType = when (pageTitle) {
+        stringResource(R.string.Favorites), "Favorites" -> "Favorites"
+        stringResource(R.string.Bookmarked), "Bookmarked" -> "Bookmarked"
+        stringResource(R.string.Uploaded), "Uploaded" -> "Uploaded"
+        else -> pageTitle
+    }
+
+
     LaunchedEffect(userid, pageTitle) {
         println("DEBUG: LaunchedEffect triggered with userId: $userid and pageTitle: $pageTitle")
         if (userid != null) {
@@ -100,22 +117,24 @@ fun SpecialDocumentListScreen(
             println("DEBUG: User is null, can't fetch documents")
             return@LaunchedEffect
         }
-        
-        if (pageTitle == "Favorites") {
-            val likedList = user?.documents?.liked ?: emptyList()
-            println("DEBUG: Found ${likedList.size} liked document IDs")
-            likedDocuments = documentRepository.getDocumentsByIds(likedList)
-            println("DEBUG: Retrieved ${likedDocuments.size} liked documents")
-        }
-        else if (pageTitle == "Bookmarked") {
-            val bookmarkedList = user?.documents?.bookmarked ?: emptyList()
-            println("DEBUG: Found ${bookmarkedList.size} bookmarked document IDs")
-            likedDocuments = documentRepository.getDocumentsByIds(bookmarkedList)
-        }
-        else if (pageTitle == "Uploaded") {
-            val uploadedList = user?.documents?.uploaded ?: emptyList()
-            println("DEBUG: Found ${uploadedList.size} uploaded document IDs")
-            likedDocuments = documentRepository.getDocumentsByIds(uploadedList)
+
+        when (documentType) {
+            "Favorites" -> {
+                val likedList = user?.documents?.liked ?: emptyList()
+                println("DEBUG: Found ${likedList.size} liked document IDs")
+                likedDocuments = documentRepository.getDocumentsByIds(likedList)
+                println("DEBUG: Retrieved ${likedDocuments.size} liked documents")
+            }
+            "Bookmarked" -> {
+                val bookmarkedList = user?.documents?.bookmarked ?: emptyList()
+                println("DEBUG: Found ${bookmarkedList.size} bookmarked document IDs")
+                likedDocuments = documentRepository.getDocumentsByIds(bookmarkedList)
+            }
+            "Uploaded" -> {
+                val uploadedList = user?.documents?.uploaded ?: emptyList()
+                println("DEBUG: Found ${uploadedList.size} uploaded document IDs")
+                likedDocuments = documentRepository.getDocumentsByIds(uploadedList)
+            }
         }
     }
 
