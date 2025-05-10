@@ -77,6 +77,10 @@ import coil.compose.AsyncImage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import android.app.DownloadManager
+import android.os.Environment
+import android.widget.Toast
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -143,6 +147,32 @@ fun DocumentDetailsScreen(
         R.drawable.comp2,
         R.drawable.comp3
     )
+
+    // Add download function
+    fun downloadFile(context: Context, fileUrl: String, fileName: String) {
+        try {
+            val request = DownloadManager.Request(android.net.Uri.parse(fileUrl))
+                .setTitle(fileName)
+                .setDescription("Downloading document")
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+
+            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            downloadManager.enqueue(request)
+            
+            // Update download count
+            coroutineScope.launch {
+                document?.let { doc ->
+                    documentRepository.updateDocument(doc.id, mapOf("downloadCount" to (doc.downloadCount + 1)))
+                    document = documentRepository.getDocument(doc.id)
+                }
+            }
+            
+            Toast.makeText(context, "Download started", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(context, "Download failed: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -429,7 +459,11 @@ fun DocumentDetailsScreen(
                 }
 
                 Button(
-                    onClick = { /* Handle download */ },
+                    onClick = { 
+                        document?.upload_documents?.forEach { uploadDoc ->
+                            downloadFile(context, uploadDoc.file_url, uploadDoc.document_name)
+                        }
+                    },
                     modifier = Modifier.weight(1f),
                 ) {
                     Icon(
