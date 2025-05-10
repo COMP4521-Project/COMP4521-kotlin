@@ -1,7 +1,6 @@
 package com.example.comp4521_ustrade.app.components
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -17,11 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.comp4521_ustrade.app.models.CourseCardItem
 import com.example.comp4521_ustrade.app.screens.Screens
 import com.example.comp4521_ustrade.ui.theme.USTBlue
@@ -41,13 +40,15 @@ fun CourseCard(CourseCardItem: CourseCardItem,  navigateController: NavControlle
         }
     ) {
         Column() {
-            Image(
-                painter = painterResource(id = CourseCardItem.thumbnail),
-                contentDescription = "null",
+            AsyncImage(
+                model = CourseCardItem.thumbnailUrl,
+                contentDescription = "Course thumbnail",
                 modifier = Modifier
-                    .fillMaxWidth().weight(3f),
-//                    .aspectRatio(16f / 9f),
-                contentScale = ContentScale.FillBounds
+                    .fillMaxWidth()
+                    .weight(3f),
+                contentScale = ContentScale.FillBounds,
+//                error = painterResource(id = R.drawable.comp1), // Fallback image
+//                placeholder = painterResource(id = R.drawable.comp1) // Loading placeholder
             )
 
 

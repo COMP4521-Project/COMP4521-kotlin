@@ -11,10 +11,13 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -23,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -83,16 +87,23 @@ fun USTBottomBar(navigationController: NavController = rememberNavController(), 
 
         IconButton(
             onClick = {
-                navViewModel.setSelectedScreen(Screens.Download)
-                navigationController.navigate(Screens.Download.screen)
+                try {
+                    navViewModel.setSelectedScreen(Screens.DocumentUploadedList)
+                    
+                    navigationController.navigate(Screens.DocumentUploadedList.screen)
+
+                } catch (e: Exception) {
+                    navViewModel.setSelectedScreen(Screens.Home)
+                    navigationController.navigate(Screens.Home.screen)
+                }
             },
             modifier = Modifier.weight(1f)
         ) {
             Icon(
-                imageVector = Icons.Default.Download,
+                imageVector = Icons.Default.Upload,
                 contentDescription = null,
                 modifier = Modifier.padding(2.dp).size(32.dp),
-                tint = if (selectedScreen.value == Screens.Download) USTWhite else Color.Gray
+                tint = if (selectedScreen.value == Screens.DocumentUploadedList) USTWhite else Color.Gray
             )
         }
 

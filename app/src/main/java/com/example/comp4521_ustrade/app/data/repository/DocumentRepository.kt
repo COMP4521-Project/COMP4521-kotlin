@@ -47,31 +47,61 @@ class DocumentRepository {
 
     // Helper function to convert Firestore document data to Document object
     @Suppress("UNCHECKED_CAST")
-    private fun mapToDocument(data: Map<String, Any>): Document {
-        return Document(
-            id = data["id"] as String,
-            title = data["title"] as String,
-            description = data["description"] as String,
-            uploaded_by = data["uploaded_by"] as String,
-            upload_date = data["upload_date"] as String,
-            subject = data["subject"] as String,
-            subjectCode = data["subjectCode"] as String,
-            course = data["course"] as String,
-            year = data["year"] as String,
-            semester = data["semester"] as String,
-            thumbnailUrl = data["thumbnailUrl"] as? String,
-            upload_documents = (data["upload_documents"] as? List<Map<String, Any>>)?.map { 
-                UploadDocument(
-                    file_url = it["file_url"] as String,
-                    file_type = it["file_type"] as String,
-                    coverImageUrl = it["coverImageUrl"] as? String,
-                    document_name = it["document_name"] as String
-                )
-            } ?: emptyList(),
-            downloadCount = (data["downloadCount"] as? Number)?.toInt() ?: 0,
-            like_count = (data["like_count"] as? Number)?.toInt() ?: 0,
-            dislike_count = (data["dislike_count"] as? Number)?.toInt() ?: 0
-        )
+    private fun mapToDocument(data: Map<String, Any>): Document? {
+        return try {
+            // Enhanced error handling for each field
+            val id = data["id"] as? String ?: return null
+            val title = data["title"] as? String ?: "Untitled Document"
+            val description = data["description"] as? String ?: ""
+            val uploadedBy = data["uploaded_by"] as? String ?: ""
+            val uploadDate = data["upload_date"] as? String ?: ""
+            val subject = data["subject"] as? String ?: ""
+            val subjectCode = data["subjectCode"] as? String ?: ""
+            val course = data["course"] as? String ?: ""
+            val year = data["year"] as? String ?: ""
+            val semester = data["semester"] as? String ?: ""
+            val thumbnailUrl = data["thumbnailUrl"] as? String
+            val likeCount = (data["like_count"] as? Number)?.toInt() ?: 0
+            val dislikeCount = (data["dislike_count"] as? Number)?.toInt() ?: 0
+            val downloadCount = (data["downloadCount"] as? Number)?.toInt() ?: 0
+            
+            // Handle the upload_documents list with extra care
+            val uploadDocsList = (data["upload_documents"] as? List<Map<String, Any>>) ?: emptyList()
+            val uploadDocuments = uploadDocsList.mapNotNull { uploadDocData ->
+                try {
+                    UploadDocument(
+                        document_name = uploadDocData["document_name"] as? String ?: "Unnamed",
+                        file_url = uploadDocData["file_url"] as? String ?: "",
+                        file_type = uploadDocData["file_type"] as? String ?: "",
+                        coverImageUrl = uploadDocData["coverImageUrl"] as? String
+                    )
+                } catch (e: Exception) {
+                    println("DEBUG: Error mapping upload document: ${e.message}")
+                    null
+                }
+            }
+            
+            Document(
+                id = id,
+                title = title,
+                description = description,
+                uploaded_by = uploadedBy,
+                upload_date = uploadDate,
+                subject = subject,
+                subjectCode = subjectCode,
+                course = course,
+                year = year,
+                semester = semester,
+                thumbnailUrl = thumbnailUrl,
+                like_count = likeCount,
+                dislike_count = dislikeCount,
+                downloadCount = downloadCount,
+                upload_documents = uploadDocuments
+            )
+        } catch (e: Exception) {
+            println("DEBUG: Error in mapToDocument: ${e.message}")
+            null
+        }
     }
 
     suspend fun getDocument(id: String): Document? {

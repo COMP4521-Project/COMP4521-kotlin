@@ -82,22 +82,40 @@ fun SpecialDocumentListScreen(
     val userRepository = remember { UserRepository() }
     var user by remember { mutableStateOf<User?>(null) }
 
-    LaunchedEffect(Unit) {
-        user = userid?.let { userRepository.getUser(userid) }
+    LaunchedEffect(userid, pageTitle) {
+        println("DEBUG: LaunchedEffect triggered with userId: $userid and pageTitle: $pageTitle")
+        if (userid != null) {
+            try {
+                user = userRepository.getUser(userid)
+                println("DEBUG: User fetched successfully: ${user?.uid}")
+            } catch (e: Exception) {
+                println("DEBUG: Failed to fetch user: ${e.message}")
+            }
+        }
     }
 
-    LaunchedEffect(user) {
-        if (pageTitle == "favorites") {
+    LaunchedEffect(user, userid, pageTitle) {
+        println("DEBUG: Processing documents for pageTitle: $pageTitle")
+        if (user == null) {
+            println("DEBUG: User is null, can't fetch documents")
+            return@LaunchedEffect
+        }
+        
+        if (pageTitle == "Favorites") {
             val likedList = user?.documents?.liked ?: emptyList()
+            println("DEBUG: Found ${likedList.size} liked document IDs")
             likedDocuments = documentRepository.getDocumentsByIds(likedList)
+            println("DEBUG: Retrieved ${likedDocuments.size} liked documents")
         }
-        else if (pageTitle == "bookmarked") {
+        else if (pageTitle == "Bookmarked") {
             val bookmarkedList = user?.documents?.bookmarked ?: emptyList()
+            println("DEBUG: Found ${bookmarkedList.size} bookmarked document IDs")
             likedDocuments = documentRepository.getDocumentsByIds(bookmarkedList)
         }
-        else if (pageTitle == "uploaded") {
-            val bookmarkedList = user?.documents?.uploaded ?: emptyList()
-            likedDocuments = documentRepository.getDocumentsByIds(bookmarkedList)
+        else if (pageTitle == "Uploaded") {
+            val uploadedList = user?.documents?.uploaded ?: emptyList()
+            println("DEBUG: Found ${uploadedList.size} uploaded document IDs")
+            likedDocuments = documentRepository.getDocumentsByIds(uploadedList)
         }
     }
 

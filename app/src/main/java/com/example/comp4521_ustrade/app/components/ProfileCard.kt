@@ -9,12 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.IosShare
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
@@ -86,15 +82,6 @@ fun ProfileCard(modifier: Modifier = Modifier, ProfileCardData : ProfileCardData
                     )
                     Spacer(modifier.padding(2.dp))
                     ContributorTag(level = level)
-                }
-
-                IconButton(onClick = {}) {
-                    Icon(
-                        imageVector = Icons.Default.IosShare,
-                        contentDescription = stringResource(R.string.Share),
-                        modifier = modifier.weight(1f),
-                        tint = Color.Gray
-                    )
                 }
             }
 
@@ -198,7 +185,7 @@ fun UploaderProfileCard(modifier: Modifier = Modifier, ProfileCardData : Profile
                 modifier = modifier
                     .padding(8.dp)
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
@@ -207,28 +194,6 @@ fun UploaderProfileCard(modifier: Modifier = Modifier, ProfileCardData : Profile
                     Text(text = "$uploadCount", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Text(
                         text = stringResource(R.string.Upload),
-                        fontSize = 16.sp,
-                        modifier = modifier.padding(top = 8.dp)
-                    )
-                }
-                VerticalDivider(
-                    modifier = modifier
-                        .padding(8.dp)
-                        .height(50.dp),
-                    thickness = 1.dp,
-                    color = androidx.compose.ui.graphics.Color.Gray
-                )
-                Column(
-                    modifier = modifier.padding(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "${ProfileCardData.download_count}",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = stringResource(R.string.Download),
                         fontSize = 16.sp,
                         modifier = modifier.padding(top = 8.dp)
                     )

@@ -30,9 +30,9 @@ fun DisplayShortCutCards(
         ShortCutCardItem(R.drawable.bookmark, stringResource(R.string.Bookmark)),
         ShortCutCardItem(R.drawable.upload, stringResource(R.string.Upload)),
         ShortCutCardItem(R.drawable.redeem, stringResource(R.string.Redeem)),
-        ShortCutCardItem(R.drawable.download, stringResource(R.string.Download)),
-        ShortCutCardItem(R.drawable.bot, stringResource(R.string.AI)),
+        //ShortCutCardItem(R.drawable.download, stringResource(R.string.Download)),
         ShortCutCardItem(R.drawable.preview, stringResource(R.string.Preview)),
+        ShortCutCardItem(R.drawable.bot, stringResource(R.string.AI)),
         ShortCutCardItem(R.drawable.preference, stringResource(R.string.Preference)),
         ShortCutCardItem(R.drawable.logout, stringResource(R.string.Logout))
     )
