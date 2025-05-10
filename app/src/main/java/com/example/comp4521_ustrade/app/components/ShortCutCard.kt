@@ -57,11 +57,11 @@ fun ShortCutCard(
     ) {
         Card(
             modifier = Modifier.size(76.dp).clickable {
-                Toast.makeText(
-                    context,
-                    "Clicked: ${ShortCutCardItem.title}",
-                    Toast.LENGTH_SHORT
-                ).show()
+//                Toast.makeText(
+//                    context,
+//                    "Clicked: ${ShortCutCardItem.title}",
+//                    Toast.LENGTH_SHORT
+//                ).show()
                 when (ShortCutCardItem.title) {
                     aiTitle -> navigateController.navigate(Screens.AIDetails.screen)
                     preferenceTitle -> navigateController.navigate(Screens.Preferences.screen)

@@ -34,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -61,6 +62,7 @@ import com.example.comp4521_ustrade.app.components.RedeemDialog
 import com.example.comp4521_ustrade.app.components.USTBottomBar
 import com.example.comp4521_ustrade.app.display.DisplayPrize
 import com.example.comp4521_ustrade.app.display.displayProfileCard
+import com.example.comp4521_ustrade.app.models.Prize
 import com.example.comp4521_ustrade.app.viewmodel.NavViewModel
 import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.example.comp4521_ustrade.ui.theme.USTBlue
@@ -91,6 +93,26 @@ fun Redeem(modifier: Modifier = Modifier,
 
     val selectedPrize by userViewModel.selectedPrize.observeAsState()
     val confirmPrize by userViewModel.confirmPrize.observeAsState()
+
+    // Load saved prize on first launch
+    LaunchedEffect(Unit) {
+        val savedPrizeIcon = sharedPreferences.getInt("selected_prize_icon", -1)
+        if (savedPrizeIcon != -1) {
+            val prize = Prize(savedPrizeIcon)
+            userViewModel.setConfirmedPrize(prize)
+        }
+    }
+
+    // Save prize when it's confirmed
+    LaunchedEffect(confirmPrize) {
+        if (confirmPrize != null) {
+            sharedPreferences.edit().apply {
+                putInt("selected_prize_icon", confirmPrize!!.icon)
+                apply()
+            }
+        }
+    }
+
     Scaffold(
         bottomBar = { USTBottomBar(navigationController, navViewModel = navViewModel) },
     ) { innerPadding ->
