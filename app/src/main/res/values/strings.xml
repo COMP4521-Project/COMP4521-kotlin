@@ -259,7 +259,7 @@
 		Level up and redeem rewards
 	</string>
 	<string name="YouHaveSelectedYourPrize">
-		If you have selected your prize. Please go to the souvenir shop to collect your prize
+		You have selected your prize. Please go to the souvenir shop to collect your prize
 	</string>
 	<!-- Upload -->
 	<!-- Drawer -->
@@ -617,5 +617,8 @@
 	<string name="Apply">Apply</string>
 	<string name="ClearAll">Clear All</string>
 	<string name="Uploads">Uploads</string>
+	<string name="Email">
+		Email
+	</string>
 
 </resources>

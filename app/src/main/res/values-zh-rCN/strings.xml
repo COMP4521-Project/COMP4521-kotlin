@@ -597,4 +597,7 @@
 <string name="Apply">应用</string>
 <string name="ClearAll">清除所有</string>
 <string name="Uploads">上传</string>
+	<string name="Email">
+		邮箱
+	</string>
 </resources>
