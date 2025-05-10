@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.comp4521_ustrade.R
 import com.example.comp4521_ustrade.app.components.CourseCard
 import com.example.comp4521_ustrade.app.data.dao.Document
 import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
@@ -57,7 +56,7 @@ fun DisplayCourseCards(modifier: Modifier = Modifier, navigateController: NavCon
     // Map Document to CourseCardItem
     val courseList: List<CourseCardItem> = documentList.map { document ->
         CourseCardItem(
-            thumbnail = R.drawable.unavailable,
+            thumbnailUrl = document.thumbnailUrl,
             course = document.course,
             courseTitle = document.title,
             courseYear = document.year,
