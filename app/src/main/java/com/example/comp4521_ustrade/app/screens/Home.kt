@@ -98,7 +98,7 @@ fun HomePage(
 
     val userViewModel: UserViewModel = viewModel { UserViewModel(authViewModel) }
     val navViewModel : NavViewModel = viewModel()
-    val docUploadViewModel: DocumentUploadViewModel = viewModel()
+    val docUploadViewModel: DocumentUploadViewModel = viewModel { DocumentUploadViewModel(userViewModel) }
 
     val courseViewModel :CourseViewModel = viewModel()
     val context = LocalContext.current

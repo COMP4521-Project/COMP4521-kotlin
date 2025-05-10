@@ -1,4 +1,3 @@
-
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -12,6 +11,7 @@ import com.example.comp4521_ustrade.app.data.dao.Document
 import com.example.comp4521_ustrade.app.data.dao.UploadDocument
 import com.example.comp4521_ustrade.app.data.repository.DocumentRepository
 import com.example.comp4521_ustrade.app.data.repository.UserRepository
+import com.example.comp4521_ustrade.app.viewmodel.UserViewModel
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +28,7 @@ import java.util.Locale
 import java.util.UUID
 import kotlin.math.max
 
-class DocumentUploadViewModel : ViewModel() {
+class DocumentUploadViewModel(private val userViewModel: UserViewModel) : ViewModel() {
     private val documentRepository = DocumentRepository()
     private val userRepository = UserRepository()
     private val storage = FirebaseStorage.getInstance()
@@ -103,6 +103,9 @@ class DocumentUploadViewModel : ViewModel() {
                 // Update user's uploaded documents
                 userRepository.addUploadedDocumentToUser(userId, documentId)
                 userRepository.increaseUserUpload(userId)
+                
+                // Refresh user data to update the UI
+                userViewModel.refreshUserData()
                 
                 _uploadState.value = UploadState.Success(documentId)
             } catch (e: Exception) {
