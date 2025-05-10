@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -217,9 +216,6 @@ fun DocumentDetailsScreen(
                             contentDescription = stringResource(R.string.Bookmark),
                             tint = if (isBookmarked) Color.Black else USTWhite
                         )
-                    }
-                    IconButton(onClick = { /* Handle share */ }) {
-                        Icon(Icons.Default.Share, stringResource(R.string.Share), tint = USTWhite)
                     }
                 }
             )
