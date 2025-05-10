@@ -1,3 +1,4 @@
+
 import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.CardGiftcard
-import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
@@ -146,11 +146,6 @@ fun Settings(
                             icon = Icons.Default.Upload,
                             text = stringResource(R.string.UploadedFiles),
                             onClick = { navigationController.navigate(Screens.DocumentUploadedList.screen) }
-                        )
-                        SettingsItem(
-                            icon = Icons.Default.Download,
-                            text = stringResource(R.string.DownloadedFiles),
-                            onClick = { navigationController.navigate(Screens.DocumentDownloadedList.screen) }
                         )
                     }
                 }

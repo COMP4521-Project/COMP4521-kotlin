@@ -150,4 +150,58 @@ class UserRepository {
         }
     }
 
+    /**
+     * Updates a specific field in a user document.
+     * 
+     * @param userId The ID of the user to update
+     * @param fieldPath The path to the field to update (e.g., "documents.liked")
+     * @param value The new value to set for the field
+     * @return Boolean indicating success or failure
+     */
+    suspend fun updateUserField(userId: String, fieldPath: String, value: Any): Boolean {
+        return try {
+            // Get a reference to the user document
+            val userRef = usersCollection.document(userId)
+            
+            // Check if the field path contains a dot for nested fields
+            if (fieldPath.contains(".")) {
+                // For nested fields like "documents.liked", we need to handle differently
+                val parts = fieldPath.split(".")
+                
+                // For the common case of "documents.liked"
+                if (parts.size == 2 && parts[0] == "documents") {
+                    // Get the current user document
+                    val userDoc = userRef.get().await()
+                    
+                    if (userDoc.exists()) {
+                        // Get the current documents map or create a new one
+                        val documentsMap = userDoc.get("documents") as? Map<String, Any> ?: hashMapOf()
+                        val mutableDocMap = documentsMap.toMutableMap()
+                        
+                        // Update the specific field in the documents map
+                        mutableDocMap[parts[1]] = value
+                        
+                        // Update the entire documents field with the modified map
+                        userRef.update("documents", mutableDocMap).await()
+                        true
+                    } else {
+                        println("DEBUG: User document not found for ID: $userId")
+                        false
+                    }
+                } else {
+                    // For other nested fields, use a generic approach
+                    userRef.update(fieldPath, value).await()
+                    true
+                }
+            } else {
+                // For top-level fields, a simple update is sufficient
+                userRef.update(fieldPath, value).await()
+                true
+            }
+        } catch (e: Exception) {
+            println("DEBUG: Error updating user field $fieldPath: ${e.message}")
+            e.printStackTrace()
+            false
+        }
+    }
 }

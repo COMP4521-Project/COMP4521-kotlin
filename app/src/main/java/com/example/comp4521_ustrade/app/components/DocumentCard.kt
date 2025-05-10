@@ -1,7 +1,6 @@
 package com.example.comp4521_ustrade.app.components
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,9 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.comp4521_ustrade.R
+import coil.compose.AsyncImage
 import com.example.comp4521_ustrade.ui.theme.USTgray
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,21 +45,13 @@ fun DocumentCard(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            // TODO: Image, please hard code the image for now
-            Image(
-                painter = painterResource(R.drawable.comp1),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(RoundedCornerShape(4.dp))
-            )
-            // AsyncImage(
-            //     model = document.imageUrl,
-            //     contentDescription = null,
-            //     modifier = Modifier
-            //         .size(80.dp)
-            //         .clip(RoundedCornerShape(4.dp))
-            // )
+             AsyncImage(
+                 model = document.thumbnailUrl,
+                 contentDescription = null,
+                 modifier = Modifier
+                     .size(80.dp)
+                     .clip(RoundedCornerShape(4.dp))
+             )
             
             Spacer(modifier = Modifier.width(16.dp))
             

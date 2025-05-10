@@ -365,11 +365,30 @@ fun DocumentDetailsScreen(
                                 val dislikedList = user?.documents?.disliked ?: emptyList()
                                 
                                 if (!likedList.contains(documentId)) {
-                                    // Add like
-                                    documentRepository.addLikeToDocument(documentId)
-                                    if (userid != null) userRepository.addLikedDocumentToUser(userid, documentId)
+                                    // Document is not liked yet - add like
                                     
-                                    // Send notification to document uploader
+                                    // 1. Increment document's like count in Firestore
+                                    document?.let { doc ->
+                                        // Calculate new like count
+                                        val newLikeCount = doc.like_count + 1
+                                        // Update the document with new like count
+                                        documentRepository.updateDocument(doc.id, mapOf("like_count" to newLikeCount))
+                                    }
+                                    
+                                    // 2. Add document ID to user's liked documents list
+                                    if (userid != null) {
+                                        // Make sure to handle the case where liked might be null
+                                        val updatedLikedList = likedList.toMutableList()
+                                        updatedLikedList.add(documentId)
+                                        
+                                        // Update the user's liked documents in Firestore
+                                        userRepository.updateUserField(userid, "documents.liked", updatedLikedList)
+                                        
+                                        // Also update local user state to reflect the change
+                                        isLiked = true
+                                    }
+                                    
+                                    // 3. Send notification to document uploader
                                     document?.let { doc ->
                                         if (userid != null && user != null && doc.uploaded_by != userid) {
                                             // Create and send notification only if the liker is not the uploader
@@ -389,20 +408,52 @@ fun DocumentDetailsScreen(
                                         }
                                     }
                                     
-                                    // If previously disliked, remove dislike
+                                    // 4. If previously disliked, remove dislike
                                     if (dislikedList.contains(documentId)) {
-                                        documentRepository.removeDislikeFromDocument(documentId)
-                                        if (userid != null) userRepository.removeDislikedDocumentFromUser(userid, documentId)
+                                        document?.let { doc ->
+                                            // Decrement dislike count
+                                            val newDislikeCount = Math.max(0, doc.dislike_count - 1)
+                                            documentRepository.updateDocument(doc.id, mapOf("dislike_count" to newDislikeCount))
+                                        }
+                                        
+                                        // Remove from user's disliked list
+                                        if (userid != null) {
+                                            val updatedDislikedList = dislikedList.toMutableList()
+                                            updatedDislikedList.remove(documentId)
+                                            userRepository.updateUserField(userid, "documents.disliked", updatedDislikedList)
+                                            
+                                            // Update local state
+                                            isDisliked = false
+                                        }
                                     }
+                                    
+                                    // 5. Refresh document and user data to update UI
+                                    document = documentRepository.getDocument(documentId)
+                                    user = userid?.let { userRepository.getUser(it) }
                                 } else {
-                                    // Remove like
-                                    documentRepository.removeLikeFromDocument(documentId)
-                                    if (userid != null) userRepository.removeLikedDocumentFromUser(userid, documentId)
+                                    // Already liked - remove like
+                                    
+                                    // 1. Decrement document's like count
+                                    document?.let { doc ->
+                                        // Ensure like count doesn't go below 0
+                                        val newLikeCount = Math.max(0, doc.like_count - 1)
+                                        documentRepository.updateDocument(doc.id, mapOf("like_count" to newLikeCount))
+                                    }
+                                    
+                                    // 2. Remove document ID from user's liked list
+                                    if (userid != null) {
+                                        val updatedLikedList = likedList.toMutableList()
+                                        updatedLikedList.remove(documentId)
+                                        userRepository.updateUserField(userid, "documents.liked", updatedLikedList)
+                                        
+                                        // Update local state
+                                        isLiked = false
+                                    }
+                                    
+                                    // 3. Refresh document and user data
+                                    document = documentRepository.getDocument(documentId)
+                                    user = userid?.let { userRepository.getUser(it) }
                                 }
-                                
-                                // Refresh user and document state
-                                user = userid?.let { userRepository.getUser(it) }
-                                document = documentRepository.getDocument(documentId)
                             }
                         }
                     ) {
