@@ -99,6 +99,42 @@ class StorageRepository {
         }
     }
 
+    suspend fun uploadProfileImage(
+        imageUri: Uri,
+        userId: String,
+        onProgress: ((Double) -> Unit)? = null
+    ): String {
+        return try {
+            val profilePath = "profile_images/$userId.jpg"
+            val storageRef = storage.reference.child(profilePath)
+            
+            // Create metadata with content type
+            val metadata = StorageMetadata.Builder()
+                .setContentType("image/jpeg")
+                .build()
+
+            // Upload file with metadata
+            val uploadTask = storageRef.putFile(imageUri, metadata)
+            
+            // Monitor upload progress if callback provided
+            onProgress?.let { callback ->
+                uploadTask.addOnProgressListener { taskSnapshot ->
+                    val progress = (100.0 * taskSnapshot.bytesTransferred) / taskSnapshot.totalByteCount
+                    callback(progress)
+                }
+            }
+
+            // Wait for upload to complete
+            uploadTask.await()
+            
+            // Get download URL
+            storageRef.downloadUrl.await().toString()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+    }
+
     // Helper function to get MIME type based on file extension
     private fun getMimeType(fileName: String): String {
         return when {
