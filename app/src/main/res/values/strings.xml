@@ -88,6 +88,7 @@
 	<string name="ProfilePicture">
 		Profile Picture
 	</string>
+	<string name="DefaultProfilePicture">Default profile picture</string>
 	<string name="Share">
 		Share
 	</string>

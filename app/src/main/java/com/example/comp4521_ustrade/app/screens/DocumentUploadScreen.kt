@@ -1212,43 +1212,112 @@ fun DocumentUploadScreen(
                                 if (capturedPhotos.isNotEmpty()) {
                                     try {
                                         // Create directory for photos if it doesn't exist
-                                        val photosDir = File(context.cacheDir, "photos").apply { mkdirs() }
+                                        val photosDir = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "USTrade").apply { 
+                                            mkdirs() 
+                                        }
                                         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
                                         
                                         // Process each captured photo
                                         capturedPhotos.forEachIndexed { index, imageBitmap ->
-                                            // Create a file for the image
-                                            val photoFile = File(photosDir, "PHOTO_${timeStamp}_${index}.jpg")
-                                            
-                                            // Save the bitmap to file
-                                            FileOutputStream(photoFile).use { out ->
-                                                imageBitmap.asBitmap().compress(Bitmap.CompressFormat.JPEG, 90, out)
+                                            try {
+                                                // Create a file for the image with proper extension
+                                                val photoFile = File(photosDir, "USTrade_${timeStamp}_${index}.jpg")
+                                                
+                                                // Save the bitmap to file with proper quality
+                                                FileOutputStream(photoFile).use { out ->
+                                                    imageBitmap.asBitmap().compress(Bitmap.CompressFormat.JPEG, 90, out)
+                                                }
+                                                
+                                                // Create content values for MediaStore
+                                                val contentValues = ContentValues().apply {
+                                                    put(MediaStore.Images.Media.DISPLAY_NAME, photoFile.name)
+                                                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                                                    put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/USTrade")
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                                        put(MediaStore.Images.Media.IS_PENDING, 1)
+                                                    }
+                                                }
+                                                
+                                                // Insert into MediaStore
+                                                val resolver = context.contentResolver
+                                                val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                                                
+                                                if (uri != null) {
+                                                    // Write the bitmap to the MediaStore file
+                                                    resolver.openOutputStream(uri)?.use { outputStream ->
+                                                        imageBitmap.asBitmap().compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+                                                    }
+                                                    
+                                                    // Update MediaStore entry
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                                        contentValues.clear()
+                                                        contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+                                                        resolver.update(uri, contentValues, null, null)
+                                                    }
+                                                    
+                                                    // Notify media scanner
+                                                    MediaScannerConnection.scanFile(
+                                                        context,
+                                                        arrayOf(photoFile.absolutePath),
+                                                        arrayOf("image/jpeg"),
+                                                        null
+                                                    )
+                                                    
+                                                    // Add to list of URIs to upload
+                                                    allFileUris.add(uri)
+                                                    
+                                                    Log.d("DocumentUpload", "Photo saved successfully: ${photoFile.absolutePath}")
+                                                } else {
+                                                    // Fallback to FileProvider if MediaStore fails
+                                                    val photoUri = FileProvider.getUriForFile(
+                                                        context,
+                                                        "${context.packageName}.provider",
+                                                        photoFile
+                                                    )
+                                                    allFileUris.add(photoUri)
+                                                    Log.d("DocumentUpload", "Using FileProvider fallback: ${photoFile.absolutePath}")
+                                                }
+                                            } catch (e: Exception) {
+                                                Log.e("DocumentUpload", "Error saving individual photo: ${e.message}")
+                                                // Continue with other photos even if one fails
                                             }
-                                            
-                                            // Get URI using FileProvider
-                                            val photoUri = FileProvider.getUriForFile(
-                                                context,
-                                                "${context.packageName}.provider",
-                                                photoFile
-                                            )
-                                            
-                                            // Add to list of URIs to upload
-                                            allFileUris.add(photoUri)
                                         }
+                                        
+                                        // Verify URIs are valid
+                                        allFileUris.forEach { uri ->
+                                            try {
+                                                context.contentResolver.openInputStream(uri)?.use { stream ->
+                                                    // Just verify we can open the stream
+                                                    Log.d("DocumentUpload", "Verified URI access: $uri")
+                                                }
+                                            } catch (e: Exception) {
+                                                Log.e("DocumentUpload", "Error verifying URI: $uri - ${e.message}")
+                                            }
+                                        }
+                                        
                                     } catch (e: Exception) {
                                         Log.e("DocumentUpload", "Error saving photos: ${e.message}")
-                                        // Show error message to user if needed
                                         currentUploadStatus = "Error preparing photos: ${e.message}"
                                     }
                                 }
                                 
-                                // Upload all files together as one document
-                                if (allFileUris.isNotEmpty()) {
+                                // Verify we have valid URIs before upload
+                                val validUris = allFileUris.filter { uri ->
                                     try {
-                                        // Start upload
+                                        context.contentResolver.openInputStream(uri)?.use { true } ?: false
+                                    } catch (e: Exception) {
+                                        Log.e("DocumentUpload", "Invalid URI: $uri - ${e.message}")
+                                        false
+                                    }
+                                }
+                                
+                                // Upload all files together as one document
+                                if (validUris.isNotEmpty()) {
+                                    try {
+                                        // Start upload with verified URIs
                                         docUploadViewModel.uploadDocument(
                                             context = context,
-                                            fileUris = allFileUris,
+                                            fileUris = validUris,
                                             document = document
                                         )
                                         
@@ -1262,8 +1331,8 @@ fun DocumentUploadScreen(
                                         currentUploadStatus = "Error: ${e.message}"
                                     }
                                 } else {
-                                    // No files to upload
-                                    currentUploadStatus = "No files selected for upload"
+                                    // No valid files to upload
+                                    currentUploadStatus = "No valid files available for upload"
                                 }
                             }
                         },

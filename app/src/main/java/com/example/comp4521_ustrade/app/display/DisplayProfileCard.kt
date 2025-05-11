@@ -1,7 +1,6 @@
 package com.example.comp4521_ustrade.app.display
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import com.example.comp4521_ustrade.R
@@ -18,7 +17,7 @@ fun displayProfileCard(modifier: Modifier = Modifier, userViewModel: UserViewMod
 
     val userData = ProfileCardData(
         name = username ?: "Loading...",
-        profilePicture = R.drawable.user1,
+        profilePicture = R.drawable.default_profile_pic,
         upload_count = uploadCount,
         download_count = 0
     )
