@@ -53,42 +53,70 @@ class DocumentUploadViewModel(private val userViewModel: UserViewModel) : ViewMo
                 
                 // Process and upload each file
                 fileUris.forEachIndexed { index, fileUri ->
-                    // Get file info
-                    val originalFileName = getOriginalFileName(context, fileUri)
-                    val mimeType = getMimeType(context, fileUri) ?: "application/octet-stream"
-                    val fileExtension = getFileExtension(context, fileUri)
-                    
-                    // Upload the file
-                    val fileName = "file_${index+1}_${System.currentTimeMillis()}.$fileExtension"
-                    val documentPath = "documents/$userId/$documentId/$fileName"
-                    val storageRef = storage.reference.child(documentPath)
-                    
-                    // Monitor upload progress
-                    storageRef.putFile(fileUri).addOnProgressListener { taskSnapshot ->
-                        val progress = (100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount).toInt()
-                        totalProgress = (index * 100 + progress) / fileUris.size
-                        _uploadState.value = UploadState.Loading(totalProgress)
-                    }.await()
-                    
-                    val fileUrl = storageRef.downloadUrl.await().toString()
-                    
-                    // Generate cover image for the file
-                    val coverImageUrl = processAndUploadCoverImage(context, fileUri, userId, documentId)
-                    
-                    // Generate thumbnail for the first file
-                    if (index == 0 && documentThumbnailUrl == null) {
-                        documentThumbnailUrl = processAndUploadThumbnail(context, fileUri, userId, documentId)
-                    }
+                    try {
+                        // Get file info
+                        val originalFileName = getOriginalFileName(context, fileUri)
+                        val mimeType = getMimeType(context, fileUri) ?: "application/octet-stream"
+                        val fileExtension = getFileExtension(context, fileUri)
+                        
+                        // Upload the file
+                        val fileName = "file_${index+1}_${System.currentTimeMillis()}.$fileExtension"
+                        val documentPath = "documents/$userId/$documentId/$fileName"
+                        val storageRef = storage.reference.child(documentPath)
+                        
+                        // Create metadata based on file type
+                        val metadata = com.google.firebase.storage.StorageMetadata.Builder()
+                            .setContentType(mimeType)
+                            .build()
+                        
+                        // Monitor upload progress and handle image files specially
+                        when {
+                            mimeType.startsWith("image/") -> {
+                                // For images, we'll use putBytes to ensure proper handling
+                                val inputStream = context.contentResolver.openInputStream(fileUri)
+                                val bytes = inputStream?.readBytes() ?: throw Exception("Failed to read image file")
+                                inputStream.close()
+                                
+                                storageRef.putBytes(bytes, metadata).addOnProgressListener { taskSnapshot ->
+                                    val progress = (100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount).toInt()
+                                    totalProgress = (index * 100 + progress) / fileUris.size
+                                    _uploadState.value = UploadState.Loading(totalProgress)
+                                }.await()
+                            }
+                            else -> {
+                                // For other files, use putFile
+                                storageRef.putFile(fileUri, metadata).addOnProgressListener { taskSnapshot ->
+                                    val progress = (100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount).toInt()
+                                    totalProgress = (index * 100 + progress) / fileUris.size
+                                    _uploadState.value = UploadState.Loading(totalProgress)
+                                }.await()
+                            }
+                        }
+                        
+                        val fileUrl = storageRef.downloadUrl.await().toString()
+                        
+                        // Generate cover image for the file
+                        val coverImageUrl = processAndUploadCoverImage(context, fileUri, userId, documentId)
+                        
+                        // Generate thumbnail for the first file
+                        if (index == 0 && documentThumbnailUrl == null) {
+                            documentThumbnailUrl = processAndUploadThumbnail(context, fileUri, userId, documentId)
+                        }
 
-                    // Add to upload documents list
-                    uploadDocuments.add(
-                        UploadDocument(
-                            file_url = fileUrl,
-                            file_type = mimeType,
-                            coverImageUrl = coverImageUrl,
-                            document_name = originalFileName
+                        // Add to upload documents list
+                        uploadDocuments.add(
+                            UploadDocument(
+                                file_url = fileUrl,
+                                file_type = mimeType,
+                                coverImageUrl = coverImageUrl,
+                                document_name = originalFileName
+                            )
                         )
-                    )
+                    } catch (e: Exception) {
+                        // Log the specific file that failed
+                        e.printStackTrace()
+                        throw Exception("Failed to upload file ${index + 1}: ${e.message}")
+                    }
                 }
 
                 // Create updated document with all content
@@ -372,7 +400,13 @@ class DocumentUploadViewModel(private val userViewModel: UserViewModel) : ViewMo
             val data = baos.toByteArray()
             
             val storageRef = FirebaseStorage.getInstance().reference.child(path)
-            storageRef.putBytes(data).addOnProgressListener { taskSnapshot ->
+            
+            // Add proper metadata for image upload
+            val metadata = com.google.firebase.storage.StorageMetadata.Builder()
+                .setContentType("image/jpeg")
+                .build()
+            
+            storageRef.putBytes(data, metadata).addOnProgressListener { taskSnapshot ->
                 val progress = (100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount).toInt()
                 onProgress(progress)
             }.await()
@@ -390,45 +424,55 @@ class DocumentUploadViewModel(private val userViewModel: UserViewModel) : ViewMo
         maxDimension: Int
     ): String? {
         return try {
-            // Load and resize the bitmap first
-            val bitmap = withContext(Dispatchers.IO) {
-                val opts = BitmapFactory.Options().apply {
-                    inJustDecodeBounds = true
-                }
-                var inputStream = context.contentResolver.openInputStream(uri)
-                BitmapFactory.decodeStream(inputStream, null, opts)
-                inputStream?.close()
-                
-                // Calculate sample size
-                val width = opts.outWidth
-                val height = opts.outHeight
-                var inSampleSize = 1
-                if (width > maxDimension || height > maxDimension) {
-                    val halfWidth = width / 2
-                    val halfHeight = height / 2
-                    while ((halfWidth / inSampleSize) >= maxDimension || 
-                           (halfHeight / inSampleSize) >= maxDimension) {
-                        inSampleSize *= 2
+            // Get the actual file path
+            val filePath = getRealPathFromUri(context, uri)
+            val bitmap = if (filePath != null) {
+                // If we have a real file path, use it directly
+                BitmapFactory.decodeFile(filePath)
+            } else {
+                // Otherwise, load from input stream
+                withContext(Dispatchers.IO) {
+                    val opts = BitmapFactory.Options().apply {
+                        inJustDecodeBounds = true
                     }
+                    var inputStream = context.contentResolver.openInputStream(uri)
+                    BitmapFactory.decodeStream(inputStream, null, opts)
+                    inputStream?.close()
+                    
+                    // Calculate sample size
+                    val width = opts.outWidth
+                    val height = opts.outHeight
+                    var inSampleSize = 1
+                    if (width > maxDimension || height > maxDimension) {
+                        val halfWidth = width / 2
+                        val halfHeight = height / 2
+                        while ((halfWidth / inSampleSize) >= maxDimension || 
+                               (halfHeight / inSampleSize) >= maxDimension) {
+                            inSampleSize *= 2
+                        }
+                    }
+                    
+                    // Decode with sample size
+                    opts.inJustDecodeBounds = false
+                    opts.inSampleSize = inSampleSize
+                    inputStream = context.contentResolver.openInputStream(uri)
+                    val bitmap = BitmapFactory.decodeStream(inputStream, null, opts)
+                    inputStream?.close()
+                    bitmap
                 }
-                
-                // Decode with sample size
-                opts.inJustDecodeBounds = false
-                opts.inSampleSize = inSampleSize
-                inputStream = context.contentResolver.openInputStream(uri)
-                val bitmap = BitmapFactory.decodeStream(inputStream, null, opts)
-                inputStream?.close()
-                bitmap
             }
             
-            // Upload the resized bitmap
+            // Upload the bitmap
             if (bitmap != null) {
                 val quality = if (maxDimension > 500) 90 else 75
                 uploadBitmapToStorage(bitmap, path, quality, maxDimension)
             } else {
                 // Fallback: direct upload if bitmap processing fails
                 val storageRef = FirebaseStorage.getInstance().reference.child(path)
-                storageRef.putFile(uri).await()
+                val metadata = com.google.firebase.storage.StorageMetadata.Builder()
+                    .setContentType("image/jpeg")
+                    .build()
+                storageRef.putFile(uri, metadata).await()
                 storageRef.downloadUrl.await().toString()
             }
         } catch (e: Exception) {
@@ -498,14 +542,33 @@ class DocumentUploadViewModel(private val userViewModel: UserViewModel) : ViewMo
         val contentResolver = context.contentResolver
         
         // Try to get the display name from the content resolver
-        val cursor = contentResolver.query(uri, null, null, null, null)
+        val cursor = contentResolver.query(uri, arrayOf("_display_name", "_data"), null, null, null)
         cursor?.use {
             if (it.moveToFirst()) {
+                // First try to get the display name
                 val displayNameIndex = it.getColumnIndex("_display_name")
                 if (displayNameIndex != -1) {
-                    return it.getString(displayNameIndex)
+                    val displayName = it.getString(displayNameIndex)
+                    if (!displayName.isNullOrEmpty()) {
+                        return displayName
+                    }
+                }
+                
+                // If display name is not available, try to get the actual file path
+                val dataIndex = it.getColumnIndex("_data")
+                if (dataIndex != -1) {
+                    val filePath = it.getString(dataIndex)
+                    if (!filePath.isNullOrEmpty()) {
+                        return File(filePath).name
+                    }
                 }
             }
+        }
+        
+        // Try to get the file path from the URI
+        val filePath = getRealPathFromUri(context, uri)
+        if (!filePath.isNullOrEmpty()) {
+            return File(filePath).name
         }
         
         // Fallback: extract name from URI path if available
@@ -518,6 +581,41 @@ class DocumentUploadViewModel(private val userViewModel: UserViewModel) : ViewMo
         
         // Last resort: create a generic name with timestamp
         return "document_${System.currentTimeMillis()}"
+    }
+    
+    private fun getRealPathFromUri(context: Context, uri: Uri): String? {
+        try {
+            // For Android 10 (API level 29) and above
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                val contentResolver = context.contentResolver
+                val takeFlags = android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                contentResolver.takePersistableUriPermission(uri, takeFlags)
+            }
+
+            // Try to get the real file path
+            val projection = arrayOf("_data")
+            val cursor = context.contentResolver.query(uri, projection, null, null, null)
+            cursor?.use {
+                if (it.moveToFirst()) {
+                    val columnIndex = it.getColumnIndexOrThrow("_data")
+                    return it.getString(columnIndex)
+                }
+            }
+
+            // If we couldn't get the real path, try to create a temporary file
+            val inputStream = context.contentResolver.openInputStream(uri)
+            if (inputStream != null) {
+                val tempFile = File(context.cacheDir, "temp_${System.currentTimeMillis()}")
+                FileOutputStream(tempFile).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+                return tempFile.absolutePath
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
     }
     
     private fun getCurrentDate(): String {
