@@ -68,14 +68,16 @@ fun AuthNavigation(
         }
         
         composable(AuthScreen.Register.route) {
+            val authState by authViewModel.authState.collectAsState()
             RegisterScreen(
-                onSignUp = { firstName, lastName,email, password ->
+                onSignUp = { firstName, lastName, email, password ->
                     authViewModel.signUp(email, password, firstName, lastName, "")
                     print("$firstName $lastName")
                 },
                 onNavigateToLogin = {
                     navController.navigateUp()
-                }
+                },
+                authState = authState
             )
         }
         

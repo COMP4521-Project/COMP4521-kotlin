@@ -1,17 +1,21 @@
 package com.example.comp4521_ustrade.auth.screens
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -145,12 +149,22 @@ fun LoginScreen(
                 onSignIn(email, password)
             },
             modifier = Modifier.fillMaxWidth(),
+            enabled = authState !is AuthState.Loading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = USTBlue
             ),
             shape = RoundedCornerShape(8.dp)
         ) {
-            Text(stringResource(R.string.Login), modifier = Modifier.padding(vertical = 8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.Login), modifier = Modifier.padding(vertical = 8.dp))
+                if (authState is AuthState.Loading) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp
+                    )
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))

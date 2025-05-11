@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +45,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.comp4521_ustrade.R
+import com.example.comp4521_ustrade.auth.AuthState
 import com.example.comp4521_ustrade.ui.theme.USTBlue
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 
 private fun isPasswordValid(password: String): Boolean {
     val hasUpperCase = password.any { it.isUpperCase() }
@@ -58,7 +64,8 @@ private fun isPasswordValid(password: String): Boolean {
 @Composable
 fun RegisterScreen(
     onSignUp: (String, String, String, String) -> Unit,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    authState: AuthState
 ) {
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
@@ -79,320 +86,343 @@ fun RegisterScreen(
     val passwordErrorMessage = stringResource(R.string.PasswordMustContainAtLeast8CharactersWithUppercaseLowercaseNumberAndSymbol)
     val confirmPasswordErrorMessage = stringResource(R.string.PasswordsDoNotMatch)
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp),
-        horizontalAlignment = Alignment.Start
-    ) {
-        Spacer(modifier = Modifier.height(64.dp))
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
 
-        Text(
-            text = stringResource(R.string.Registration),
-            style = MaterialTheme.typography.headlineLarge,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text(stringResource(R.string.FirstName), style = MaterialTheme.typography.bodyMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextField(
-            value = firstName,
-            onValueChange = {
-                firstName = it
-                firstNameError = null
-            },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(stringResource(R.string.EnterYourFirstName)) },
-            shape = RoundedCornerShape(8.dp),
-            singleLine = true,
-            isError = firstNameError != null,
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                unfocusedIndicatorColor = MaterialTheme.colorScheme.outline
-            )
-        )
-
-        firstNameError?.let { error ->
-            Text(
-                text = error,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(start = 8.dp, top = 4.dp)
-            )
+    LaunchedEffect(authState) {
+        if (authState is AuthState.Error) {
+            errorMessage = authState.message
+            showErrorDialog = true
         }
+    }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(stringResource(R.string.LastName), style = MaterialTheme.typography.bodyMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-
-
-        TextField(
-            value = lastName,
-            onValueChange = {
-                lastName = it
-                lastNameError = null
-            },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(stringResource(R.string.EnterYourLastName)) },
-            shape = RoundedCornerShape(8.dp),
-            singleLine = true,
-            isError = lastNameError != null,
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                unfocusedIndicatorColor = MaterialTheme.colorScheme.outline
-            )
-        )
-
-        lastNameError?.let { error ->
-            Text(
-                text = error,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(start = 8.dp, top = 4.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(stringResource(R.string.Email), style = MaterialTheme.typography.bodyMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextField(
-            value = email,
-            onValueChange = {
-                email = it
-                emailError = null
-            },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(stringResource(R.string.EnterYourEmail)) },
-            shape = RoundedCornerShape(8.dp),
-            singleLine = true,
-            isError = emailError != null,
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                unfocusedIndicatorColor = MaterialTheme.colorScheme.outline
-            )
-        )
-
-        emailError?.let { error ->
-            Text(
-                text = error,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(start = 8.dp, top = 4.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+    androidx.compose.material3.Scaffold { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp)
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.Start
         ) {
-            Text(stringResource(R.string.Password), style = MaterialTheme.typography.bodyMedium)
+            if (showErrorDialog) {
+                AlertDialog(
+                    onDismissRequest = { showErrorDialog = false },
+                    confirmButton = {
+                        TextButton(onClick = { showErrorDialog = false }) {
+                            Text("OK")
+                        }
+                    },
+                    title = { Text("Registration Error") },
+                    text = { Text(errorMessage) }
+                )
+            }
+            Text(
+                text = stringResource(R.string.Registration),
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold
+            )
 
-            IconButton(
-                onClick = { showPasswordPolicy = !showPasswordPolicy },
-                modifier = Modifier
-                    .size(24.dp)
-                    .padding(start = 4.dp)
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Text(stringResource(R.string.FirstName), style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextField(
+                value = firstName,
+                onValueChange = {
+                    firstName = it
+                    firstNameError = null
+                },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text(stringResource(R.string.EnterYourFirstName)) },
+                shape = RoundedCornerShape(8.dp),
+                singleLine = true,
+                isError = firstNameError != null,
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                    unfocusedIndicatorColor = MaterialTheme.colorScheme.outline
+                )
+            )
+
+            firstNameError?.let { error ->
+                Text(
+                    text = error,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(stringResource(R.string.LastName), style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextField(
+                value = lastName,
+                onValueChange = {
+                    lastName = it
+                    lastNameError = null
+                },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text(stringResource(R.string.EnterYourLastName)) },
+                shape = RoundedCornerShape(8.dp),
+                singleLine = true,
+                isError = lastNameError != null,
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                    unfocusedIndicatorColor = MaterialTheme.colorScheme.outline
+                )
+            )
+
+            lastNameError?.let { error ->
+                Text(
+                    text = error,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(stringResource(R.string.Email), style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextField(
+                value = email,
+                onValueChange = {
+                    email = it
+                    emailError = null
+                },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text(stringResource(R.string.EnterYourEmail)) },
+                shape = RoundedCornerShape(8.dp),
+                singleLine = true,
+                isError = emailError != null,
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                    unfocusedIndicatorColor = MaterialTheme.colorScheme.outline
+                )
+            )
+
+            emailError?.let { error ->
+                Text(
+                    text = error,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Surface(
-                    shape = CircleShape,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant),
-                    color = Color.Transparent,
-                    modifier = Modifier.size(16.dp)
+                Text(stringResource(R.string.Password), style = MaterialTheme.typography.bodyMedium)
+
+                IconButton(
+                    onClick = { showPasswordPolicy = !showPasswordPolicy },
+                    modifier = Modifier
+                        .size(24.dp)
+                        .padding(start = 4.dp)
+                ) {
+                    Surface(
+                        shape = CircleShape,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant),
+                        color = Color.Transparent,
+                        modifier = Modifier.size(16.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.QuestionMark),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.wrapContentSize(Alignment.Center)
+                        )
+                    }
+                }
+            }
+
+            if (showPasswordPolicy) {
+                Text(
+                    text = stringResource(R.string.PasswordMustContain),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
+                )
+
+                Column(
+                    modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.QuestionMark),
+                        text = stringResource(R.string.AtLeast8Characters),
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.wrapContentSize(Alignment.Center)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = stringResource(R.string.AtLeastOneUppercaseLetter),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = stringResource(R.string.AtLeastOneLowercaseLetter),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = stringResource(R.string.AtLeastOneNumber),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = stringResource(R.string.AtLeastOneSpecialCharacter),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = stringResource(R.string.MaximumLengthOf4096Characters),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
-        }
 
-        if (showPasswordPolicy) {
-            Text(
-                text = stringResource(R.string.PasswordMustContain),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextField(
+                value = password,
+                onValueChange = { password = it },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text(stringResource(R.string.EnterYourPassword)) },
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                shape = RoundedCornerShape(8.dp),
+                singleLine = true,
+                isError = passwordError != null,
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            imageVector = if (passwordVisible)
+                                Icons.Outlined.VisibilityOff
+                            else Icons.Outlined.Visibility,
+                            contentDescription = if (passwordVisible)
+                                "Hide password"
+                            else "Show password"
+                        )
+                    }
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = if (passwordError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    unfocusedIndicatorColor = if (passwordError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline
+                )
             )
 
-            Column(
-                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(stringResource(R.string.ConfirmPassword), style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text(stringResource(R.string.ConfirmPassword)) },
+                visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                shape = RoundedCornerShape(8.dp),
+                singleLine = true,
+                isError = passwordError != null,
+                trailingIcon = {
+                    IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
+                        Icon(
+                            imageVector = if (confirmPasswordVisible)
+                                Icons.Outlined.VisibilityOff
+                            else Icons.Outlined.Visibility,
+                            contentDescription = if (confirmPasswordVisible)
+                                "Hide password"
+                            else "Show password"
+                        )
+                    }
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = if (passwordError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    unfocusedIndicatorColor = if (passwordError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline
+                )
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    // Reset all error states
+                    firstNameError = null
+                    lastNameError = null
+                    emailError = null
+                    passwordError = null
+
+                    when {
+                        firstName.isBlank() -> {
+                            firstNameError = firstNameErrorMessage
+                        }
+                        lastName.isBlank() -> {
+                            lastNameError = lastNameErrorMessage
+                        }
+                        email.isBlank() -> {
+                            emailError = emailErrorMessage
+                        }
+                        !email.matches(Regex("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) -> {
+                            emailError = emailErrorMessage
+                        }
+                        !isPasswordValid(password) -> {
+                            passwordError = passwordErrorMessage
+                        }
+                        password != confirmPassword -> {
+                            passwordError = confirmPasswordErrorMessage
+                        }
+                        else -> {
+                            onSignUp(firstName, lastName, email, password)
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = authState !is AuthState.Loading,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = USTBlue
+                ),
+                shape = RoundedCornerShape(8.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.AtLeast8Characters),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = stringResource(R.string.AtLeastOneUppercaseLetter),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = stringResource(R.string.AtLeastOneLowercaseLetter),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = stringResource(R.string.AtLeastOneNumber),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = stringResource(R.string.AtLeastOneSpecialCharacter),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = stringResource(R.string.MaximumLengthOf4096Characters),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(R.string.SignUp), modifier = Modifier.padding(vertical = 8.dp))
+                    if (authState is AuthState.Loading) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(18.dp),
+                            strokeWidth = 2.dp
+                        )
+                    }
+                }
             }
-        }
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        TextField(
-            value = password,
-            onValueChange = { password = it },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(stringResource(R.string.EnterYourPassword)) },
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            shape = RoundedCornerShape(8.dp),
-            singleLine = true,
-            isError = passwordError != null,
-            trailingIcon = {
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Icon(
-                        imageVector = if (passwordVisible)
-                            Icons.Outlined.VisibilityOff
-                        else Icons.Outlined.Visibility,
-                        contentDescription = if (passwordVisible)
-                            "Hide password"
-                        else "Show password"
-                    )
-                }
-            },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = if (passwordError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                unfocusedIndicatorColor = if (passwordError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline
-            )
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(stringResource(R.string.ConfirmPassword), style = MaterialTheme.typography.bodyMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(stringResource(R.string.ConfirmPassword)) },
-            visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            shape = RoundedCornerShape(8.dp),
-            singleLine = true,
-            isError = passwordError != null,
-            trailingIcon = {
-                IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
-                    Icon(
-                        imageVector = if (confirmPasswordVisible)
-                            Icons.Outlined.VisibilityOff
-                        else Icons.Outlined.Visibility,
-                        contentDescription = if (confirmPasswordVisible)
-                            "Hide password"
-                        else "Show password"
-                    )
-                }
-            },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = if (passwordError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                unfocusedIndicatorColor = if (passwordError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline
-            )
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = {
-                // Reset all error states
-                firstNameError = null
-                lastNameError = null
-                emailError = null
-                passwordError = null
-
-                when {
-                    firstName.isBlank() -> {
-                        firstNameError = firstNameErrorMessage
-                    }
-                    lastName.isBlank() -> {
-                        lastNameError = lastNameErrorMessage
-                    }
-                    email.isBlank() -> {
-                        emailError = emailErrorMessage
-                    }
-                    !email.matches(Regex("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) -> {
-                        emailError = emailErrorMessage
-                    }
-                    !isPasswordValid(password) -> {
-                        passwordError = passwordErrorMessage
-                    }
-                    password != confirmPassword -> {
-                        passwordError = confirmPasswordErrorMessage
-                    }
-                    else -> {
-                        onSignUp(firstName, lastName, email, password)
-                    }
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = USTBlue
-            ),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Text(stringResource(R.string.SignUp), modifier = Modifier.padding(vertical = 8.dp))
-        }
-
-        passwordError?.let { error ->
-            Text(
-                text = error,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(start = 8.dp, top = 4.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedButton(
-            onClick = onNavigateToLogin,
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Text(stringResource(R.string.AlreadyHaveAnAccount))
+            OutlinedButton(
+                onClick = onNavigateToLogin,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(stringResource(R.string.AlreadyHaveAnAccount))
+            }
         }
     }
 }
